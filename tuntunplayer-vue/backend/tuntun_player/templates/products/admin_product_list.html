@@ -1,0 +1,116 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 판매교재 연결 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">dataset_linked</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">연결교재 ({{service_kind_id | service_kind_name()}})</h4>
+                        <p class="card-category">
+                            현장에서 배본(판매)되는 실물교재코드와 튼튼플레이어 컨텐츠를 연결합니다.<br />
+                            신규등록 전에 해당 교재가 이미 등록되어있는지 <strong>검색</strong>해보세요.
+                        </p>
+                        <div class="row">
+                            <div class="col-md-12">
+	                			<form method="GET" action="{{url_for(request.endpoint, service_kind_id=service_kind_id)}}" class="form-horizontal">
+                                    <label class="form-group">
+                                        <select id="row_size" onchange="row_size_change(this)" class="form-control" >
+                                            <option value="20" {{'selected' if paging.row_size == 20}}>20개씩 보기</option>
+                                            <option value="30" {{'selected' if paging.row_size == 30}}>30개씩 보기</option>
+                                            <option value="50" {{'selected' if paging.row_size == 50}}>50개씩 보기</option>
+                                        </select>
+                                    </label> &nbsp;
+                                    <label class="form-group">
+                                        {{ input('text', 'search_text', search.search_text, opt='required', placeholder='검색') }}
+                                        <input type="submit" hidden>
+                                    </label>
+                                    <button class="btn btn-facebook btn-round btn-fab btn-fab-mini">
+                                        <i class="material-icons">search</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th class="text-center">교재코드</th>
+                                        <th class="text-left">연결컨텐츠</th>
+                                        <th class="text-left">제품명</th>
+                                        <th class="text-center">작성자</th>
+                                        <th class="text-center">출시일</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in res_list %}
+                                        <tr id="row">
+                                            <td class="text-center">
+                                                <a href="{{ url_for('products.admin_product_update', service_kind_id=service_kind_id, product_code=res.ProductCode) }}">
+                                                    {{res.ProductCode}}
+                                                </a>
+                                            </td>
+                                            <td class="text-left">{{res.ContentGroupName}}</td>
+                                            <td class="text-left">{{res.ProductName}}</td>
+                                            <td class="text-center">{{res.MemberName}}</td>
+                                            <td class="text-center">{{res.PublishDate}}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <h4>데이터가 존재하지 않습니다.</h4>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="">
+                                <ul class="pagination pagination-info">
+                                    {% set board_list_url = url_for(request.endpoint, service_kind_id=service_kind_id, row_size=paging.row_size, search_text=search.search_text if search) %}
+
+                                    {% if paging.pre_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.pre_page}}">prev</a></li>
+                                    {% endif %}
+
+                                    {% for i in range(paging.start_page, paging.max_page) %}
+                                        {% if paging.page == i %}
+                                            <li class="active"><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% else %}
+                                            <li><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if paging.next_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.next_page}}">next</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('products.admin_product_insert', service_kind_id=service_kind_id) }}" class="btn btn-fill btn-facebook">신규등록</a>
+<!--                        <button type="button" class="btn btn-fill btn-success">엑셀출력</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function row_size_change(select) {
+        var row_size = select.value;
+        window.location.href="{{ url_for(request.endpoint, service_kind_id=service_kind_id) }}?page=1&row_size="+row_size;
+   }
+</script>
+
+{% endblock %}
+
+
+
+

@@ -1,0 +1,365 @@
+{% set member_endpoint = ['admins.member_list', 'admins.member_detail'] %}
+{% set product_endpoint = ['products.admin_product_list', 'products.admin_product_update'] %}
+{% set content_endpoint = ['products.admin_main_group_list', 'products.admin_main_list', 'products.admin_title_list', 'products.admin_content_list', 'products.admin_content_reference_list', 'products.admin_content_booklet_list', 'products.admin_content_upper_list', 'products.admin_content_edu_list'] %}
+{% set board_endpoint = ['boards.admin_board_list', 'boards.admin_board_insert', 'boards.admin_board_update'] %}
+{% set notice_endpoint = ['admins.modal_notice_list', 'admins.modal_notice_insert', 'admins.modal_notice_update'] %}
+
+
+<div class="sidebar" data-active-color="orange" data-background-color="white" data-image="/static/images/admin/sidebar_berry.png">
+    <!--
+    Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
+    Tip 2: you can also add an image using data-image tag
+    Tip 3: you can change the color of the sidebar with data-background-color="white | black"
+    -->
+
+    <div class="logo">
+        <a href="{{ url_for('homes.index') }}" class="simple-text logo-mini">
+            <img src="/static/images/logo/logo_small_player.svg" height="25">
+        </a>
+        <a href="{{ url_for('homes.index') }}" class="simple-text logo-normal">
+            <img src="/static/images/logo/mainLogo_player.svg" style="height:15px">
+        </a>
+    </div>
+
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+
+            <li class="{{'active' if request.endpoint in member_endpoint}}">
+                <a data-toggle="collapse" href="#memberContent" aria-expanded="{{'true' if request.endpoint in member_endpoint}}">
+                    <i class="material-icons">account_circle</i>
+                    <p> 회원
+                        <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{'in' if request.endpoint in member_endpoint}}" id="memberContent">
+                    <ul class="nav">
+                        <li class="{{ 'active' if request.endpoint in member_endpoint and manager_yn==0 }}">
+                            <a href="{{url_for('admins.member_list', manager_yn=0)}}">
+                                <span class="sidebar-mini"> MS </span>
+                                <span class="sidebar-normal"> 학생 </span>
+                            </a>
+                        </li>
+                        <li class="{{ 'active' if request.endpoint in member_endpoint and manager_yn==1 }}">
+                            <a href="{{url_for('admins.member_list', manager_yn=1)}}">
+                                <span class="sidebar-mini"> MT </span>
+                                <span class="sidebar-normal"> 교사 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="{{'active' if request.endpoint in product_endpoint}}">
+                <a data-toggle="collapse" href="#productContent" aria-expanded="{{ 'true' if request.endpoint in product_endpoint }}">
+                    <i class="material-icons">dataset_linked</i>
+                    <p> 연결교재
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{ 'in' if request.endpoint in product_endpoint }}" id="productContent">
+                    <ul class="nav">
+                        <li class="{{ 'active' if request.endpoint in product_endpoint and service_kind_id==1 }}">
+                            <a href="{{url_for('products.admin_product_list', service_kind_id=1)}}">
+                                <span class="sidebar-mini"> LB </span>
+                                <span class="sidebar-normal"> 베이비리그 </span>
+                            </a>
+                        </li>
+                        <li class="{{ 'active' if request.endpoint in product_endpoint and service_kind_id==2 }}">
+                            <a href="{{url_for('products.admin_product_list', service_kind_id=2)}}">
+                                <span class="sidebar-mini"> LJ </span>
+                                <span class="sidebar-normal"> 주니어/튜터링 </span>
+                            </a>
+                        </li>
+                        <li class="{{ 'active' if request.endpoint in product_endpoint and service_kind_id==61 }}">
+                            <a href="{{url_for('products.admin_product_list', service_kind_id=61)}}">
+                                <span class="sidebar-mini"> LP </span>
+                                <span class="sidebar-normal"> 주니어플러스 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- <li class="{{ 'active' if request.endpoint in content_endpoint and route_kind_id == 7 }}">
+                <a data-toggle="collapse" href="#eduContent" aria-expanded="{{ 'true' if request.endpoint in content_endpoint and route_kind_id == 7  }}">
+                    <i class="material-icons">school</i>
+                    <p> 교육
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{ 'in' if request.endpoint in content_endpoint and route_kind_id == 7 }}" id="eduContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 7 and product_kind_id == 122 and content_title_id == 2067 }}">
+                            <a href="{{url_for('products.admin_content_list', route_kind_id=7, product_kind_id=122, content_title_id=2067)}}">
+                                <span class="sidebar-mini"> BL </span>
+                                <span class="sidebar-normal"> 베이비리그 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 7 and product_kind_id == 122 and content_title_id == 2068 }}">
+                            <a href="{{url_for('products.admin_content_list', route_kind_id=7, product_kind_id=122, content_title_id=2068)}}">
+                                <span class="sidebar-mini"> JP </span>
+                                <span class="sidebar-normal"> 주니어플러스 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 7 and product_kind_id == 122 and content_title_id == 2069 }}">
+                            <a href="{{url_for('products.admin_content_list', route_kind_id=7, product_kind_id=122, content_title_id=2069)}}">
+                                <span class="sidebar-mini"> JR </span>
+                                <span class="sidebar-normal"> 주니어 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 7 and product_kind_id == 122 and content_title_id == 2070 }}">
+                            <a href="{{url_for('products.admin_content_list', route_kind_id=7, product_kind_id=122, content_title_id=2070)}}">
+                                <span class="sidebar-mini"> TR </span>
+                                <span class="sidebar-normal"> 튜터링 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li> -->
+
+            <li class="{{ 'active' if request.endpoint in content_endpoint and route_kind_id == 1 }}">
+                <a data-toggle="collapse" href="#videoContent" aria-expanded="{{ 'true' if request.endpoint in content_endpoint and route_kind_id == 1  }}">
+                    <i class="material-icons">movie</i>
+                    <p> 영상
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{ 'in' if request.endpoint in content_endpoint and route_kind_id == 1 }}" id="videoContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 1 and product_kind_id == 3 }}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=1, product_kind_id=3, manager_yn=0)}}">
+                                <span class="sidebar-mini"> BL </span>
+                                <span class="sidebar-normal"> 베이비리그 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 1 and product_kind_id in (62, 63, 64, 65, 91, 121) }}">
+                            <a href="{{url_for('products.admin_main_group_list', route_kind_id=1, product_kind_id=62)}}">
+                                <span class="sidebar-mini"> JP </span>
+                                <span class="sidebar-normal"> 주니어플러스 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 1 and product_kind_id == 4 }}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=1, product_kind_id=4, manager_yn=0)}}">
+                                <span class="sidebar-mini"> JR </span>
+                                <span class="sidebar-normal"> 주니어 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 1 and product_kind_id == 5 }}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=1, product_kind_id=5, manager_yn=0)}}">
+                                <span class="sidebar-mini"> TR </span>
+                                <span class="sidebar-normal"> 튜터링 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 1 and product_kind_id == 103 }}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=1, product_kind_id=103, manager_yn=1)}}">
+                                <span class="sidebar-mini"> SC </span>
+                                <span class="sidebar-normal"> 스페셜클래스 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5}}">
+                <a data-toggle="collapse" href="#videoBundleContent" aria-expanded="{{ 'true' if request.endpoint in content_endpoint and route_kind_id == 5 }}">
+                    <i class="material-icons">video_library</i>
+                    <p> 영상모음
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{'in' if request.endpoint in content_endpoint and route_kind_id == 5}}" id="videoBundleContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5 and product_kind_id == 3}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=5, product_kind_id=3, manager_yn=0)}}">
+                                <span class="sidebar-mini"> BL </span>
+                                <span class="sidebar-normal"> 베이비리그 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5 and product_kind_id in (62, 63, 64, 65, 91, 121)}}">
+                            <a href="{{url_for('products.admin_main_group_list', route_kind_id=5, product_kind_id=62)}}">
+                                <span class="sidebar-mini"> JP </span>
+                                <span class="sidebar-normal"> 주니어플러스 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5 and product_kind_id == 4}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=5, product_kind_id=4, manager_yn=0)}}">
+                                <span class="sidebar-mini"> JR </span>
+                                <span class="sidebar-normal"> 주니어 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5 and product_kind_id == 5}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=5, product_kind_id=5, manager_yn=0)}}">
+                                <span class="sidebar-mini"> TR </span>
+                                <span class="sidebar-normal"> 튜터링 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 5 and product_kind_id == 103}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=5, product_kind_id=103, manager_yn=1)}}">
+                                <span class="sidebar-mini"> SC </span>
+                                <span class="sidebar-normal"> 스페셜클래스 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+             <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3}}">
+                <a data-toggle="collapse" href="#fileContent" aria-expanded="{{ 'true' if request.endpoint in content_endpoint and route_kind_id == 3 }}">
+                    <i class="material-icons">inventory</i>
+                    <p> 첨부파일 (교사)
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{'in' if request.endpoint in content_endpoint and route_kind_id == 3}}" id="fileContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3 and product_kind_id == 3}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=3, product_kind_id=3, manager_yn=1)}}">
+                                <span class="sidebar-mini"> BL </span>
+                                <span class="sidebar-normal"> 베이비리그 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3 and product_kind_id in (62, 63, 64, 65, 91, 121)}}">
+                            <a href="{{url_for('products.admin_main_group_list', route_kind_id=3, product_kind_id=62)}}">
+                                <span class="sidebar-mini"> JP </span>
+                                <span class="sidebar-normal"> 주니어플러스 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3 and product_kind_id == 4}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=3, product_kind_id=4, manager_yn=1)}}">
+                                <span class="sidebar-mini"> JR </span>
+                                <span class="sidebar-normal"> 주니어 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3 and product_kind_id == 5}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=3, product_kind_id=5, manager_yn=1)}}">
+                                <span class="sidebar-mini"> TR </span>
+                                <span class="sidebar-normal"> 튜터링 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 3 and product_kind_id == 103}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=3, product_kind_id=103, manager_yn=1)}}">
+                                <span class="sidebar-mini"> SC </span>
+                                <span class="sidebar-normal"> 스페셜클래스 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 4}}">
+                <a data-toggle="collapse" href="#bookletContent" aria-expanded="{{ 'true' if request.endpoint in content_endpoint and route_kind_id == 4}}">
+                    <i class="material-icons">photo</i>
+                    <p> 슬라이드 (교사)
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{'in' if request.endpoint in content_endpoint and route_kind_id == 4}}" id="bookletContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in content_endpoint and route_kind_id == 4 and product_kind_id == 5}}">
+                            <a href="{{url_for('products.admin_main_list', route_kind_id=4, product_kind_id=5, manager_yn=1)}}">
+                                <span class="sidebar-mini"> TR </span>
+                                <span class="sidebar-normal"> 튜터링 </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="{{'active' if request.endpoint in board_endpoint}}">
+                <a data-toggle="collapse" href="#boardContent" aria-expanded="{{'true' if request.endpoint in board_endpoint}}">
+                    <i class="material-icons">assignment</i>
+                    <p> 멀티게시판 (교사)
+                    <b class="caret"></b>
+                    </p>
+                </a>
+                <div class="collapse {{'in' if request.endpoint in board_endpoint}}" id="boardContent">
+                    <ul class="nav">
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==104}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=104, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> NT </span>
+                                <span class="sidebar-normal"> 공지사항 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==114}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=114, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> EC </span>
+                                <span class="sidebar-normal"> 교육컨설팅/상담 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==111}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=111, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> SE </span>
+                                <span class="sidebar-normal"> 특별교육 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==110}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=110, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> MC </span>
+                                <span class="sidebar-normal"> 맘스클래스 </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==105}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=105, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> RF </span>
+                                <span class="sidebar-normal"> 자료실 (브랜드별) </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==106}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=106, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> EX </span>
+                                <span class="sidebar-normal"> 체험관리 (브랜드별) </span>
+                            </a>
+                        </li>
+                        <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==107}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=107, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> CS </span>
+                                <span class="sidebar-normal"> 상담관리 (브랜드별) </span>
+                            </a>
+                        </li>
+                        <!-- <li class="{{'active' if request.endpoint in board_endpoint and board_kind_id==112}}">
+                            <a href="{{url_for('boards.admin_board_list', board_kind_id=112, product_kind_id=0)}}">
+                                <span class="sidebar-mini"> SR </span>
+                                <span class="sidebar-normal"> 특강 자료실 </span>
+                            </a>
+                        </li> -->
+                    </ul>
+                </div>
+            </li>
+
+            <li class="{{'active' if request.endpoint in notice_endpoint}}">
+                <a href="{{url_for('admins.modal_notice_list')}}">
+                    <i class="material-icons">new_releases</i>
+                    <p> 팝업공지</p>
+                </a>
+            </li>
+
+            <li class="{{'active' if request.endpoint == 'admin_version_history'}}">
+                <a href="{{url_for('admins.version_history')}}">
+                    <i class="material-icons">grade</i>
+                    <p> 새소식 </p>
+                </a>
+            </li>
+            {% if session.login_user %}
+                <li>
+                    <a href="{{url_for('accounts.logout')}}">
+                        <i class="material-icons">logout</i>
+                        <p> 로그아웃 </p>
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{{url_for('accounts.login')}}">
+                        <i class="material-icons">login</i>
+                        <p> 로그인 </p>
+                    </a>
+                </li>
+            {% endif  %}
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 비밀번호 재설정 {% endblock %}
+
+{% block section %}
+
+<div class="product-page">
+    <div class="page-header" data-parallax="true" style="background-image: url('/static/images/main/bg_anyone.png');">
+	    <div class="container">
+	        <div class="row title-row">
+	            <div class="col-md-4 col-md-offset-8">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="section section-gray">
+        <div class="container">
+			<div class="main main-raised">
+				<div class="contact-content">
+					<h4 class="title">비밀 번호를 재설정 합니다.</h4>
+					<div class="row">
+						<div class="col-md-6">
+							<p class="description">이 화면은 인증 메일의 링크를 통해 들어온 페이지입니다. 개인 이메일 계정을 확인하시고 비밀번호 변경 절차를 따라주세요.
+							</p>
+							<form id="passUpdate" name="passUpdate" method="POST" action="{{ url_for('accounts.auth_pass_update_post') }}" class="form">
+								<div class="form-group label-floating">
+									<label class="control-label">이메일 계정</label>
+									{{ input('email', 'user_email', user_email, opt='required readonly') }}
+								</div>
+								<div class="form-group label-floating">
+									<label class="control-label">신규 비밀번호</label>
+									{{ input('password', 'new_passwd', new_passwd, min=8, max=50, opt='required') }}
+								</div>
+								<div class="form-group label-floating">
+									<label class="control-label">비밀번호 확인</label>
+									{{ input('password', 'confirm_passwd', confirm_passwd, min=8, max=50, opt='required') }}
+								</div>
+								<br />
+								<div class="form-group form-button">
+                                    <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                                        <i class="material-icons">arrow_back</i> 뒤로가기
+                                    </button>
+                                    <button type="submit" class="btn btn-facebook btn-round">
+                                        <i class="material-icons">check</i> 변경하기
+                                    </button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+    	</div>
+    </div> <!--section end -->
+</div>
+
+
+{% endblock %}
+

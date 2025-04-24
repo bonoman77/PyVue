@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block title %} 교재 슬라이드 {% endblock %}
+
+{% block section %}
+
+<div class="signup-page">
+   <div class="page-header" style="background-image: url('/static/images/main/bg_account.png'); background-size: cover; background-position: top center;">
+    	<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="text-center">
+<!--						<a href="{{ url_for('products.content_list', product_kind_id=product_kind_id, content_title_id = content_title_id) }}" class="btn btn-light btn-info">뒤로가기</a>-->
+						{% for item in booklet_list %}
+							<a href="{{ url_for('products.content_booklet_list', product_kind_id=product_kind_id, content_title_id = content_title_id, booklet_id = item.BookletID) }}">
+								<input type="button" value="{{item.BookletKindName}}" class="btn btn-light {{ 'btn-warning' if booklet_id==item.BookletID else 'btn-github' }}">
+							</a>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			<div class="row">
+    			<div class="col-md-12">
+					{% if res_list|length > 0 %}
+							<div class="card card-plain card-carousel">
+		<!--					data-interval="false" 는 자동으로 페이지가 넘어가지 않게 하는데 중요함-->
+								<div id="carousel-generic" class="carousel slide" data-interval="false">
+									<div class="carousel slide" data-interval="false">
+										<!-- Wrapper for slides -->
+										<div class="carousel-inner">
+											{% for res in res_list %}
+												<div class="item {{'active' if loop.index==1}}">
+													<div class="col-md-12 ml-auto mr-auto">
+														<img src="{{res.UploadPath | virtual_path }}">
+													</div>
+												</div>
+											{% endfor %}
+										</div>
+										<!-- Indicators -->
+										<ol class="carousel-indicators">
+											{% for res in res_list %}
+												<li data-target="#carousel-generic" data-slide-to="{{loop.index-1}}" class="{{'active' if loop.index==1}}"></li>
+											{% endfor %}
+										</ol>
+
+										<!-- Controls -->
+										<a class="left carousel-control" href="#carousel-generic" data-slide="prev">
+											<i class="material-icons">keyboard_arrow_left</i>
+										</a>
+										<a class="right carousel-control" href="#carousel-generic" data-slide="next">
+											<i class="material-icons">keyboard_arrow_right</i>
+										</a>
+									</div>
+								</div>
+							</div>
+					{% else %}
+						<div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+							<img src="/static/images/notice/illust_2.png" width="180px">
+							<h3>슬라이드 자료가 존재하지 않습니다.</h3>
+						</div>
+					{% endif %}
+                </div>
+            </div>
+		</div>
+   </div>
+</div>
+
+
+{% endblock %}
+

@@ -1,0 +1,290 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input, textarea %}
+{% from "macros/modal.html" import small_modal %}
+{% block title %} 회원 상세 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+		<div class="col-md-10">
+    	    <div class="card">
+				<form id="member_insert" name="member_insert" method="POST" action="" class="form-horizontal">
+					<div class="card-header card-header-icon" data-background-color="rose">
+						<i class="material-icons">account_circle</i>
+					</div>
+					<div class="card-content">
+						<h4 class="card-title">회원정보 상세</h4>
+							<div class="row">
+								<div class="col-md-8">
+									<p class="description">한 명의 {{ '교사가' if res.ManagerYn else '회원이' }} 튼튼영어의 여러 채널(브랜드)에 등록되어있는 경우, 추가할 수 있습니다.</p>
+									<div class="table-responsive">
+										<table class="table table-striped">
+											<tbody>
+												{% for code in code_list %}
+													<tr>
+														<td class="text-center" width="40%">{{code.ServiceKind}}</td>
+														<td class="text-center" width="30%">{{code.MemberCode}}</td>
+														<td class="text-center" width="30%">{{code.MemberName}}</td>
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+									</div>
+									<button type="button" onclick="searchMemberCode({{1 if res.ManagerYn else 0}}, 1);" class="btn btn-fill btn-sm btn-facebook">베이비리그</button>
+									<button type="button" onclick="searchMemberCode({{1 if res.ManagerYn else 0}}, 2);" class="btn btn-fill btn-sm btn-facebook">주니어/튜터링</button>
+									<button type="button" onclick="searchMemberCode({{1 if res.ManagerYn else 0}}, 61);" class="btn btn-fill btn-sm btn-facebook">주니어플러스</button>
+								</div>
+							</div>
+
+
+
+							<div class="row">
+			                    <div class="col-md-8">
+									<div class="form-group">
+				                        <label class="label-control">회원고유ID</label>
+										{{ input('text', 'member_id', res.MemberID, opt='required disabled') }}
+				                    <span class="material-input"></span></div>
+									<div class="form-group">
+				                        <label class="label-control">이름</label>
+									    <span class="{{'text-success' if res.AuthYn else 'text-danger'}}">{{'인증완료' if res.AuthYn else '미인증'}}</span>
+										{{ input('text', 'member_name', res.MemberName, opt='required disabled') }}
+									<span class="material-input"></span></div>
+									<div class="form-group">
+				                        <label class="label-control">회원타입</label>
+									    <span class="text-info">{{'관리자' if res.AdminYn}}</span>
+										{{ input('text', 'member_type', '교사' if res.ManagerYn else '회원', opt='required disabled') }}
+										<span class="material-input"></span>
+									</div>
+									<div class="form-group">
+				                        <label class="label-control">이메일</label>
+										{{ input('email', 'user_email', res.UserEmail, opt='required') }}
+										<button type="button" onclick="mailUpdate();" class="btn btn-fill btn-success">이메일계정 변경</button>
+									</div>
+									<div class="form-group">
+				                        <label class="label-control">가입일</label>
+										{{ input('text', 'create_date', res.CreateDate, opt='required disabled') }}
+									<span class="material-input"></span></div>
+									<button type="button" onclick="javascript:history.back()" class="btn btn-fill btn-github">뒤로가기</button>
+									<button type="button" onclick="authMailResend();" class="btn btn-fill btn-info">인증메일 재발송</button>
+									<button type="button" onclick="passReset();" class="btn btn-fill btn-warning">비밀번호 초기화</button>
+									<button type="button" onclick="itemDelete();" class="btn btn-fill btn-danger">탈퇴처리</button>
+			                    </div>
+			                </div>
+						</div>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+
+
+{% call small_modal('searchCodeModal', '회원코드 조회', submit_fn='memberCodeSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_code_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_member_code" class="form-group label-floating is-empty">
+                <label class="control-label"><span id="searchCode"></span></label>
+				{{ input('hidden', 'search_service_kind_id', service_kind_id, opt='required') }}
+				{{ input('hidden', 'search_manager_yn', res.ManagerYn, opt='required') }}
+				{{ input('hidden', 'search_member_name', res.MemberName, opt='required') }}
+                {{ input('text', 'search_member_code', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+<script>
+ 	function searchMemberCode(manager_yn, service_kind_id) {
+        $("#searchCodeModal").modal('show');
+	    document.getElementById("search_code_info").innerText = "";
+        document.getElementById("search_manager_yn").value = manager_yn;
+        document.getElementById("search_service_kind_id").value = service_kind_id;
+
+        if (service_kind_id == 1){
+			document.getElementsByClassName("modal-title")[0].innerText = "베이비리그 회원조회";
+		} else if (service_kind_id == 2){
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어/튜터링 회원조회";
+		} else {
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어플러스 회원조회";
+		}
+		if (manager_yn == 1){
+			document.getElementById("searchCode").innerText = "교사코드";
+		} else {
+			document.getElementById("searchCode").innerText = "회원코드";
+		}
+    }
+
+	function memberCodeSearch() {
+        member_id = document.getElementById("member_id").value;
+        member_name = document.getElementById("member_name").value;
+
+        manager_yn = document.getElementById("search_manager_yn").value;
+        service_kind_id = document.getElementById("search_service_kind_id").value;
+		member_code = document.getElementById("search_member_code").value;
+		if (member_code=="") {
+		  document.getElementById("search_code_info").innerText = "등록된 회원코드를 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('accounts.member_code_search') }}",
+				data: { add_yn: 1, manager_yn: manager_yn, member_id: member_id, service_kind_id: service_kind_id, member_code: member_code, member_name: member_name },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchCodeModal").modal("hide");
+						window.location.reload();
+		    		} else {
+						document.getElementById("input_member_code").className = "form-group label-floating is-empty";
+						document.getElementById("search_member_code").value = "";
+						document.getElementById("search_code_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+
+	function itemDelete() {
+        member_id = document.getElementById("member_id").value;
+
+		swal({
+			title: '삭제',
+			text: "{{res.MemberName}}님의 계정을 완전히 삭제하시겠습니까?",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonClass: 'btn btn-success',
+			cancelButtonClass: 'btn btn-danger',
+			confirmButtonText: 'Yes, delete it!',
+			buttonsStyling: false
+		}).then(function () {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('admins.member_delete') }}",
+				data: { member_id: member_id },
+				success: function (result) {
+					swal({
+						title: '삭제 완료!',
+						text: '정상적으로 삭제하였습니다.',
+						type: 'success',
+						showConfirmButton: false
+					}),
+					setTimeout(function () {
+						window.location.href="/admins/member_list?manager_yn="+{{1 if res.ManagerYn else 0}};
+					}, 1200);
+				}
+			})
+		}).catch(swal.noop);
+	}
+
+	function authMailResend() {
+		swal({
+			title: '인증메일 재발송',
+			text: "{{res.MemberName}}님의 계정으로 인증 메일을 재발송 하시겠습니까?",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonClass: 'btn btn-success',
+			cancelButtonClass: 'btn btn-danger',
+			confirmButtonText: 'Yes, resend it!',
+			buttonsStyling: false
+		}).then(function () {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('admins.auth_mail_resend_post') }}",
+				data: { member_id: {{res.MemberID}} },
+				success: function (result) {
+					swal({
+						title: '재발송 완료!',
+						text: '정상적으로 재발송하였습니다. {{res.MemberName}}님에게 메일 확인 고지해주세요.',
+						type: 'success',
+						timer: 1500,
+						showConfirmButton: false
+					})
+				}
+			})
+		}).catch(swal.noop);
+	}
+
+
+	function passReset() {
+		swal({
+			title: '비밀번호 초기화',
+			text: "{{res.MemberName}}님의 비밀번호를 초기화 하시겠습니까?",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonClass: 'btn btn-success',
+			cancelButtonClass: 'btn btn-danger',
+			confirmButtonText: 'Yes, resend it!',
+			buttonsStyling: false
+		}).then(function () {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('admins.member_pass_reset_post') }}",
+				data: { member_id: {{res.MemberID}} },
+				success: function (result) {
+					swal({
+						title: '초기화 완료!',
+						text: '정상적으로 초기화하였습니다. {{res.MemberName}}님에게 메일 확인 고지해주세요.',
+						type: 'success',
+						timer: 1500,
+						showConfirmButton: false
+					})
+				}
+			})
+		}).catch(swal.noop);
+	}
+
+	function validateEmail(email) {
+		// 정규표현식을 사용하여 이메일 유효성 검사
+		const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		return re.test(String(email).toLowerCase());
+	}
+
+	function mailUpdate() {
+        member_id = document.getElementById("member_id").value;
+        user_email = document.getElementById("user_email").value;
+
+		if (validateEmail(user_email)) {
+			swal({
+				title: '이메일 계정 변경',
+				text: "이메일 계정을 변경하면 미인증 상태가 되며, <br/>변경된 메일로 인증 메일이 재발송됩니다. 진행 하시겠습니까?",
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonClass: 'btn btn-success',
+				cancelButtonClass: 'btn btn-danger',
+				confirmButtonText: 'Yes, resend it!',
+				buttonsStyling: false
+			}).then(function () {
+				$.ajax({
+					type: "POST",
+					url: "{{ url_for('admins.auth_mail_update_post') }}",
+					data: { member_id: member_id, user_email: user_email },
+					success: function (res) {
+						if (res.result == "success"){
+							swal({ title: '계정변경 완료!',
+							   text: '정상적으로 수정하였습니다. {{res.MemberName}}님에게 메일 확인 고지해주세요.',
+							   timer: 1500,
+							   showConfirmButton: false
+							}).catch(swal.noop)
+						} else {
+							swal({ title: "계정변경 실패!",
+							   text: res.message,
+							   timer: 1500,
+							   showConfirmButton: false
+							}).catch(swal.noop)
+						}
+					}
+				})
+			}).catch(swal.noop);
+		} else {
+			swal({ title: "계정변경 실패!",
+			   text: "유효하지 않은 형태의 이메일 주소입니다.",
+			   timer: 1500,
+			   showConfirmButton: false
+			}).catch(swal.noop)
+		}
+	}
+</script>
+
+{% endblock %}			 
+
+			

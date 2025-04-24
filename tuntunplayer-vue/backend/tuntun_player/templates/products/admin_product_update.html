@@ -1,0 +1,207 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import small_modal %}
+
+{% block title %} 연결교재 등록 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+		<div class="col-md-8">
+			<div class="card">
+				<form id="product_update" name="product_update" method="POST" action="/products/admin_product_update" class="form-horizontal">
+					<div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">dataset_linked</i>
+                    </div>
+					<div class="card-content">
+                        <h4 class="card-title">연결교재 수정 ({{service_kind_id | service_kind_name()}})</h4>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">교재코드</label>
+                        	<div class="col-sm-8">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('hidden', 'service_kind_id', service_kind_id, opt='required') }}
+									{{ input('hidden', 'old_product_code', product_code, opt='required') }}
+									{{ input('text', 'product_code', product_code, opt='required readonly', onclick="searchProductCode(service_kind_id);") }}
+									<span class="help-block">교재코드를 조회해 주세요.</span>
+								</div>
+                            </div>
+						</div>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">등록 교재명</label>
+                        	<div class="col-sm-8">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('text', 'product_alias', product_alias, opt='required readonly', onclick="searchProductCode(service_kind_id);") }}
+									<span class="help-block">교재코드를 조회해 주세요.</span>
+								</div>
+                            </div>
+						</div>
+
+						<div class="row">
+							<label class="col-sm-2 label-on-left">연결 컨텐츠</label>
+                        	<div class="col-sm-8">
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead class="text-primary">
+											<tr>
+												<th class="text-center" colspan="2" width="15%">번호</th>
+												<th class="text-left" width="30%">컨텐츠명</th>
+												<th class="text-left" width="45%">컨텐츠구분</th>
+											</tr>
+										</thead>
+										<tbody>
+										{% for res in res_list %}
+											<tr id="row_{{res.ContentGroupID}}">
+												<td class="text-center" width="5%" style="{{'background-color: #FFFFE0' if res.MappingYn}}">
+													<div class="checkbox">
+														<label>
+															<input type="checkbox" name="content_group_check" value="{{res.ContentGroupID}}" {{'checked' if res.MappingYn}}>
+														</label>
+ 													</div>
+												</td>
+												<td class="text-center" width="10%" style="{{'background-color: #FFFFE0' if res.MappingYn}}">{{res.ContentGroupID}}</td>
+												<td class="text-left" width="30%" style="{{'background-color: #FFFFE0' if res.MappingYn}}">{{res.ContentGroupName}}</td>
+												<td class="text-left" width="45%" style="{{'background-color: #FFFFE0' if res.MappingYn}}">{{res.ProductKindName}} ({{res.ProductKindSubName}})</td>
+											</tr>
+										{% else %}
+											<tr>
+												<td colspan="4" class="text-center">
+													<h4>데이터가 존재하지 않습니다.</h4>
+												</td>
+											</tr>
+										{% endfor %}
+										</tbody>
+									</table>
+      				 		 	</div>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-sm-2 label-on-left"></label>
+                        	<div class="col-sm-8">
+								<span id="alert" class="material-input text-rose"></span>
+                            </div>
+						</div>
+						<br />
+						<div class="row">
+							<label class="col-sm-2 label-on-left"></label>
+							<div class="col-sm-8">
+								<div class="form-group form-button">
+									<button type="button" onclick="javascript:history.back()" class="btn btn-fill btn-github">뒤로가기</button>
+ 	                            	<button type="submit" id="submitBtn" class="btn btn-fill btn-facebook">수정하기</button>
+ 	                            	<button type="button" onclick="javascript:itemDelete()" class="btn btn-fill btn-danger">연결삭제</button>
+	                        	</div>
+	                    	</div>
+						</div>
+                    </div>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+
+{% call small_modal('searchCodeModal', '교재코드 조회', submit_fn='productCodeSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_code_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_product_code" class="form-group label-floating is-empty">
+                <label class="control-label"><span id="searchCode"></span></label>
+				{{ input('hidden', 'search_service_kind_id', service_kind_id, opt='required') }}
+                {{ input('text', 'search_product_code', max=8, opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+
+
+<script>
+	function searchProductCode(service_kind_id) {
+        $("#searchCodeModal").modal('show');
+    }
+
+	function productCodeSearch() {
+        service_kind_id = document.getElementById("search_service_kind_id").value;
+		product_code = document.getElementById("search_product_code").value;
+		if (product_code=="") {
+		  document.getElementById("search_code_info").innerText = "교재코드를 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "/products/admin_product_code_search",
+				data: { service_kind_id: service_kind_id, product_code: product_code },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchCodeModal").modal("hide");
+						document.getElementById("product_code").value = product_code;
+						document.getElementById("product_alias").value = res.product_alias;
+		    		} else {
+						document.getElementById("input_product_code").className = "form-group label-floating is-empty";
+						document.getElementById("search_product_code").value = "";
+						document.getElementById("search_code_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+
+	document.getElementById('submitBtn').addEventListener('click', function(event) {
+		var productCode = document.getElementById('product_code').value;
+        var checkboxes = document.querySelectorAll('input[name="content_group_check"]');
+        var isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        var alertMessage = '';
+
+        if (!productCode) {
+            alertMessage += '교재코드를 조회해야 합니다.\n';
+        }
+
+        if (!isChecked) {
+            alertMessage += '하나 이상의 체크박스를 선택해야 합니다.\n';
+        }
+
+        if (alertMessage) {
+            event.preventDefault();
+            document.getElementById('alert').innerText = alertMessage.trim();
+        }
+	});
+
+	function itemDelete() {
+        product_code = document.getElementById("product_code").value;
+
+		swal({
+			title: '삭제',
+			text: "{{product_code}} 교재의 연결정보를 모두 삭제하시겠습니까?",
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonClass: 'btn btn-success',
+			cancelButtonClass: 'btn btn-danger',
+			confirmButtonText: 'Yes, delete it!',
+			buttonsStyling: false
+		}).then(function () {
+			$.ajax({
+				type: "POST",
+				url: "/products/admin_product_delete",
+				data: { product_code: product_code },
+				success: function (result) {
+					swal({
+						title: '삭제 완료!',
+						text: '정상적으로 삭제하였습니다.',
+						type: 'success',
+						showConfirmButton: false
+					}),
+					setTimeout(function () {
+						window.location.href="/products/admin_product_list?service_kind_id="+{{service_kind_id}};
+					}, 1200);
+				}
+			})
+		}).catch(swal.noop);
+	}
+
+
+
+
+</script>
+
+{% endblock %}
+

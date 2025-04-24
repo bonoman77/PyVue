@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import small_modal %}
+{% block title %} P2P Plus 안내 {% endblock %}
+
+{% block section %}
+
+<div class="product-page">
+    <div class="page-header" data-parallax="true" style="background-image: url({{ '/static/images/main/bg_anyone.png' }});">
+	    <div class="container">
+	        <div class="row title-row">
+	            <div class="col-md-4 col-md-offset-8">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="section section-gray">
+        <div class="container">
+			<div class="main main-raised">
+				<div class="contact-content">
+					<h4 class="title">P2P Plus 안내</h4>
+					<div class="row">
+						<div class="col-md-8">
+<!--							<p class="description">You can contact us with anything related to our Products. We'll get in touch with you as soon as possible.<br><br>-->
+<!--							</p>-->
+                            <div class="row">
+                                <div class="table=responsive">
+                                    <table class="table table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <td>신청일</td>
+                                                <td class="text-left">
+                                                    수업 신청은 전월, 매월 둘째주 월요일 예악하시고 다음달부터 진행하시게 됩니다.
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>대상 및 효과</td>
+                                                <td class="text-left">
+                                                    튼튼영어 튜터링, 슈퍼튼튼영어주니어 단계의 회원이라면 그 동안 배운 영어를 활용해 보는 즐거움을 느낄 수 있습니다.<br />
+                                                    특히, 튼튼영어 학습을 1년 이상 진행한 회원들에게 효과적입니다.
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>문의처</td>
+                                                <td class="text-left">
+                                                    P2P Plus 고객센터, (070) 7663-6478
+                                                    상담시간: 평일 10~19시까지 (13-14시 점심시간 제외)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" class="text-left">
+                                                    P2P Plus는 튼튼영어 튜터링, 슈퍼튼튼영어주니어 단계의 모든 회원들이 신청 가능한
+                                                    <span class="text-danger">
+                                                        유료 서비스
+                                                    </span>
+                                                    로서,
+                                                    튼튼 회원들에게 특별가로 제공되고 있습니다. 비교하고, 믿고, 선택해주세요.
+                                                    <br /><br />
+                                                    수업시간: 평일 오후 3시~9시까지
+                                                    <br /><br />
+                                                    수업예약 및 실행: 수업 예약은 입장 버튼을 누르신 후 카드결제로 예약하시고 수업은 스케쥴/성적조회에서 당일수업 대기의
+                                                    <span class="text-danger">
+                                                        Start
+                                                    </span>
+                                                    버튼을 누르시면 됩니다.
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="table=responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <td class="td-actions text-center">월 4회</td>
+                                                <td class="td-actions text-center">주 1회 1개월 과정</td>
+                                                <td class="td-actions text-center">주 2회 1개월 과정</td>
+                                                <td class="td-actions text-center">주 3회 1개월 과정</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="td-actions text-center">제공가 (1회 20분)</td>
+                                                <td class="td-actions text-center text-blue">30,000원</td>
+                                                <td class="td-actions text-center text-blue">55,000원</td>
+                                                <td class="td-actions text-center text-blue">80,000원</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+						</div>
+					</div>
+
+                    <div class="form-group form-button">
+                        <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                            <i class="material-icons">arrow_back</i> 뒤로가기
+                        </button>
+                        <button type="button" class="btn btn-info btn-round" onclick="window.open('https://tuntunenglish.co.kr/tutun.php?memberId={{member_id}}&apiCode={{api_code}}', '_blank')">
+                            <i class="material-icons">check</i> 입장하기
+                        </button>
+                   </div>
+				</div>
+			</div>
+    	</div>
+    </div> <!--section end -->
+</div>
+
+
+{% endblock %}

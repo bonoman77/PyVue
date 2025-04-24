@@ -1,0 +1,207 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import small_modal %}
+{% block title %} 가입정보 확인 {% endblock %}
+
+{% block section %}
+
+<div class="product-page">
+    <div class="page-header" data-parallax="true" style="background-image: url({{ '/static/images/main/main_anyone.png' if res.ManagerYn else '/static/images/main/bg_anyone.png' }});">
+	    <div class="container">
+	        <div class="row title-row">
+	            <div class="col-md-4 col-md-offset-8">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="section section-gray">
+        <div class="container">
+			<div class="main main-raised">
+				<div class="contact-content">
+					<h4 class="title">채널 추가</h4>
+					<div class="row">
+						<div class="col-md-8">
+							<p class="description">한 명의 {{ '교사가' if res.ManagerYn else '회원이' }} 튼튼영어의 여러 채널(브랜드)에 등록되어있는 경우, 추가할 수 있습니다.</p>
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<tbody>
+										{% for code in code_list %}
+											<tr>
+												<td class="text-center" width="40%">{{code.ServiceKind}}</td>
+												<td class="text-center" width="30%">{{code.MemberCode}}</td>
+												<td class="text-center" width="30%">{{code.MemberName}}</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							{% if res.ManagerYn %}
+								<button type="button" onclick="searchMemberCode(1, 1);" class="btn btn-fill btn-light btn-warning">베이비리그</button>
+							{% else %}
+								<button type="button" onclick="searchMemberAccount();" class="btn btn-fill btn-light btn-warning">베이비리그</button>
+							{% endif %}
+							<button type="button" onclick="searchMemberCode({{1 if res.ManagerYn else 0}}, 2);" class="btn btn-fill btn-light btn-rose">주니어/튜터링</button>
+							<button type="button" onclick="searchMemberCode({{1 if res.ManagerYn else 0}}, 61);" class="btn btn-fill btn-light btn-info">주니어플러스</button>
+						</div>
+					</div>
+				</div>
+				<br />
+				<div class="contact-content">
+					<h4 class="title">가입 정보 확인</h4>
+					<div class="row">
+						<div class="col-md-6">
+<!--							<p class="description">You can contact us with anything related to our Products. We'll get in touch with you as soon as possible.<br><br>-->
+<!--							</p>-->
+							<form role="form" id="contact-form" method="post">
+								<div class="form-group label-floating">
+									<label class="control-label">이름</label>
+									{{ input('hidden', 'member_id', res.MemberID, opt='readonly') }}
+									{{ input('text', 'member_name', res.MemberName, opt='readonly') }}
+								</div>
+								<div class="form-group label-floating">
+									<label class="control-label">이메일 계정</label>
+									{{ input('email', 'user_email', res.UserEmail, opt='readonly') }}
+								</div>
+								<div class="form-group label-floating">
+									<label class="control-label">등록일</label>
+									{{ input('text', 'create_date', res.CreateDate | datetime_str("%Y-%M-%d"), opt='readonly') }}
+								</div>
+								<br />
+								<div class="form-group form-button">
+									<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+										<i class="material-icons">arrow_back</i> 뒤로가기
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+    	</div>
+    </div> <!--section end -->
+</div>
+
+
+{% call small_modal('searchCodeModal', '회원코드 조회', submit_fn='memberCodeSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_code_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_member_code" class="form-group label-floating is-empty">
+                <label class="control-label"><span id="searchCode"></span></label>
+				{{ input('hidden', 'search_service_kind_id', service_kind_id, opt='required') }}
+				{{ input('hidden', 'search_manager_yn', res.ManagerYn, opt='required') }}
+				{{ input('hidden', 'search_member_name', res.MemberName, opt='required') }}
+                {{ input('text', 'search_member_code', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+
+{% call small_modal('searchAccountModal', '베이비리그 계정 조회', submit_fn='memberAccountSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_account_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_account" class="form-group label-floating is-empty">
+                <label class="control-label">아이디</label>
+				{{ input('hidden', 'account_manager_yn', 0, opt='required') }}
+				{{ input('hidden', 'account_service_kind_id', 1, opt='required') }}
+                {{ input('text', 'search_account', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+        <div class="input-group">
+            <div id="input_passwd" class="form-group label-floating is-empty">
+                <label class="control-label">패스워드</label>
+                {{ input('password', 'search_passwd', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+<script>
+    function searchMemberCode(manager_yn, service_kind_id) {
+        $("#searchCodeModal").modal('show');
+	    document.getElementById("search_code_info").innerText = "";
+        document.getElementById("search_manager_yn").value = manager_yn;
+        document.getElementById("search_service_kind_id").value = service_kind_id;
+
+        if (service_kind_id == 1){
+			document.getElementsByClassName("modal-title")[0].innerText = "베이비리그 회원조회";
+		} else if (service_kind_id == 2){
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어/튜터링 회원조회";
+		} else {
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어플러스 회원조회";
+		}
+		if (manager_yn == 1){
+			document.getElementById("searchCode").innerText = "교사코드";
+		} else {
+			document.getElementById("searchCode").innerText = "회원코드";
+		}
+    }
+
+    function searchMemberAccount() {
+        $("#searchAccountModal").modal('show');
+    }
+
+	function memberCodeSearch() {
+        member_id = document.getElementById("member_id").value;
+        member_name = document.getElementById("member_name").value;
+
+        manager_yn = document.getElementById("search_manager_yn").value;
+        service_kind_id = document.getElementById("search_service_kind_id").value;
+		member_code = document.getElementById("search_member_code").value;
+		if (member_code=="") {
+		  document.getElementById("search_code_info").innerText = "등록된 회원코드를 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('accounts.member_code_search') }}",
+				data: { add_yn: 1, manager_yn: manager_yn, member_id: member_id, service_kind_id: service_kind_id, member_code: member_code, member_name: member_name },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchCodeModal").modal("hide");
+						window.location.reload();
+		    		} else {
+						document.getElementById("input_member_code").className = "form-group label-floating is-empty";
+						document.getElementById("search_member_code").value = "";
+						document.getElementById("search_code_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+
+	function memberAccountSearch() {
+        manager_yn = document.getElementById("account_manager_yn").value;
+        service_kind_id = document.getElementById("account_service_kind_id").value;
+		account = document.getElementById("search_account").value;
+		passwd = document.getElementById("search_passwd").value;
+		if (account=="" || passwd=="") {
+		  document.getElementById("search_account_info").innerText = "베이비리그 계정 정보를 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('accounts.member_account_search') }}",
+				data: { add_yn: 1, service_kind_id: service_kind_id, account: account, passwd: passwd },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchAccountModal").modal("hide");
+						window.location.reload();
+		    		} else {
+						document.getElementById("input_account").className = "form-group label-floating is-empty";
+						document.getElementById("input_passwd").className = "form-group label-floating is-empty";
+						document.getElementById("search_account").value = "";
+						document.getElementById("search_passwd").value = "";
+						document.getElementById("search_account_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,183 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+
+{% block title %} 팝업공지 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">new_releases</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">팝업공지</h4>
+                        <p class="card-category">
+                            <strong>가장 최신의 게시물 하나</strong>만 조건에 따라 메인 페이지에 게시됩니다.
+                        </p>
+                        <div class="row">
+                            <div class="col-md-12">
+	                			<form method="GET" action="{{url_for(request.endpoint)}}" class="form-horizontal">
+                                    <label class="form-group">
+                                        <select id="row_size" onchange="row_size_change(this)" class="form-control" >
+                                            <option value="20" {{'selected' if paging.row_size == 20}}>20개씩 보기</option>
+                                            <option value="30" {{'selected' if paging.row_size == 30}}>30개씩 보기</option>
+                                            <option value="50" {{'selected' if paging.row_size == 50}}>50개씩 보기</option>
+                                        </select>
+                                    </label> &nbsp;
+                                    <label class="form-group">
+                                        <select id="display_type" onchange="display_type_change(this)" class="form-control" >
+                                            <option value="2" {{'selected' if search.display_type==2}}>전체목록</option>
+                                            <option value="1" {{'selected' if search.display_type==1}}>사용목록</option>
+                                            <option value="0" {{'selected' if search.display_type==0}}>보관목록</option>
+                                        </select>
+                                    </label> &nbsp;
+                                    <label class="form-group">
+                                        {{ input('text', 'search_text', search.search_text, opt="required autofocus", placeholder='검색') }}
+                                        <input type="submit" hidden>
+                                    </label>
+                                    <button class="btn btn-facebook btn-round btn-fab btn-fab-mini">
+                                        <i class="material-icons">search</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="text-primary">
+                              		<tr>
+										<th class="text-center" width="10%">번호</th>
+										<th class="text-left" width="40%">제목</th>
+										<th class="text-center" width="12%">작성자</th>
+										<th class="text-center" width="13%">시작일</th>
+										<th class="text-center" width="13%">종료일</th>
+										<th class="text-center" width="12%">옵션</th>
+									</tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in res_list %}
+										<tr id="row_{{res.ModalNoticeID}}">
+											<td class="text-center" width="10%">{{res.ModalNoticeID}}</td>
+											<td class="text-left" width="40%">
+												<a href="{{ url_for('admins.modal_notice_update', modal_notice_id = res.ModalNoticeID) }}">
+													{{res.Title}}
+												</a>
+  												{% if res.UploadFileName %}
+													<i class="fa fa-image text-success"></i>
+                        						{% endif %}
+											</td>
+    										<td class="text-center" width="12%">{{res.MemberName}}</td>
+                                            <td class="text-center" width="13%">{{res.OpenDate}}</td>
+                                            <td class="text-center" width="13%">{{res.CloseDate if res.CloseDate else '-'}}</td>
+                                            <td class="text-center td-actions" width="12%">
+                                                <button id="display_{{res.ModalNoticeID}}" type="button" onclick="displayUpdate({{res.ModalNoticeID}}, {{0 if res.DisplayYn else 1}});" class="btn btn-round {{'btn-info' if res.DisplayYn}}">
+                                                    <i class="material-icons">visibility</i>
+                                                </button>
+                                                <button type="button" onclick="itemDelete({{res.ModalNoticeID}});" class="btn btn-round btn-github">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+									{% else %}
+										<tr>
+											<td colspan="6" class="text-center">
+												<h4>데이터가 존재하지 않습니다.</h4>
+											</td>
+										</tr>
+									{% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="">
+                                <ul class="pagination pagination-info">
+								 	{% set board_list_url = url_for(request.endpoint, row_size=paging.row_size,display_type=search.display_type,start_date=search.start_date,end_date=search.end_date,search_text=search.search_text if search) %}
+
+									{% if paging.pre_page_yn %}
+										<li><a href="{{board_list_url}}&page={{paging.pre_page}}">prev</a></li>
+									{% endif %}
+
+									{% for i in range(paging.start_page, paging.max_page) %}
+										{% if paging.page == i %}
+											<li class="active"><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+										{% else %}
+											<li><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+										{% endif %}
+									{% endfor %}
+
+									{% if paging.next_page_yn %}
+										<li><a href="{{board_list_url}}&page={{paging.next_page}}">next</a></li>
+									{% endif %}
+                                </ul>
+                            </div>
+                        </div>
+		        		<a type="button" href="{{ url_for('admins.modal_notice_insert') }}" class="btn btn-fill btn-facebook">신규등록</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function display_type_change(select) {
+        var display_type = select.value;
+        window.location.href="/admins/modal_notice_list?page=1&row_size={{paging.row_size}}&display_type="+display_type;
+   }
+
+   function row_size_change(select) {
+        var row_size = select.value;
+        window.location.href="/admins/modal_notice_list?page=1&display_type={{search.display_type}}&row_size="+row_size;
+   }
+
+   function displayUpdate(modal_notice_id, display_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/admins/modal_notice_display_update",
+            data: { modal_notice_id: modal_notice_id, display_yn: display_yn },
+            success: function (result) {
+                btnElement = document.getElementById("display_" + modal_notice_id);
+
+                if (display_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-info';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + modal_notice_id + ', 0)');
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + modal_notice_id + ', 1)');
+                }
+            }
+        });
+   }
+
+   function itemDelete(modal_notice_id) {
+        swal({
+            title: '삭제',
+            text: "선택한 연구자료를 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admins/modal_notice_delete",
+                data: { modal_notice_id: modal_notice_id },
+                success: function (result) {
+                    swal({
+                        title: '삭제완료!',
+                        text: '정상적으로 삭제하였습니다.',
+                        type: 'success',
+                        confirmButtonClass: "btn btn-success",
+                        buttonsStyling: false
+                    }),
+                        $("#row_" + modal_notice_id).remove();
+                }
+            })
+        }).catch(swal.noop);
+   }
+</script>
+
+{% endblock %}
+

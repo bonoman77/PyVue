@@ -1,0 +1,399 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input, textarea %}
+{% from "macros/modal.html" import classic_modal %}
+
+{% block title %} 스토리북 첨부파일 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">{{route_kind_id | route_kind_info('icon')}}</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{route_kind_id | route_kind_info('name')}} ({{content_title}})</h4>
+                        <p class="card-category">
+                            첨부파일의 순서는 마우스 드래그앤드롭으로 변경이 가능합니다. 업로드는 50메가까지 가능합니다.
+                        </p>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-group">
+                                    <select id="refe_kind_id" class="form-control">
+                                        <option value="102">일반</option>
+                                        <option value="101">TG</option>
+                                    </select>
+                                </label>
+                                <label class="form-group">
+                                    {{ input('hidden', 'content_title_id', content_title_id, opt='required') }}
+                                    {{ input('text', 'title', opt='required autofocus', placeholder='타이틀 등록') }}
+                                </label>
+                                <button class="btn btn-primary btn-round btn-fab btn-fab-mini"
+                                    onclick="referenceInsert();">
+                                    <i class="material-icons">add</i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="sortable-table" class="table table-striped">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th class="text-center" width="10%" colspan=2>자료ID</th>
+                                        <th class="text-center" width="45%" colspan="3">타이틀</th>
+                                        <th class="text-center" width="10%">작성자</th>
+                                        <th class="text-center" width="15%">옵션</th>
+                                        <th class="text-center" width="20%">파일명</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in res_list %}
+                                    <span id="comment_{{res.ContentReferenceID}}" hidden>{{res.Comments | safe}}</span>
+                                    <tr id="row_{{res.ContentReferenceID}}" data-id="{{res.ContentReferenceID}}">
+                                        <td class="text-left handle" width="3%">
+                                            <i class="material-icons">swap_vert</i>
+                                        </td>
+                                        <td class="text-center" width="7%">{{res.ContentReferenceID}}</td>
+                                        <td class="text-center" width="10%">
+                                            <span id="hidden_refe_{{res.ContentReferenceID}}"
+                                                style="display: none;">{{res.RefeKindID}}</span>
+                                            <label class="form-group">
+                                                <select id="refe_{{res.ContentReferenceID}}" class="form-control">
+                                                    <option value="102" {{'selected' if res.RefeKindID==102}}>일반
+                                                    </option>
+                                                    <option value="101" {{'selected' if res.RefeKindID==101}}>TG
+                                                    </option>
+                                                </select>
+                                            </label>
+                                        </td>
+                                        <td class="text-left" width="25%">
+                                            <span id="hidden_title_{{res.ContentReferenceID}}"
+                                                style="display: none;">{{res.Title}}</span>
+                                            {{ input('text', 'title_'+(res.ContentReferenceID | string), res.Title) }}
+                                        </td>
+                                        <td class="text-center td-actions" width="10%">
+                                            <button type="button"
+                                                onclick="referenceTitleUpdate({{res.ContentReferenceID}});"
+                                                class="btn btn-facebook btn-round">
+                                                <i class="material-icons">edit</i>
+                                            </button>
+                                            <button onclick="commentUpdate({{res.ContentReferenceID | string}});"
+                                                class="btn btn-round {{'btn-rose' if res.Comments else 'btn-default'}}">
+                                                <i class="material-icons">description</i>
+                                            </button>
+                                            <span id="comment_{{res.ContentReferenceID}}" hidden>{{res.Comments |
+                                                safe}}</span>
+                                        </td>
+                                        <td class="text-center" width="10%">{{res.MemberName}}</td>
+                                        <td class="text-center td-actions" width="15%">
+                                            <button id="display_{{res.ContentReferenceID}}" type="button"
+                                                onclick="displayUpdate({{res.ContentReferenceID}}, {{0 if res.DisplayYn else 1}});"
+                                                class="btn btn-round {{'btn-info' if res.DisplayYn}}">
+                                                <i class="material-icons">visibility</i>
+                                            </button>
+                                            <button type="button" onclick="referenceDelete({{res.ContentReferenceID}});"
+                                                class="btn btn-round btn-github">
+                                                <i class="material-icons">delete</i>
+                                            </button>
+                                            <button id="img_{{res.ContentReferenceID}}" type="button"
+                                                onclick="image_click({{res.ContentReferenceID}})"
+                                                class="btn btn-round {{'btn-warning' if res.UploadFilePath}}">
+                                                <i class="material-icons">inventory_2</i>
+                                            </button>
+                                            <form id="frm_{{res.ContentReferenceID}}" method="POST"
+                                                enctype="multipart/form-data">
+                                                <input id="file_{{res.ContentReferenceID}}" type="file"
+                                                    onchange="image_upload({{res.ContentReferenceID}})"
+                                                    style="opacity:0; width: 0; height: 0;">
+                                            </form>
+                                        </td>
+                                        <td class="text-left text-sm td-actions" width="20%">
+                                            <span id="upload_{{res.ContentReferenceID}}">
+                                                {% if res.UploadFileName != None %}
+                                                <a
+                                                    href="{{ url_for('file_download', file_path=res.UploadFilePath, file_name=res.UploadFileName, download_yn=1) }}">{{res.UploadFileName}}</a>
+                                                <a href="javascript:deleteFile({{res.ContentReferenceID}});"
+                                                    class="text-danger">x</a>
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center">
+                                            <h4>데이터가 존재하지 않습니다.</h4>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-fill btn-github"
+                            onclick="javascript:history.back()">뒤로가기</button>
+                        <button type="button" class="btn btn-fill btn-success" onclick="changeSorts()">순서저장</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <form id="commentUpdateForm" method="POST">
+                    <div class="card" id="commentCard" style="display: none;">
+                        <div class="card-content">
+                            <h5 id="card_title" class="card-title"></h5>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ input('hidden', 'content_reference_id', opt="required") }}
+                                        {{ textarea(name='comments', row='3', class='trumbo', placeholder='내용을 입력하세요.') }}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-fill btn-github" onclick="commentCancel()">취소</button>
+                            <button type="button" class="btn btn-fill btn-info" onclick="commentFormUpdate()">저장</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#sortable-table tbody').sortable({
+            handle: '.handle'  // 'handle' 클래스를 드래그 핸들로 지정
+        });
+    });
+    
+    function commentUpdate(content_reference_id) {
+        document.getElementById("commentCard").style.display = "block";
+        document.getElementById("card_title").innerHTML = "첨부파일 설명 (자료ID: " + content_reference_id + ")";
+        comment = document.getElementById("comment_" + content_reference_id).innerHTML;
+        document.getElementById("comments").value = comment;
+        document.getElementsByClassName("trumbowyg-editor")[0].innerHTML = comment; // trumbowyg 때문에  
+        document.getElementById("content_reference_id").value = content_reference_id;
+    }
+
+    function commentCancel() {
+        document.getElementById("commentCard").style.display = "none";
+        document.getElementById("comments").innerHTML = "";
+        document.getElementById("content_reference_id").value = 0;
+    }
+
+    function commentFormUpdate() {
+        content_reference_id = document.getElementById("content_reference_id").value;
+        comments = document.getElementById("comments").value;
+
+        $.ajax({
+            type: "POST",
+            url: "/products/admin_content_reference_comment_update",
+            data: { content_reference_id: content_reference_id, comments: comments },
+            success: function (result) {
+                window.location.reload();
+            }
+        })
+    };
+
+    function changeSorts() {
+        var ids = [];
+        $('#sortable-table tbody tr').each(function () {
+            ids.push($(this).data('id'));
+        });
+
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify({ content_reference_ids: ids }),
+            url: "/products/admin_content_reference_sort_update",
+            success: function (result) {
+                site.showNotification('top', 'center', '순서를 변경하였습니다.', 'info')
+            }
+        })
+    }
+
+    function referenceInsert() {
+        content_title_id = document.getElementById("content_title_id").value;
+        refe_kind_id = document.getElementById("refe_kind_id").value;
+        title = document.getElementById("title").value;
+
+        if (content_title_id == "" || title == "") {
+            site.showNotification('top', 'center', '타이틀을 넣어주세요.', 'info')
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/products/admin_content_reference_title_insert",
+                data: { content_title_id: content_title_id, refe_kind_id: refe_kind_id, title: title },
+                success: function (result) {
+                    window.location.reload();
+                }
+            });
+        }
+    }
+
+    function referenceTitleUpdate(content_reference_id) {
+        title = document.getElementById("title_" + content_reference_id).value;
+        hidden_title = document.getElementById("hidden_title_" + content_reference_id).innerText;
+
+        refe_kind_id = document.getElementById("refe_" + content_reference_id).value;
+        hidden_refe_kind_id = document.getElementById("hidden_refe_" + content_reference_id).innerText;
+
+        if (title == hidden_title && refe_kind_id == hidden_refe_kind_id) {
+            site.showNotification('top', 'center', '컨텐츠 정보를 변경해야만 수정이 가능합니다.', 'danger')
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/products/admin_content_reference_title_update",
+                data: { content_reference_id: content_reference_id, refe_kind_id: refe_kind_id, title: title },
+                success: function (res) {
+                    document.getElementById("hidden_title_" + content_reference_id).innerText = title;
+                    site.showNotification('top', 'center', '정상적으로 수정하였습니다.', 'info')
+                }
+            });
+        }
+    }
+
+
+    function recommendUpdate(content_reference_id, recommend_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/products/admin_content_reference_recommend_update",
+            data: { content_reference_id: content_reference_id, recommend_yn: recommend_yn },
+            success: function (result) {
+                btnElement = document.getElementById("recommend_" + content_reference_id);
+                starElement = document.getElementById("star_" + content_reference_id);
+
+                if (recommend_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-warning';
+                    btnElement.setAttribute('onclick', 'recommendUpdate(' + content_reference_id + ', 0)');
+                    starElement.className = 'fa fa-star text-warning';
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'recommendUpdate(' + content_reference_id + ', 1)');
+                    starElement.className = '';
+                }
+            }
+        });
+    }
+
+    function displayUpdate(content_reference_id, display_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/products/admin_content_reference_display_update",
+            data: { content_reference_id: content_reference_id, display_yn: display_yn },
+            success: function (result) {
+                btnElement = document.getElementById("display_" + content_reference_id);
+
+                if (display_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-info';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + content_reference_id + ', 0)');
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + content_reference_id + ', 1)');
+                }
+            }
+        });
+    }
+
+    function referenceDelete(content_reference_id) {
+        swal({
+            title: '삭제',
+            text: content_reference_id + "번 자료를 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/products/admin_content_reference_delete",
+                data: { content_reference_id: content_reference_id },
+                success: function (result) {
+                    swal({
+                        title: '삭제완료!',
+                        text: '정상적으로 삭제하였습니다.',
+                        type: 'success',
+                        confirmButtonClass: "btn btn-success",
+                        buttonsStyling: false
+                    }),
+                        $("#row_" + content_reference_id).remove();
+                }
+            })
+        }).catch(swal.noop);
+    }
+
+    function image_click(content_reference_id) {
+        $('#file_' + content_reference_id).click();
+    }
+
+    function image_upload(content_reference_id) {
+
+        var form = $('#frm_' + content_reference_id)[0],
+            formData = new FormData(form),
+            file = $('#file_' + content_reference_id)[0].files[0];
+
+        const maxSizeInBytes = 1024 * 1024 * 50;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "txt", "doc", "docx", "xls", "xlsx", "pdf", "ppt", "pptx", "mp3", "stk"];
+        const fileNameParts = file.name.split('.');
+        const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+
+        if (file.size > maxSizeInBytes) {
+            site.showNotification('top', 'center', '파일 크기가 허용된 최대 크기(50메가)를 초과했습니다.', 'danger')
+            file = ''; // 파일 선택을 취소합니다.
+            return;
+        }
+        else if (!allowedExtensions.includes(fileExtension)) {
+            site.showNotification('top', 'center', '허용된 파일 확장명이 아닙니다.', 'warning')
+            file = ''; // 파일 선택을 취소합니다.
+            return;
+        }
+        else {
+            content_title_id = document.getElementById("content_title_id").value;
+
+            formData.append("image_file", file);
+            formData.append("content_title_id", content_title_id);
+            formData.append("content_reference_id", content_reference_id);
+
+            $.ajax({
+                url: '/products/admin_content_reference_file_upload'
+                , processData: false
+                , contentType: false
+                , data: formData
+                , type: 'POST'
+                , success: function (res) {
+                    if (res && res.file_name)
+                        window.location.reload();
+                }
+            });
+        }
+    }
+
+    var deleteFile = function (content_reference_id) {
+        swal({
+            title: '삭제',
+            text: "선택한 파일을 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/products/admin_content_reference_file_delete",
+                data: { content_reference_id: content_reference_id },
+                success: function (result) {
+                    window.location.reload();
+                }
+            })
+        }).catch(swal.noop);
+    }
+
+</script>
+
+{% endblock %}

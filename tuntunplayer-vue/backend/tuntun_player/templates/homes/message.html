@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 안내 {% endblock %}
+
+{% block section %}
+
+<div class="product-page">
+    <div class="page-header" data-parallax="true" style="background-image: url('/static/images/main/bg_anyone.png');">
+	    <div class="container">
+	        <div class="row title-row">
+	            <div class="col-md-4 col-md-offset-8">
+<!--					<button class="btn btn-rose pull-right" style="cursor:auto">안내</button>-->
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="section section-gray">
+        <div class="container">
+            <div class="main main-raised main-product">
+                <div class="row">
+                    <div class="col-md-12" style="height: 80px">
+                    </div>
+                </div>
+                    <div class="row">
+                         <div class="col-md-8 col-md-offset-2">
+                            <div class="text-center">
+                                <img src="{{model_path}}" width="180px">
+                                {% if msg_kind == "route_error" %}
+                                  <h3>권한이 없거나 접근이 잘못되었습니다.</h3>
+                                {% elif msg_kind == "auth_fail" %}
+                                  <h3>이미 인증이 되어있거나, 인증에 실패하였습니다. 다시 시도해주세요.</h3>
+                                {% elif msg_kind == "login_disable" %}
+                                    <h4>혹시 회원/교사 가입을 하셨나요?</h4>
+                                    <div class="form-group form-button text-center">
+                                        <a href="{{ url_for('accounts.member_insert', manager_yn=0) }}" class="btn btn-fill btn-round btn-success">회원 가입</a>
+                                        <a href="{{ url_for('accounts.member_insert', manager_yn=1) }}" class="btn btn-fill btn-round btn-info">교사 가입</a>
+                                    </div>
+                                    <br />
+                                    <h4>인증 메일을 다시 받거나 비밀번호를 초기화 해보시겠어요?</h4>
+                                    <div class="form-group form-button text-center">
+                                        <a href="{{url_for('accounts.member_pass_reset')}}" class="btn btn-fill btn-round btn-success">비밀번호 초기화</a>
+                                        <a href="{{url_for('accounts.auth_mail_resend')}}" class="btn btn-fill btn-round btn-info">인증메일 재발송</a>
+                                    </div>
+                                    <br />
+                                    <h4>
+                                        회원 가입이 정상적으로 되었을까요? 가입 이후에도 계속 로그인에 문제가 있다면 고객센터(02-1577-0582)에 문의해주세요.
+                                    </h4>
+                                {% else %}
+                                  <h3>빈 메시지입니다.</h3>
+                                {% endif %}
+                            </div>
+                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-button text-center">
+	        					<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                                    <i class="material-icons">arrow_back</i> 뒤로가기
+                                </button>
+                                <a href="tel:02-1577-0582" class="btn btn-fill btn-round btn-warning">
+                                    <i class="material-icons">call</i> 고객센터에 문의하기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
+        </div>
+    </div>
+</div> <!--section end -->
+
+{% endblock %}
+
+

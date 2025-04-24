@@ -1,0 +1,137 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 회원관리 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">account_circle</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">회원 ({{'교사' if manager_yn else '학생'}})</h4>
+                        <p class="card-category">
+                            이메일 인증을 하지 않은 경우, 이름이 <span class="text-warning">노란색</span>으로 표기됩니다. 인증된 회원의 우측 끝의 버튼을 누르면 해당 회원/교사로 <span class="text-info">로그인</span>이 됩니다.
+                        </p>
+
+                        <div class="row">
+                            <div class="col-md-12">
+	                			<form method="GET" action="{{url_for(request.endpoint, manager_yn=manager_yn)}}" class="form-horizontal">
+                                    <label class="form-group">
+                                        <select id="row_size" onchange="row_size_change(this)" class="form-control" >
+                                            <option value="20" {{'selected' if paging.row_size == 20}}>20개씩 보기</option>
+                                            <option value="30" {{'selected' if paging.row_size == 30}}>30개씩 보기</option>
+                                            <option value="50" {{'selected' if paging.row_size == 50}}>50개씩 보기</option>
+                                        </select>
+                                    </label> &nbsp;
+                                    <label class="form-group">
+                                        {{ input('text', 'search_text', search.search_text, opt='required', placeholder='검색') }}
+                                        <input type="submit" hidden>
+                                    </label>
+                                    <button class="btn btn-facebook btn-round btn-fab btn-fab-mini">
+                                        <i class="material-icons">search</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th class="text-center">회원ID</th>
+                                        <th class="text-left">{{'교사' if manager_yn else '회원'}}명</th>
+                                        <th class="text-left">이메일계정</th>
+                                        <th class="text-center">서비스종류</th>
+                                        <th class="text-center">등록일</th>
+                                        <th class="text-center">옵션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in res_list %}
+                                        <tr id="row_{{res.MemberID}}">
+                                            <td class="text-center">{{res.MemberID}}</td>
+                                            <td class="text-left">
+                                                {% if res.AuthYn %}
+                                                    <a href="{{ url_for('admins.member_detail', manager_yn = manager_yn, member_id=res.MemberID) }}">{{res.MemberName}}</a>
+                                                {% else %}
+                                                    <a href="{{ url_for('admins.member_detail', manager_yn = manager_yn, member_id=res.MemberID) }}"><div class="text-warning">{{res.MemberName}}</div></a>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-left">
+                                                    <a href="mailto:{{res.UserEmail}}">{{res.UserEmail}}</a>
+                                            </td>
+                                            <td class="text-center">{{res.ServiceKind}}</td>
+                                            <td class="text-center">{{res.CreateDate}}</td>
+                                            <td class="text-center td-actions">
+                                                <a class="btn btn btn-warning btn-xs" href="{{ url_for('admins.member_detail', manager_yn = manager_yn, member_id=res.MemberID) }}">
+                                                    <i class="material-icons">settings</i>
+                                                </a>
+                                                {% if res.AuthYn %}
+                                                    <a class="btn btn btn-info btn-xs" href="{{url_for('admins.member_login', member_id = res.MemberID )}}">
+                                                        <i class="material-icons">input</i>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="btn btn btn-default btn-xs" style="cursor: default" data-toggle="popover" data-placement="bottom" data-original-title="안내" data-content="인증이 완료된 회원에 대해서만 로그인이 가능합니다." data-container="body">
+                                                        <i class="material-icons">input</i>
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">
+                                                <h4>데이터가 존재하지 않습니다.</h4>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="">
+                                <ul class="pagination pagination-info">
+                                    {% set board_list_url = url_for(request.endpoint, manager_yn=manager_yn, row_size=paging.row_size, search_text=search.search_text if search) %}
+
+                                    {% if paging.pre_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.pre_page}}">prev</a></li>
+                                    {% endif %}
+
+                                    {% for i in range(paging.start_page, paging.max_page) %}
+                                        {% if paging.page == i %}
+                                            <li class="active"><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% else %}
+                                            <li><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if paging.next_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.next_page}}">next</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+<!--                        <button type="button" class="btn btn-fill btn-github" onclick="javascript:history.back()">뒤로가기</button>-->
+<!--                        <button type="button" class="btn btn-fill btn-success">엑셀출력</button>-->
+<!--                        <button type="button" class="btn btn-fill btn-info">이메일발송</button>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function row_size_change(select) {
+        var row_size = select.value;
+        window.location.href="{{ url_for(request.endpoint, manager_yn=manager_yn) }}?page=1&row_size="+row_size;
+   }
+</script>
+
+{% endblock %}
+
+
+
+

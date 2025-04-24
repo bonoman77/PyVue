@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		<meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="언제 어디서나 튼튼영어와 함께, 튼튼 플레이어!" />
+
+		<link rel="icon" type="image/png" href="/static/images/favicon.png">
+        <link href='/static/images/icon192x192.png' rel='icon' type='image/png' />
+        <link href='/static/images/icon192x192.png' rel='shortcut icon' type='image/png' />
+        <link href='/static/images/icon128x128.png' rel='apple-touch-icon' type='image/png' />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+        <title>TUNTUN PLAYER {% block title %} {% endblock %}</title>
+
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+        <meta property="og:type" content="website">
+		<meta property="og:url" content="https://player.tuntun.com/">
+		<meta property="og:title" content="TUNTUN PLAYER">
+		<meta property="og:description" content="언제 어디서나 튼튼영어와 함께, 튼튼 플레이어!">
+		<meta property="og:image" content="/static/images/main/mobile_graph.png">
+
+        <!--     Fonts and icons     -->
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:300,400,500,700|Material+Icons" rel="stylesheet" type="text/css" />
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" rel="stylesheet" type="text/css" />
+	    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-round.css" rel="stylesheet" />
+
+        <!-- CSS Files -->
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="/static/css/material-dashboard.css?v=1.3.0" rel="stylesheet" />
+        <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+		<link href="/static/js/modal-video/css/modal-video.min.css" rel="stylesheet" />
+        <link href="/static/js/trumbo/ui/trumbowyg.min.css" rel="stylesheet" />
+        <link href="/static/css/site-dashboard.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <!--		ignore missing: 파일이 존재하지 않을 때 오류 대신 빈공간으로 표기-->
+            <!--		with context: 변수 승계 처리 (기본 적용되고 변수 승계받지 않으려면 without context  -->
+
+            {% include "includes/admin_sidebar.html" ignore missing with context %}
+
+            <div class="main-panel">
+                {% include "includes/admin_navbar.html" ignore missing with context %}
+
+                {% block main_section %}
+                    <div class="content">
+                        <div class="container-fluid">
+                            <div class="row">
+                                빈 페이지
+                        </div>
+                        </div>
+                    </div>
+                {% endblock %}
+
+                {% include "includes/admin_footer.html" ignore missing with context %}
+
+            </div>
+        </div>
+    </body>
+
+    <!--   Core JS Files   -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.min.js') }}" type="text/javascript"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>-->
+    <script src="{{ url_for('static', filename='js/dashboard/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/dashboard/material.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/dashboard/perfect-scrollbar.jquery.min.js') }}" type="text/javascript"></script>
+    <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <!-- Library for adding dinamically elements -->
+    <script src="{{ url_for('static', filename='js/dashboard/arrive.min.js') }}" type="text/javascript"></script>
+    <!-- Forms Validations Plugin -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.validate.min.js') }}"></script>
+    <!--  Plugin for Date Time Picker and Full Calendar Plugin-->
+    <script src="{{ url_for('static', filename='js/dashboard/moment.min.js') }}"></script>
+    <!--  Charts Plugin, full documentation here: https://gionkunz.github.io/chartist-js/ -->
+    <script src="{{ url_for('static', filename='js/dashboard/chartist.min.js') }}"></script>
+    <!--  Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.bootstrap-wizard.js') }}"></script>
+    <!--  Notifications Plugin, full documentation here: http://bootstrap-notify.remabledesigns.com/    -->
+    <script src="{{ url_for('static', filename='js/dashboard/bootstrap-notify.js') }}"></script>
+    <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+    <script src="{{ url_for('static', filename='js/dashboard/bootstrap-datetimepicker.js') }}"></script>
+    <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery-jvectormap.js') }}"></script>
+    <!-- Sliders Plugin, full documentation here: https://refreshless.com/nouislider/ -->
+    <script src="{{ url_for('static', filename='js/dashboard/nouislider.min.js') }}"></script>
+    <!--  Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.select-bootstrap.js') }}"></script>
+    <!--  DataTables.net Plugin, full documentation here: https://datatables.net/    -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.datatables.js') }}"></script>
+    <!-- Sweet Alert 2 plugin, full documentation here: https://limonte.github.io/sweetalert2/ -->
+    <script src="{{ url_for('static', filename='js/dashboard/sweetalert2.js') }}"></script>
+    <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+    <script src="{{ url_for('static', filename='js/dashboard/jasny-bootstrap.min.js') }}"></script>
+    <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+    <script src="{{ url_for('static', filename='js/dashboard/fullcalendar.min.js') }}"></script>
+    <!-- Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+    <script src="{{ url_for('static', filename='js/dashboard/jquery.tagsinput.js') }}"></script>
+	<!--    Modal-Video plugin, https://appleple.github.io/modal-video/ -->
+	<script src="{{ url_for('static', filename='js/modal-video/js/jquery-modal-video.js') }}"></script>
+    <!-- Material Dashboard javascript methods -->
+    <script src="/static/js/dashboard/material-dashboard.js?v=1.3.0"></script>
+	<!--    trumbowyg    -->
+    <script src="/static/js/trumbo/trumbowyg.min.js"></script>
+    <!-- Personal Js -->
+    <script src="{{ url_for('static', filename='js/dashboard/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/site-dashboard.js') }}"></script>
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+    <script type="text/javascript">
+        site.showNotification('top','center', '{{message}}', '{{category}}')
+    </script>
+{% endfor %}
+
+
+</html>

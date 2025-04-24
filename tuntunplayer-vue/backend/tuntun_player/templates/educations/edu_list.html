@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import small_modal %}
+
+{% block title %} 멀티게시판 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-mini" data-parallax="true" style="background-image: url('/static/images/main/bg_teacher.png');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+						<h4><b>{{'신입교육' if res.ClassTypeID == 108 else '특강'}}</b></h4>
+                        <h4 class="text-title"><b>{{res.ClassGroupName}}</b></h4>
+				    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+			<div class="container">
+	            <a href="{{ url_for('homes.index') }}">메인</a> > <a href="{{ url_for('educations.edu_main_list', class_type_id=res.ClassTypeID) }}">{{'신입교육' if res.ClassTypeID == 108 else '특강'}}</a> > {{ res.ClassGroupName }}
+
+				<div class="row">
+					<div class="col-md-12">
+						<div class="col-md-8 col-md-offset-2">
+							<div id="screen">
+								<div class="text-center" id="vimeo-player" style="max-width: 100%; overflow: hidden;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<br />
+				<div class="row">
+	                <div class="col-md-12">
+						<div class="col-md-8 col-md-offset-2">
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th class="text-center" width="10%">순서</th>
+											<th class="text-center" width="70%">교육명</th>
+											<th class="text-center" width="20%">시청</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for item in res_list %}
+											<tr id="row_{{item.ClassID}}">
+												<td class="text-center" width="10%">{{item.OrderNum}}</td>
+												<td class="text-left text-muted td-actions" width="70%">
+													{{item.Title}}
+													{% if item.Contents %}
+														<button class="btn btn-info btn-simple" onclick="contentOpen({{item.ClassID}})">(설명보기)</button>
+													{% endif %}
+		                                            <div id="content_{{item.ClassID}}" hidden>{{item.Contents | safe}}</div>
+												</td>
+												<td class="text-center td-actions" width="20%">
+													<button type="button" rel="tooltip" id="btn_{{item.ClassID}}" class="btn {{'btn-warning' if item.AttendDate else 'btn-success'}}" onclick="videoPlay({{item.StreamID}},0, {{item.ClassID}}, {{item.ClassAttendID}});">
+														{{'다시보기' if item.AttendDate else '시청하기'}}
+													</button>
+												</td>
+											</tr>
+										{% else %}
+											<tr>
+												<td colspan="3" class="text-center">
+													<h4>데이터가 존재하지 않습니다.</h4>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							<div class="text-center">
+								<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+									<i class="material-icons">arrow_back</i> 뒤로가기
+								</button>
+							</div>
+						</div>
+               	    </div>
+                </div>
+            </div>
+        </div> <!--section end -->
+    </div>
+</div>
+
+{% call small_modal('contentModal', '안내') %}
+	<div id="modal-content"></div>
+{% endcall %}
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+var initList = [
+	{% for item in res_list %}
+		"{{ item.StreamID | trim }}",
+	{% endfor %}
+];
+
+function allVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+    var newVideoIds = initList;
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function selectVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+	var selectedStreamIds = [];
+	var checkboxes = document.querySelectorAll('input[name="stream_check"]:checked');
+	checkboxes.forEach(function(checkbox) {
+		selectedStreamIds.push(checkbox.value);
+	});
+
+	if (selectedStreamIds.length > 0) {
+		var newVideoIds = selectedStreamIds;
+		var init_yn = true;
+		initializePlayer(newVideoIds, init_yn, loop_yn);
+	} else {
+        site.showNotification('top','center', '먼저 실행을 원하는 영상 목록을 체크해 주세요.', 'info')
+	}
+};
+
+function videoPlay(stream_id, loop_yn, class_id, class_attend_id) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+	$.ajax({
+		type: "POST",
+		url: "/educations/edu_class_view_check",
+		data: { class_id: class_id, class_attend_id: class_attend_id },
+		success: function (result) {
+			document.getElementById("btn_" + class_id).innerText = '다시보기';
+			document.getElementById("btn_" + class_id).className = 'btn btn-warning';
+			document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+		}
+	});
+    var newVideoIds = [stream_id];
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function initializePlayer(videoIds, init_yn, loop_yn) {
+	var options = {
+		id: videoIds[0],
+		width: 640,
+		loop: (videoIds.length === 1 && loop_yn === 1),
+		autoplay: init_yn,
+	};
+
+	if (init_yn) {
+		// 이전 플레이어 제거
+		var oldPlayer = document.getElementById('vimeo-player');
+		oldPlayer.innerHTML = '';
+
+		// 새로운 플레이어 생성
+		var newPlayer = document.createElement('div');
+		newPlayer.className = 'text-center';
+		newPlayer.id = 'vimeo-player';
+		oldPlayer.parentNode.replaceChild(newPlayer, oldPlayer);
+
+		// 새로운 플레이어로 초기화
+		var player = new Vimeo.Player(newPlayer, options);
+	} else {
+ 		var player = new Vimeo.Player('vimeo-player', options);
+	}
+
+	var currentIndex = 0;
+    player.on('ended', function() {
+        currentIndex++;
+        if (currentIndex < videoIds.length) {
+            player.loadVideo(videoIds[currentIndex]).then(function() {
+                player.play();
+            });
+        } else {
+			if (loop_yn==1) {
+ 	           initializePlayer(videoIds, init_yn, loop_yn);
+			} else {
+ 	           console.log('모든 비디오가 재생되었습니다.');
+			}
+        }
+    });
+}
+
+var contentOpen = function (class_id) {
+	var content = document.getElementById('content_'+class_id).innerHTML;
+	document.getElementById('modal-content').innerHTML = content;
+	$("#contentModal").modal("show");
+
+}
+</script>
+
+{% endblock %}
+
+

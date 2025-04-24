@@ -1,0 +1,72 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+
+{% block title %} 컨텐츠 관리 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">{{ route_kind_id | route_kind_info('icon')}}</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{route_kind_id | route_kind_info('name')}} ({{product_kind_id | product_kind_name if product_kind_id | product_kind_name else '공통'}})</h4>
+
+                        {% if product_kind_id == 103 %}
+                            <p class="card-category">
+                                스페셜클래스는 교사 전용 서비스입니다.
+                            </p>
+                        {% else %}
+                            <p class="card-category">
+                                대부분 회원/교사 함께 사용하고 있으며, 교육팀 요청에 따라 일부 컨텐츠(SingAlong, DangAlong, JuniorPlus)만 분리되어 있습니다.
+                            </p>
+                        {% endif %}
+
+                        {% if route_kind_id in (1, 2, 5, 6) %}
+                            <ul class="nav nav-pills nav-pills-icons nav-pills-warning">
+                                <li class="{{'active' if manager_yn==0}}"><a href="{{url_for('products.admin_main_list', route_kind_id=route_kind_id, product_kind_id=product_kind_id, manager_yn=0)}}">회원</a></li>
+                                <li class="{{'active' if manager_yn}}"><a href="{{url_for('products.admin_main_list', route_kind_id=route_kind_id, product_kind_id=product_kind_id, manager_yn=1)}}">교사</a></li>
+                            </ul>
+                            <br />
+                        {% endif %}
+                        <div class="row">
+                            {% for res in res_list %}
+                                <div class="col-md-2 col-sm-4">
+                                    <div class="card card-profile main-list-card">
+                                        {% if route_kind_id in (5, 6) %}
+                                            {% set link_url = 'products.admin_content_upper_list' if route_kind_id==5 else 'products.admin_content_upper_music_list' %}
+                                            <a href="{{url_for(link_url, route_kind_id=route_kind_id, product_kind_id=res.ProductKindID,content_group_id=res.ContentGroupID)}}">
+                                                <div class="card-body">
+                                                    <img src="{{res.ContentGroupImageURL | new_image_url}}" />
+                                                </div>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{url_for('products.admin_title_list', route_kind_id=route_kind_id, product_kind_id=res.ProductKindID,content_group_id=res.ContentGroupID, manager_yn=manager_yn)}}">
+                                                <div class="card-body">
+                                                    <img src="{{res.ContentGroupImageURL | new_image_url}}" />
+                                                </div>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                             {% else %}
+                                <div class="col-md-8">
+                                    <h4>등록된 자료가 없습니다.</h4>
+                                </div>
+                            {% endfor %}
+                        </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+

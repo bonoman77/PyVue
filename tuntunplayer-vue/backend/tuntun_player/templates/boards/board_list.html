@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 멀티게시판 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-small" data-parallax="true" style="background-image: url('{{ product_kind_id | background_url('board_list') }}');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+					<div class="brand text-muted">
+						{% if product_kind_id|int != ProductKind.COMMON.value %}
+							<img src="{{ product_kind_id | logo_url }}" style="height:auto; max-width:140px">
+						{% endif %}
+						{% if product_kind_id == ProductKind.SPECIAL_CLASS.value %}
+							<h5 class="text-title">스페셜 클래스</h5>
+						{% endif %}
+						<h5 class="text-title-black"><b>{{ board_kind_id | board_kind_name() }}</b></h5>
+					</div>
+
+					{% if board_kind_id in [BoardKind.EDU_CONSULT.value, BoardKind.MOMS_CLASS.value, BoardKind.NOTICE.value] %}
+						<ul class="nav nav-pills nav-pills-github" style="display: inline-block">
+							<li class="{{'active' if board_kind_id == 114}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=114) }}">교육컨설팅/상담</a></li>
+							<li class="{{'active' if board_kind_id == 110}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=110) }}">맘스클래스</a></li>
+							<li class="{{'active' if board_kind_id == 104}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=104) }}">공지사항</a></li>
+						</ul>
+					{% elif board_kind_id in [BoardKind.EXPERIENCE.value, BoardKind.CONSULT.value] %}
+						<ul class="nav nav-pills nav-pills-github" style="display: inline-block">
+							<li class="{{'active' if board_kind_id == 106}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=106) }}">체험관리</a></li>
+							<li class="{{'active' if board_kind_id == 107}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=107) }}">상담관리</a></li>
+							{% if product_kind_id == ProductKind.TUTORING.value %}
+								<li><a href="{{ url_for('products.content_booklet_sample_list', product_kind_id=product_kind_id, board_kind_id=board_kind_id, product_kind='HME') }}" target="_blank">화상수업체험</a></li>
+								<li><a href="http://leveltest.tuntun.com/" target="_blank">레벨테스트</a></li>
+							{% endif %}
+						</ul>
+					{% elif board_kind_id in [BoardKind.CLASS_NEW.value, BoardKind.CLASS_SPECIAL.value] %}
+						<ul class="nav nav-pills nav-pills-github" style="display: inline-block">
+							<li class="{{'active' if board_kind_id == 111}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=111) }}">특별교육</a></li>
+							<li><a href="{{ url_for('educations.edu_main_list', class_type_id=108) }}">신입교육</a></li>
+							<!-- <li><a href="{{ url_for('educations.edu_main_list', class_type_id=109) }}">특강</a></li> -->
+							<!-- <li class="{{'active' if board_kind_id == 112}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=112) }}">특강 자료실</a></li> -->
+						</ul>
+					{% elif product_kind_id in (ProductKind.BABY_LEAGUE.value, ProductKind.JUNIOR.value, ProductKind.TUTORING.value, ProductKind.SPECIAL_CLASS.value) and board_kind_id == BoardKind.REFERENCE.value %}
+						<ul class="nav nav-pills nav-pills-github" style="display: inline-block">
+							<li><a href="{{ url_for('products.main_list', product_kind_id=product_kind_id, product_kind_sub_id=0) }}">수업연구</a></li>
+							<li class="{{'active' if board_kind_id == 105}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=105) }}">자료실</a></li>
+						</ul>
+					{% elif product_kind_id == ProductKind.JUNIOR_PLUS.value and board_kind_id == BoardKind.REFERENCE.value %}
+						<ul class="nav nav-pills nav-pills-github" style="display: inline-block">
+							<li><a href="{{ url_for('products.main_group_list', product_kind_id=product_kind_id) }}">수업연구</a></li>
+							<li class="{{'active' if board_kind_id == 105}}"><a href="{{ url_for('boards.board_list', product_kind_id=product_kind_id, board_kind_id=105) }}">자료실</a></li>
+						</ul>
+					{% endif %}
+                    </div>
+			</div>
+		</div>
+	</div>
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+			<div class="container">
+	            <a href="{{ url_for('homes.index') }}">메인</a> > {{ board_kind_id | board_kind_name() }}
+                <div class="row">
+                    <div class="col-md-12">
+						<div class="col-md-10 col-md-offset-1">
+							<form method="GET" action="{{ url_for(request.endpoint, board_kind_id=board_kind_id, product_kind_id=product_kind_id) }}">
+								<label class="form-group">
+									{{ input('text', 'start_date', search.start_date, class='datepicker', placeholder="검색시작일") }}
+								</label>
+								<label class="form-group">
+									{{ input('text', 'end_date', search.end_date, class='datepicker', placeholder="검색종료일") }}
+								</label>
+								<label class="form-group">
+									{{ input('text', 'search_text', search.search_text, opt='autofocus', placeholder="Search...") }}
+									<input type="submit" hidden>
+								</label>
+							</form>
+						</div>
+						<div class="col-md-10 col-md-offset-1">
+<!--						<h4><small>Simple With Actions</small></h4>-->
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th class="text-center" width="10%">번호</th>
+											<th class="text-center" width="70%">제목</th>
+											<th class="text-center" width="20%">등록일</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for res in res_list %}
+											<tr id="row_{{res.BoardID}}">
+												<td class="text-center" width="15%">{{res.BoardID}}</td>
+												<td class="text-left text-muted" width="70%">
+													<a href="{{ url_for('boards.board_detail', board_id=res.BoardID, board_kind_id=board_kind_id, product_kind_id=product_kind_id) }}">
+														{{res.Title}}
+													</a>
+													{% if res.FileExistYn %}
+														<i class="fa fa-archive text-success"></i>
+													{% endif %}
+													{% if res.RecommendYn %}
+														<i class="fa fa-star text-warning"></i>
+													{% endif %}
+													{% if res.NewYn %}
+														<i class="fa fa-bell text-rose"></i>
+													{% endif %}
+												</td>
+												<td class="text-center" width="15%">{{res.CreateDate}}</td>
+											</tr>
+										{% else %}
+											<tr>
+												<td colspan="3" class="text-center">
+													<h4>데이터가 존재하지 않습니다.</h4>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+								<div class="">
+									<ul class="pagination pagination-info">
+										{% set board_list_url = url_for(request.endpoint, board_kind_id=board_kind_id, product_kind_id=product_kind_id, row_size=paging.row_size, start_date=search.start_date, end_date=search.end_date, search_text=search.search_text if search) %}
+
+									    {% if paging.pre_page_yn %}
+											<li><a href="{{board_list_url}}&page={{paging.pre_page}}">prev</a></li>
+										{% endif %}
+
+										{% for i in range(paging.start_page, paging.max_page) %}
+											{% if paging.page == i %}
+												<li class="active"><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+											{% else %}
+												<li><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+											{% endif %}
+										{% endfor %}
+
+										{% if paging.next_page_yn %}
+											<li><a href="{{board_list_url}}&page={{paging.next_page}}">next</a></li>
+										{% endif %}
+									</ul>
+								</div>
+							</div>
+			                <div class="text-center">
+								<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+									<i class="material-icons">arrow_back</i> 뒤로가기
+								</button>
+							</div>
+           				</div>
+           	    	</div>
+                </div>
+            </div>
+        </div> <!--section end -->
+    </div>
+</div>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,405 @@
+{% extends "layout.html" %}
+{% block title %} 나의 좋아요 표시한 영상 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-auto" data-parallax="true" style="background-image: url('{{ product_kind_id | background_url('main_list') }}');">
+
+		<div class="container">
+			<!-- <div class="row">
+				<div class="col-md-6 col-md-offset-3">
+					<div class="profile-tabs">
+						<div class="nav-align-center">
+							<ul class="nav nav-pills nav-pills-github nav-pills-icons" role="tablist">
+								<li class="active">
+									<a href="{{ url_for('products.content_favorite_list', product_kind_id=product_kind_id, content_group_id=0) }}">
+										<i class="material-icons" style="padding-top: 2px; padding-bottom: 2px;">slideshow</i>
+										영상 즐겨찾기
+									</a>
+								</li>
+								<li class="">
+									<a href="{{ url_for('products.content_favorite_music_list', product_kind_id=product_kind_id, content_group_id=0) }}">
+									<i class="material-icons" style="padding-top: 2px; padding-bottom: 2px;">music_note</i>
+									음원 즐겨찾기
+								</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div> -->
+
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+                        <img src="{{ product_kind_id | logo_url }}" style="height:auto; max-width:140px">
+						<h5 class="text-title">
+							좋아요 표시한 영상
+						</h5>
+                    </div>
+				</div>
+			</div>
+
+			<br />
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+<!--					<div class="brand text-muted">-->
+<!--						<h5 class="text-title-black">-->
+<!--							<b>{{product_kind_id | product_kind_name}}</b>-->
+<!--							<b>즐겨찾기</b>-->
+<!--						</h5>-->
+<!--					</div>-->
+					<div class="brand text-muted">
+						<a class="btn btn-light {{'btn-github' if product_kind_id==3 else 'btn-white'}}" href="{{ url_for('products.content_favorite_list', product_kind_id=3, content_group_id=0) }}">베이비리그</a>
+						<a class="btn btn-light {{'btn-github' if product_kind_id==4 else 'btn-white'}}" href="{{ url_for('products.content_favorite_list', product_kind_id=4, content_group_id=0) }}">튼튼영어 주니어</a>
+						<a class="btn btn-light {{'btn-github' if product_kind_id==62 else 'btn-white'}}" href="{{ url_for('products.content_favorite_list', product_kind_id=62, content_group_id=0) }}">튼튼영어 주니어플러스</a>
+						<a class="btn btn-light {{'btn-github' if product_kind_id==5 else 'btn-white'}}" href="{{ url_for('products.content_favorite_list', product_kind_id=5, content_group_id=0) }}">튼튼영어 튜터링</a>
+						{% if session.login_user.manager_yn %}
+							<a class="btn btn-light {{'btn-github' if product_kind_id==103 else 'btn-white'}}" href="{{ url_for('products.content_favorite_list', product_kind_id=103, content_group_id=0) }}">스페셜 클래스</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+			<div class="container">
+        	    <div class="row">
+                    <div class="col-md-12">
+						<div class="col-md-8 col-md-offset-2">
+							<a href="{{ url_for('homes.index') }}">메인</a> > 좋아요 표시한 영상 ({{product_kind_id | product_kind_name}})
+						</div>
+        	   	    </div>
+				</div>
+				<br />
+
+				<div class="tab-content">
+			        <div class="tab-pane active" id="stream-area">
+						{% if res_list|length > 0 %}
+
+							<div class="row">
+								<div class="col-md-12 text-center">
+									<button type="button" class="btn btn-fill btn-warning btn-round btn-md" onclick="allVideoPlay(0);">
+										<i class="material-icons">play_arrow</i> 전체 재생
+									</button>
+								</div>
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<div id="screen" class="embed-responsive embed-responsive-16by9">
+											<div class="text-center" id="vimeo-player" style="max-width: 100%; overflow: hidden;"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12 text-center">
+									<button type="button" class="btn btn-fill btn-success btn-round btn-md" onclick="selectVideoPlay(0);">
+										<i class="material-icons">play_arrow</i> 선택 재생
+									</button>
+									<button type="button" class="btn btn-fill btn-info btn-round btn-md" onclick="selectVideoPlay(1);">
+										<i class="material-icons">restart_alt</i> 선택 반복재생
+									</button>
+								</div>
+							</div>
+						{% endif %}
+						<div class="row">
+							<div class="col-md-12 text-left">
+								<div class="col-md-10 col-md-offset-1">
+									<div class="card-content">
+										{% if tag_list|length > 1 %}
+											<a href="{{ url_for('products.content_favorite_list', product_kind_id=product_kind_id, content_group_id=0) }}" class="btn btn-light {{'btn-warning' if content_group_id==0 else 'btn-white'}}">전체</a>
+											{% for tag in tag_list %}
+												<a href="{{ url_for('products.content_favorite_list', product_kind_id=product_kind_id, content_group_id=tag.ContentGroupID) }}" class="btn btn-light {{'btn-warning' if content_group_id==tag.ContentGroupID else 'btn-white'}}">{{tag.ContentGroupName}}</a>
+											{% endfor %}
+										{% endif %}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-10 col-md-offset-1">
+									{% if (manager_auth_yn and session.login_user.manager_yn) or not session.login_user.manager_yn %}
+										{% if res_list %}
+											<div class="table-responsive table-wrapper">
+												<table id="sortable-table" class="table table-striped">
+													<thead>
+														<tr>
+															<th class="text-left" width="5%">
+																<i class="material-icons">swap_vert</i>
+															</th>
+															<th class="text-left" width="10%">
+																<div class="checkbox">
+																	<label>
+																		<input type="checkbox" name="stream_check_all" value="">
+																	</label>
+																</div>
+															</th>
+															<th class="text-left" width="60%">영상 제목</th>
+															<th class="text-center" width="30%">삭제/재생</th>
+														</tr>
+													</thead>
+													<tbody>
+														{% for item in res_list %}
+															<tr id="row_{{item.ContentID}}" data-id="{{item.ContentID}}">
+																<td class="text-left handle" width="5%">
+																	<i class="material-icons">swap_vert</i>
+																</td>
+																<td class="text-center" width="10%">
+																	<div class="checkbox">
+																		<label>
+																			<input type="checkbox" name="stream_check" value="{{item.StreamID}}">
+																			<input type="hidden" id="stream_url_{{item.ContentID}}" value="{{item.StreamID}}">
+																		</label>
+																	</div>
+																</td>
+																<td class="text-left" width="60%"> <!-- 타이틀 > 교재 > 영상제목 -->
+																	<a href="javascript:videoPlay({{item.StreamID | int}},0);">
+																		{{item.ContentGroupName}} >>
+																		{{item.ContentTitle}} >>
+																		{{item.ListName}}
+																	</a>
+																</td>
+																<td class="text-center td-actions" width="30%">
+																	<button id="favorite_{{item.ContentID}}" type="button" onclick="favoriteOut({{item.ContentID}});" class="btn btn-round" data-toggle="tooltip" data-placement="left" data-original-title="좋아요 삭제">
+																		<i class="material-icons">remove</i>
+																	</button>
+																	&nbsp;
+																	<button type="button" rel="tooltip" class="btn btn-success btn-round" onclick="videoPlay({{item.StreamID | int}},0);">
+																		<i class="material-icons">play_arrow</i>
+																	</button>
+<!--																	<button type="button" rel="tooltip" class="btn btn-info btn-round"  onclick="videoPlay({{item.StreamID | int}}, 1);">-->
+<!--																		<i class="material-icons">restart_alt</i>-->
+<!--																	</button>-->
+																</td>
+															</tr>
+														{% endfor %}
+													</tbody>
+												</table>
+											</div>
+											<div class="brand text-muted">
+												순서변경 후 하단의 순서저장(보라색) 버튼을 눌러주세요. 전체 목록에서만 순서저장이 가능합니다.
+											</div>
+											<button type="button" class="btn btn-github btn-round btn-md" onclick="javascript:history.back()">
+												<i class="material-icons">arrow_back</i> 뒤로가기
+											</button>
+											{% if content_group_id==0 %}
+												<button type="button" class="btn btn-primary btn-round btn-md" onclick="changeSorts()">
+													<i class="material-icons">swap_vert</i> 순서저장
+												</button>
+											{% else %}
+												<a class="btn btn-default btn-round btn-md"  data-toggle="popover" data-placement="bottom" title="" data-content="전체 리스트에서만 순서 변경 및 저장이 가능합니다." data-container="body" data-original-title="안내">
+													<i class="material-icons">swap_vert</i> 순서저장
+												</a>
+											{% endif %}
+										{% else %}
+											<div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+												<img src="/static/images/notice/illust_5.png" width="180px">
+												<h5>영상 자료가 없습니다.<br />먼저 영상 컨텐츠를 찾아서 "좋아요"로 지정해주세요.</h5>
+												<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+													<i class="material-icons">arrow_back</i> 뒤로가기
+												</button>
+												{% if product_kind_id==62 %}
+													<a class="btn btn-white btn-round" href="{{ url_for('products.main_group_list', product_kind_id=product_kind_id) }}">
+														<i class="material-icons">arrow_back</i> 컨텐츠보기
+													</a>
+												{% else %}
+													<a class="btn btn-white btn-round" href="{{ url_for('products.main_list', product_kind_id=product_kind_id, product_kind_sub_id=0) }}">
+														<i class="material-icons">arrow_back</i> 컨텐츠보기
+													</a>
+												{% endif %}
+											</div>
+										{% endif %}
+									{% else %}
+										<div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+											<img src="/static/images/notice/illust_5.png" width="180px">
+											<h5>등록된 사업에 대한 컨텐츠로 이용이 제한됩니다.</h5>
+											<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+												<i class="material-icons">arrow_back</i> 뒤로가기
+											</button>
+										</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div> <!-- 영상 -->
+				</div>
+            </div>
+        </div> <!-- section end -->
+	</div>
+</div>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+	//	 $('#sortable-table tbody').sortable();
+    $('#sortable-table tbody').sortable({
+        handle: '.handle'  // 'handle' 클래스를 드래그 핸들로 지정
+    });
+
+    var streamCheckAll = document.querySelector('input[name="stream_check_all"]');
+    streamCheckAll.addEventListener('change', function() {
+        var streamCheckboxes = document.querySelectorAll('input[name="stream_check"]');
+        for (var i = 0; i < streamCheckboxes.length; i++) {
+            streamCheckboxes[i].checked = streamCheckAll.checked;
+        }
+    });
+});
+
+var initScreen = 0;
+if (initScreen != {{content_group_id}}) {
+	window.addEventListener('load', function() {
+		var targetElement = document.querySelector('#screen');
+		if (targetElement) {
+			targetElement.scrollIntoView({ behavior: 'smooth' });
+		} else {
+			console.error('Could not find the target element on the page.');
+		}
+	});
+}
+
+// 영상 파트
+var initList = [
+	{% for item in res_list %}
+		"{{ item.StreamID | trim }}",
+	{% endfor %}
+];
+
+var initialVideoIds = initList;
+initializePlayer(initialVideoIds, false, false);
+
+function videoPlay(stream_id, loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+    var newVideoIds = [stream_id];
+
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function allVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+    var newVideoIds = initList;
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function selectVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+	var selectedStreamIds = [];
+	var checkboxes = document.querySelectorAll('input[name="stream_check"]:checked');
+
+	checkboxes.forEach(function(checkbox) {
+			selectedStreamIds.push(checkbox.value);
+	});
+
+	if (selectedStreamIds.length > 0) {
+		var newVideoIds = selectedStreamIds;
+		var init_yn = true;
+		initializePlayer(newVideoIds, init_yn, loop_yn);
+	} else {
+        site.showNotification('top','center', '먼저 실행을 원하는 영상 목록을 체크해 주세요.', 'info')
+	}
+};
+
+function initializePlayer(videoIds, init_yn, loop_yn) {
+	var options = {
+		id: videoIds[0],
+		width: 640,
+		loop: (videoIds.length === 1 && loop_yn === 1),
+		autoplay: init_yn,
+	};
+
+	if (init_yn) {
+		$.ajax({
+			type: "GET",
+			url: "/products/content_view",
+			data: { stream_id: videoIds[0] },
+			success: function (result) {
+			   console.log('첫번째 비디오가 재생되었습니다.');
+			}
+		});
+
+		// 이전 플레이어 제거
+		var oldPlayer = document.getElementById('vimeo-player');
+		oldPlayer.innerHTML = '';
+
+		// 새로운 플레이어 생성
+		var newPlayer = document.createElement('div');
+		newPlayer.className = 'text-center';
+		newPlayer.id = 'vimeo-player';
+		oldPlayer.parentNode.replaceChild(newPlayer, oldPlayer);
+
+		// 첫 번째 비디오 재생 시 로그 기록
+		loadAndPlayVideo(0);
+
+		// 새로운 플레이어로 초기화
+		var player = new Vimeo.Player(newPlayer, options);
+	} else {
+ 		var player = new Vimeo.Player('vimeo-player', options);
+	}
+
+	function loadAndPlayVideo(index) {
+
+		$.ajax({
+			type: "GET",
+			url: "/products/content_view",
+			data: { stream_id: videoIds[index] },
+			success: function (result) {
+				player.loadVideo(videoIds[index]).then(function() {
+					player.play();
+				});
+			}
+		});
+	}
+
+	var currentIndex = 0;
+
+    player.on('ended', function() {
+        currentIndex++;
+        if (currentIndex < videoIds.length) {
+ 			loadAndPlayVideo(currentIndex);
+		} else {
+			if (loop_yn == 1) {
+ 		 	   currentIndex = 0; // currentIndex 초기화
+ 			   loadAndPlayVideo(currentIndex);
+			} else {
+ 	           console.log('모든 비디오가 재생되었습니다.');
+			}
+        }
+    });
+}
+
+function changeSorts() {
+	var ids = [];
+	$('#sortable-table tbody tr').each(function() {
+	  ids.push($(this).data('id'));
+	});
+
+	$.ajax({
+		type: "POST",
+		contentType: 'application/json',
+		data: JSON.stringify({ content_ids: ids }),
+		url: "/products/content_favorite_sort_update",
+		success: function (result) {
+			site.showNotification('top','center', '순서를 변경하였습니다.', 'warning')
+		}
+	})
+}
+
+function favoriteOut(content_id) {
+	$.ajax({
+		type: "GET",
+		url: "/products/content_favorite_update",
+		data: { content_id: content_id, favorite_yn: 0 },
+		success: function (result) {
+			$("#row_" + content_id).remove();
+		}
+	});
+}
+</script>
+
+{% endblock %}
+

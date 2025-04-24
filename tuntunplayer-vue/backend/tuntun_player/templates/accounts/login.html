@@ -1,0 +1,60 @@
+{% extends "layout_nofooter.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 로그인 {% endblock %}
+
+{% block section %}
+
+<div class="index-page">
+	<div class="page-header" style="background:url('/static/images/main/main_bg3.png') top center no-repeat; background-size:cover;">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+					<br><br><br>
+					<div class="card card-signup">
+						<form class="form" action="/accounts/login" method="post">
+<!--							<div class="header header-warning text-center">-->
+<!--								<h4 class="card-title">로그인</h4>-->
+<!--							</div>-->
+							<br />
+							<h2 class="card-title text-center">
+								<img src="/static/images/main/tuntunplay_logo.png" style="width:110px" />
+							</h2>
+							<div class="card-content">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">email</i>
+                                    </span>
+									<div class="form-group is-focused">
+						 	             {{ input('email', 'user_email', user_email, opt='required autofocus', placeholder='이메일 계정') }}
+                         			</div>
+                                </div>
+
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">lock_outline</i>
+                                    </span>
+									<div class="form-group">
+                                    	{{ input('password', 'user_passwd', user_passwd, opt='required', placeholder='비밀번호') }}
+                         			</div>
+                                </div>
+                            </div>
+
+							<div class="footer text-center">
+								<button type="submit" class="btn btn-warning btn-wd btn-round">로그인</button>
+							</div>
+							<div class="text-center">
+								<a href="{{ url_for('accounts.member_insert', manager_yn=0) }}" class="btn btn-simple btn-sm">회원가입</a>
+								<a href="{{ url_for('accounts.member_insert', manager_yn=1) }}" class="btn btn-simple btn-sm">교사가입</a>
+							</div>
+							<div class="text-center">
+								<a href="{{url_for('homes.message', msg_kind='login_disable')}}" class="btn btn-default btn-simple btn-wd btn-lg"><u>로그인에 어려움이 있으신가요?</u></a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% include "includes/footer.html" ignore missing with context %}
+	</div>
+{% endblock %}

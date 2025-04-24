@@ -1,0 +1,103 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input, textarea %}
+
+{% block title %} 게시자료 등록 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+		<div class="col-md-10">
+			<div class="card">
+				<form id="board_insert" name="board_insert" method="POST" enctype="multipart/form-data" action="{{ url_for('boards.admin_board_insert_post') }}" class="form-horizontal">
+					<div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">assignment</i>
+                    </div>
+					<div class="card-content">
+                        <h4 class="card-title">{{ board_kind_id | board_kind_name() }} 등록 ({{product_kind_id | product_kind_name if product_kind_id | product_kind_name else '공통'}})</h4>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">제목</label>
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('hidden', 'board_kind_id', board_kind_id, opt='required') }}
+									{{ input('hidden', 'product_kind_id', product_kind_id, opt='required') }}
+									{{ input('text', 'title', title, opt='required') }}
+									<span class="help-block">제목을 입력해 주세요.</span>
+								</div>
+                            </div>
+						</div>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">내용</label>
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ textarea(name='comments', value=comments, row='5', class='trumbo',  placeholder='내용을 입력하세요.') }}
+								</div>
+                            </div>
+						</div>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">첨부파일</label>
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('file', 'upload_file_path', upload_file_path, opt='multiple', onchange='checkFiles(this)') }}
+									<span class="help-block">허용된 파일: "jpg", "png", "txt", "doc", "docx", "xls", "xlsx", "pdf", "ppt", "pptx"</span>
+								</div>
+                        	</div>
+						</div>
+
+						<br />
+						<div class="row">
+							<label class="col-sm-2 label-on-left"></label>
+							<div class="col-md-10">
+								<div class="form-group form-button">
+									<button type="button" onclick="javascript:history.back()" class="btn btn-fill btn-github">뒤로가기</button>
+ 	                            	<button type="submit" class="btn btn-fill btn-facebook">등록하기</button>
+	                        	</div>
+	                    	</div>
+						</div>
+                    </div>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+
+<script>
+	function checkFiles(input) {
+		const files = input.files;
+		const maxSizeInBytes = 1024 * 1024 * 50;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "txt", "doc", "docx", "xls", "xlsx", "pdf", "ppt", "pptx", "mp3", "stk"];
+
+
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+
+			// 파일 크기 체크
+			if (file.size > maxSizeInBytes) {
+ 	            site.showNotification('top','center', '최대 크기(50메가)를 초과하는 파일이 있습니다.', 'danger')
+			 	input.value = ''; // 파일 선택을 취소합니다.
+			 	input.type = 'file'; // 파일을 리셋합니다.
+			 	return;
+			}
+
+			// 파일 확장명 체크
+			const fileNameParts = file.name.split('.');
+			const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+			if (!allowedExtensions.includes(fileExtension)) {
+ 	            site.showNotification('top','center', '허용되지 않은 확장명이 포함된 파일이 있습니다.', 'warning')
+				input.value = ''; // 파일 선택을 취소합니다.
+				input.type = 'file'; // 파일을 리셋합니다.
+				return;
+			}
+		}
+	}
+
+	var form_submit = function() {
+		document.board_insert.submit();
+  	};
+</script>
+
+{% endblock %}			 
+
+			

@@ -1,0 +1,86 @@
+@media screen and (max-width: 767px) {
+    .card-container {
+        justify-content: center;
+    }
+}
+
+
+/* 오디오 플레이어 스타일링 */
+.audio-player {
+    width: 330px;
+    margin: 10px auto;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+.progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    height: 10px;
+    cursor: pointer;
+    box-shadow: none;
+}
+.progress {
+    height: 100%;
+    background-color: #4caf50;
+    width: 0;
+}
+.audio-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.audio-controls button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 기본 그림자 */
+    transition: box-shadow 0.3s ease, transform 0.1s ease; /* 부드러운 전환 효과 */
+}
+.audio-controls button:hover {
+    background-color: #555;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* 강조된 그림자 */
+}
+.audio-controls button:active {
+    background-color: #222; /* 눌렸을 때 색상 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 눌렸을 때 그림자 */
+    transform: translateY(2px); /* 눌렸을 때 약간 아래로 이동 */
+}
+
+
+.card.card-profile.main-list-card {
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s, background 0.3s;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+.card.card-profile.main-list-card:hover {
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    transform: translateY(-8px) scale(1.04);
+    border-color: #007bff;
+    background: #f5faff;
+    z-index: 2;
+}
+
+.card.card-profile.main-list-card .card-body img,
+.card.card-profile.main-list-card .card-image img {
+    transition: transform 0.35s;
+}
+
+.card.card-profile.main-list-card:hover .card-body img,
+.card.card-profile.main-list-card:hover .card-image img {
+    transform: scale(1.07) rotate(-2deg);
+    filter: brightness(1.07) saturate(1.1);
+}

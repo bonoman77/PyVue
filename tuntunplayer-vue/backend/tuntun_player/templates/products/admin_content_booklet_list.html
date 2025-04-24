@@ -1,0 +1,310 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import classic_modal %}
+  
+{% block title %} 템플릿 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">{{route_kind_id | route_kind_info('icon')}}</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{route_kind_id | route_kind_info('name')}} ({{booklet_kind_id | booklet_kind_name()}})</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-group">
+                                    <select id="booklet_kind_id" onchange="booklet_kind_change(this)" class="form-control">
+                                        <option value="117" {{'selected' if booklet_kind_id == 117}}>스토리북</option>
+                                        <option value="118" {{'selected' if booklet_kind_id == 118}}>연상력 그림장</option>
+                                        <option value="119" {{'selected' if booklet_kind_id == 119}}>부가자료</option>
+                                    </select>
+                                </label>
+                                <span class="card-category">
+                                    {{content_title}}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="sortable-table" class="table table-striped">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th class="text-center" width="10%" colspan=2>ID</th>
+                                        <th class="text-center" width="50%">파일명</th>
+                                        <th class="text-center" width="20%">관리</th>
+                                        <th class="text-center" width="20%">작성자</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in res_list %}
+                                        <tr id="row_{{item.BookletSubID}}" data-id="{{item.BookletSubID}}">
+                                            <td class="text-left handle" width="3%">
+                                                <i class="material-icons">swap_vert</i>
+                                            </td>
+                                            <td class="text-center" width="7%">{{item.BookletSubID}}</td>
+                                            <td class="text-left" width="50%">
+                                                <a href="{{ url_for('file_download', file_path=item.ImageFilePath, file_name=item.ImageFileName, download_yn=0) }}">
+                                                    {{item.ImageFileName}}
+                                                </a>
+                                            </td>
+                                            <td class="text-center td-actions" width="20%">
+                                                <button id="img_{{item.BookletSubID}}" type="button" onclick="imageClick({{item.BookletSubID}})" class="btn btn-round btn-warning">
+                                                    <i class="material-icons">image</i>
+                                                </button>
+                                                <button id="display_{{item.BookletSubID}}" type="button" onclick="displayUpdate({{item.BookletSubID}}, {{0 if item.DisplayYn else 1}});" class="btn btn-round {{'btn-info' if item.DisplayYn}}">
+                                                    <i class="material-icons">visibility</i>
+                                                </button>
+                                                <button type="button" onclick="itemDelete({{item.BookletSubID}});" class="btn btn-round btn-github">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                                <form id="frm_{{item.BookletSubID}}" method="POST" enctype="multipart/form-data">
+                                                    <input id="booklet_{{item.BookletSubID}}" type="hidden" value="{{item.BookletID}}">
+                                                    <input id="file_{{item.BookletSubID}}" type="file" onchange="imageUpload({{item.BookletSubID}})" style="opacity:0; width: 0; height: 0;">
+                                                </form>
+                                            </td>
+                                            <td class="text-center" width="20%">{{item.MemberName}}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <h4>데이터가 존재하지 않습니다.</h4>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-fill btn-github" onclick="javascript:history.back()">뒤로가기</button>
+         				{% if res_list|length > 0 %}
+                            <button type="button" class="btn btn-fill btn-success" onclick="changeSorts()">순서저장</button>
+                        {% endif %}
+                        <button type="button" class="btn btn-fill btn-primary" onclick="newImageClick()">신규등록</button>
+
+                        <form id="booklet_insert" method="POST" enctype="multipart/form-data">
+                            <input id="booklet_id" name="booklet_id" type="hidden" value="{{booklet_id}}">
+                            <input id="booklet_file" name="booklet_file" type="file" onchange="newImageUpload({{booklet_id}})" style="opacity:0; width: 0; height: 0;" multiple>
+                        </form>
+
+                        <div class="text-left">
+                            교재 템플릿의 순서는 마우스 드래그앤드롭으로 변경이 가능합니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        //	 $('#sortable-table tbody').sortable();
+        $('#sortable-table tbody').sortable({
+            handle: '.handle'  // 'handle' 클래스를 드래그 핸들로 지정
+        });
+    });
+
+    function booklet_kind_change(select) {
+        var booklet_kind_id = select.value;
+        window.location.href="/products/admin_content_booklet_list/{{route_kind_id}}/{{product_kind_id}}/{{content_title_id}}/"+booklet_kind_id;
+    }
+
+    function changeSorts() {
+        var ids = [];
+        $('#sortable-table tbody tr').each(function() {
+          ids.push($(this).data('id'));
+        });
+
+        $.ajax({
+            type: "POST",
+            contentType: 'application/json',
+            data: JSON.stringify({ booklet_sub_ids: ids }),
+            url: "/products/admin_content_booklet_sub_sort_update",
+            success: function (result) {
+                site.showNotification('top','center', '순서를 변경하였습니다.', 'info')
+            }
+        })
+    }
+
+    function displayUpdate(booklet_sub_id, display_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/products/admin_content_booklet_sub_display_update",
+            data: { booklet_sub_id: booklet_sub_id, display_yn: display_yn },
+            success: function (result) {
+                btnElement = document.getElementById("display_" + booklet_sub_id);
+
+                if (display_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-info';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + booklet_sub_id + ', 0)');
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + booklet_sub_id + ', 1)');
+                }
+            }
+        });
+    }
+
+    function itemDelete(booklet_sub_id) {
+        swal({
+            title: '삭제',
+            text: booklet_sub_id+"번 이미지를 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/products/admin_content_booklet_sub_delete",
+                data: { booklet_sub_id: booklet_sub_id },
+                success: function (result) {
+                    swal({
+                        title: '삭제완료!',
+                        text: '정상적으로 삭제하였습니다.',
+                        type: 'success',
+                        confirmButtonClass: "btn btn-success",
+                        buttonsStyling: false
+                    }),
+                        $("#row_" + booklet_sub_id).remove();
+                }
+            })
+        }).catch(swal.noop);
+    }
+
+
+function checkFiles(input) {
+		const files = input.files;
+		const maxSizeInBytes = 1024 * 1024 * 50;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "txt", "doc", "docx", "xls", "xlsx", "pdf", "ppt", "pptx", "mp3", "stk"];
+
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+
+			// 파일 크기 체크
+			if (file.size > maxSizeInBytes) {
+ 	            site.showNotification('top','center', '최대 크기(50메가)를 초과하는 파일이 있습니다.', 'danger')
+				input.value = ''; // 파일 선택을 취소합니다.
+				input.type = 'file'; // 파일을 리셋합니다.
+				return;
+			}
+
+			// 파일 확장명 체크
+			const fileNameParts = file.name.split('.');
+			const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+			if (!allowedExtensions.includes(fileExtension)) {
+ 	            site.showNotification('top','center', '허용되지 않은 확장명이 포함된 파일이 있습니다.', 'warning')
+				input.value = ''; // 파일 선택을 취소합니다.
+				input.type = 'file'; // 파일을 리셋합니다.
+				return;
+			}
+		}
+	}
+
+    function newImageClick() {
+        $('#booklet_file').click();
+    }
+
+    function newImageUpload(booklet_id) {
+
+        var form = $('#booklet_insert')[0],
+            formData = new FormData(form),
+            files = $('#booklet_file')[0].files;
+
+        formData.append("booklet_id", booklet_id);
+
+        const maxSizeInBytes = 1024 * 1024 * 10;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"];
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+
+            const fileNameParts = file.name.split('.');
+            const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+
+            if (file.size > maxSizeInBytes) {
+                site.showNotification('top','center', '파일 크기가 허용된 최대 크기(10메가)를 초과했습니다.', 'danger')
+                file = ''; // 파일 선택을 취소합니다.
+                return;
+            }
+            else if (!allowedExtensions.includes(fileExtension)) {
+                site.showNotification('top','center', '허용된 파일 확장명이 아닙니다.', 'warning')
+                file = ''; // 파일 선택을 취소합니다.
+                return;
+            }
+            else {
+                formData.append("image_files", file);
+            }
+        }
+
+
+        $.ajax({
+            url: '/products/admin_content_booklet_image_upload'
+            , processData: false
+            , contentType: false
+            , data: formData
+            , type: 'POST'
+            , success: function (res) {
+                if (res && res.file_name)
+                    window.location.reload();
+                }
+        });
+    }
+
+    function imageClick(booklet_sub_id) {
+        $('#file_'+booklet_sub_id).click();
+    }
+
+    function imageUpload(booklet_sub_id) {
+        var form = $('#frm_' + booklet_sub_id)[0],
+            formData = new FormData(form),
+            file = $('#file_' + booklet_sub_id)[0].files[0];
+
+        const maxSizeInBytes = 1024 * 1024 * 10;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"];
+        const fileNameParts = file.name.split('.');
+        const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+
+        if (file.size > maxSizeInBytes) {
+            site.showNotification('top','center', '파일 크기가 허용된 최대 크기(10메가)를 초과했습니다.', 'danger')
+            file = ''; // 파일 선택을 취소합니다.
+            return;
+        }
+        else if (!allowedExtensions.includes(fileExtension)) {
+            site.showNotification('top','center', '허용된 파일 확장명이 아닙니다.', 'warning')
+            file = ''; // 파일 선택을 취소합니다.
+            return;
+        }
+        else {
+            booklet_id = document.getElementById("booklet_"+ booklet_sub_id).value;
+            formData.append("image_file", file);
+            formData.append("booklet_id", booklet_id);
+            formData.append("booklet_sub_id", booklet_sub_id);
+
+            $.ajax({
+                url: '/products/admin_content_booklet_sub_image_upload'
+                , processData: false
+                , contentType: false
+                , data: formData
+                , type: 'POST'
+                , success: function (res) {
+                    if (res && res.file_name)
+                        window.location.reload();
+                    }
+            });
+        }
+    }
+
+</script>
+
+{% endblock %}
+
+
+
+

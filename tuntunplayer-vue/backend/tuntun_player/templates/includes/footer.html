@@ -1,0 +1,41 @@
+<footer class="footer">
+    <div class="container">
+        <nav class="pull-left">
+            <ul>
+                <li>
+                    <a href="{{ url_for('homes.index') }}">
+                        TUNTUN PLAYER
+                    </a>
+                </li>
+                {% if session.login_user %}
+                    {% if session.login_user.manager_yn %}
+                        <li>
+                            <a href="{{ url_for('admins.index') }}">
+                               관리자 페이지
+                            </a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li>
+                        <a href="{{ url_for('accounts.member_insert', manager_yn=1) }}">
+                            교사가입
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{{url_for('homes.term')}}">
+                        이용약관
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('homes.privacy')}}">
+                        <b>개인정보처리방침</b>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="copyright pull-right">
+            &copy; <script>document.write(new Date().getFullYear())</script>, 튼튼영어
+        </div>
+    </div>
+</footer>

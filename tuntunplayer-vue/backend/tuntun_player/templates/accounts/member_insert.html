@@ -1,0 +1,296 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import small_modal %}
+{% block title %} 회원 가입 {% endblock %}
+
+{% block section %}
+
+<div class="product-page">
+    <div class="page-header" data-parallax="true" style="background-image: url({{ '/static/images/main/main_anyone.png' if manager_yn else '/static/images/main/bg_anyone.png' }});">
+	    <div class="container">
+	        <div class="row title-row">
+	            <div class="col-md-4 col-md-offset-8">
+<!--					<button class="btn {{ 'btn-facebook' if manager_yn else 'btn-rose' }} pull-right" style="cursor:auto">{{ '교사 가입' if manager_yn else '회원 가입' }}</button>-->
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    <div class="section section-gray">
+        <div class="container">
+			<div class="main main-raised">
+				<div class="contact-content">
+					<h4 class="title">튼튼플레이어 {{ '교사' if manager_yn else '회원' }} 가입을 환영합니다.</h4>
+					<div class="row">
+						<div class="col-md-8">
+							<p class="description">
+								튼튼플레이어는 튼튼영어에 소속된 채널(브랜드)에 등록된 {{ '교사' if manager_yn else '회원' }}에게만 제공되는 서비스입니다.
+							</p>
+
+							{% if manager_yn %}
+								<button type="button" onclick="searchMemberCode({{manager_yn}}, 1);" class="btn btn-fill btn-light btn-warning">베이비리그</button>
+							{% else %}
+								<button type="button" onclick="searchMemberAccount();" class="btn btn-fill btn-light btn-warning">베이비리그</button>
+							{% endif %}
+							<button type="button" onclick="searchMemberCode({{manager_yn}}, 2);" class="btn btn-fill btn-light btn-rose">주니어/튜터링</button>
+							<button type="button" onclick="searchMemberCode({{manager_yn}}, 61);" class="btn btn-fill btn-light btn-info">주니어플러스</button>
+
+							<form id="registerForm" name="registerForm" method="POST" action="{{ url_for('accounts.member_insert_post') }}" class="form" >
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group label-static">
+											<label class="control-label">{{'교사' if manager_yn else '회원'}}코드 (조회)</label>
+											{{ input('hidden', 'service_kind_id', service_kind_id, opt='required') }}
+											{{ input('hidden', 'manager_yn', manager_yn, opt='required') }}
+											{{ input('text', 'member_code', member_code, opt='required readonly') }}
+											<span class="material-input"></span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group label-static">
+											<label class="control-label">{{'교사' if manager_yn else '회원'}}명 (조회)</label>
+											{{ input('text', 'member_name', member_name, opt='required readonly') }}
+											<span class="material-input"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group label-static">
+											<label class="control-label">이메일 계정</label>
+											{{ input('email', 'user_email', user_email, opt='required') }}
+											<span class="material-input text-success">이메일 인증 후 가입 처리되오니, 실사용하는 이메일로 기입해 주시기 바랍니다.</span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group label-static">
+											<label class="control-label">비밀번호</label>
+											{{ input('password', 'user_passwd', user_passwd, min=8, opt='required') }}
+											<span class="material-input"></span>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group label-static">
+											<label class="control-label">비밀번호 확인</label>
+											{{ input('password', 'confirm_passwd', confirm_passwd, min=8, opt='required') }}
+											<span class="material-input"></span>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group checkbox">
+											<label class="form-group">
+												<input type="checkbox" id="term_check">
+												사이트 이용약관의 내용에 모두 동의합니다. (<a href="{{ '/term' if manager_yn==0 else '/term_teacher' }}" target="_blank">이용약관 보기</a>)
+											</label>
+										</div>
+										<span id="alert" class="material-input text-rose"></span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group form-button">
+											<button type="button" class="btn btn-fill btn-round btn-github" onclick="javascript:history.back()">
+												<i class="material-icons">arrow_back</i> 뒤로가기
+											</button>
+											<button type="button" class="btn btn-fill btn-round btn-facebook" onclick="onSubmit()">
+												<i class="material-icons">check</i> {{'교사' if manager_yn else '회원'}}가입
+											</button>
+										</div>
+									</div>
+								</div>
+								<div id="progress-bar" class="progress progress-line-primary" style="display:none">
+									<div id="progress" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+								 	</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+    	</div>
+    </div>
+</div>
+
+
+{% call small_modal('searchCodeModal', '회원코드 조회', submit_fn='memberCodeSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_code_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_member_code" class="form-group label-floating is-empty">
+                <label class="control-label"><span id="searchCode"></span></label>
+				{{ input('hidden', 'search_manager_yn', manager_yn, opt='required') }}
+				{{ input('hidden', 'search_service_kind_id', service_kind_id, opt='required') }}
+                {{ input('text', 'search_member_code', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+        <div class="input-group">
+            <div id="input_member_name" class="form-group label-floating is-empty">
+                <label class="control-label"><span id="searchName"></span></label>
+                {{ input('text', 'search_member_name', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+{% call small_modal('searchAccountModal', '베이비리그 계정 조회', submit_fn='memberAccountSearch()', fn_comment='확인') %}
+    <form class="form" method="post">
+        <span id="search_account_info" class="text-danger"></span>
+        <div class="input-group">
+            <div id="input_account" class="form-group label-floating is-empty">
+                <label class="control-label">아이디</label>
+				{{ input('hidden', 'account_manager_yn', 0, opt='required') }}
+				{{ input('hidden', 'account_service_kind_id', 1, opt='required') }}
+                {{ input('text', 'search_account', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+        <div class="input-group">
+            <div id="input_passwd" class="form-group label-floating is-empty">
+                <label class="control-label">패스워드</label>
+                {{ input('password', 'search_passwd', opt='required') }}
+            	<span class="material-input"></span>
+			</div>
+        </div>
+    </form>
+{% endcall %}
+
+<script type="text/javascript">
+    function updateProgressBar() {
+		var progress = 0;
+		var progressBar = document.getElementById("progress");
+		var width = 0;
+		var interval = setInterval(frame, 50);
+
+		function frame() {
+			if (width >= 100) {
+				clearInterval(interval);
+			} else {
+				width++;
+				progressBar.style.width = width + "%";
+				progressBar.innerHTML = width + "%";
+			}
+		}
+	}
+
+  	function onSubmit() {
+        if (document.getElementById("member_code").value == "") {
+            document.getElementById("alert").innerText="먼저 상단의 브랜드별 버튼을 사용하여 등록된 정보를 확인하세요.";
+        }
+        else if (document.getElementById("user_passwd").value.length < 8) {
+            document.getElementById("alert").innerText="암호는 8자리 이상이어야 합니다.";
+        }
+        else if (document.getElementById("user_passwd").value != document.getElementById("confirm_passwd").value) {
+            document.getElementById("alert").innerText="암호가 서로 일치해야 합니다.";
+        }
+        else if (document.getElementById("term_check").checked == false) {
+            document.getElementById("alert").innerText="이용약관에 대한 동의를 해야 회원 가입이 가능합니다.";
+        }
+        else {
+			var form = document.getElementById("registerForm");
+			if (form.checkValidity()) {
+				var progress = document.getElementById("progress-bar");
+				progress.style.display = "block";
+				updateProgressBar();
+				form.submit();
+			} else {
+	            document.getElementById("alert").innerText="입력값이 올바른지 확인 부탁드립니다.";
+			}
+        }
+    }
+
+    function searchMemberCode(manager_yn, service_kind_id) {
+        $("#searchCodeModal").modal('show');
+	    document.getElementById("search_code_info").innerText = "";
+        document.getElementById("search_manager_yn").value = manager_yn;
+        document.getElementById("search_service_kind_id").value = service_kind_id;
+
+        if (service_kind_id == 1){
+			document.getElementsByClassName("modal-title")[0].innerText = "베이비리그 회원조회";
+		} else if (service_kind_id == 2){
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어/튜터링 회원조회";
+		} else {
+			document.getElementsByClassName("modal-title")[0].innerText = "주니어플러스 회원조회";
+		}
+		if (manager_yn == 1){
+			document.getElementById("searchCode").innerText = "교사코드";
+			document.getElementById("searchName").innerText = "교사이름";
+		} else {
+			document.getElementById("searchCode").innerText = "회원코드";
+			document.getElementById("searchName").innerText = "회원이름";
+		}
+    }
+
+    function searchMemberAccount() {
+        $("#searchAccountModal").modal('show');
+    }
+
+	function memberCodeSearch() {
+        manager_yn = document.getElementById("search_manager_yn").value;
+        service_kind_id = document.getElementById("search_service_kind_id").value;
+		member_code = document.getElementById("search_member_code").value;
+		member_name = document.getElementById("search_member_name").value;
+		if (member_code=="" || member_name=="") {
+		  document.getElementById("search_code_info").innerText = "회원코드와 이름을 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "{{ url_for('accounts.member_code_search') }}",
+				data: { manager_yn: manager_yn, service_kind_id: service_kind_id, member_code: member_code, member_name: member_name },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchCodeModal").modal("hide");
+						document.getElementById("service_kind_id").value = service_kind_id;
+						document.getElementById("member_code").value = member_code;
+						document.getElementById("member_name").value = member_name;
+		    		} else {
+						document.getElementById("input_member_code").className = "form-group label-floating is-empty";
+						document.getElementById("input_member_name").className = "form-group label-floating is-empty";
+						document.getElementById("search_member_code").value = "";
+						document.getElementById("search_member_name").value = "";
+						document.getElementById("search_code_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+
+	function memberAccountSearch() {
+        manager_yn = document.getElementById("account_manager_yn").value;
+        service_kind_id = document.getElementById("account_service_kind_id").value;
+		account = document.getElementById("search_account").value;
+		passwd = document.getElementById("search_passwd").value;
+		if (account=="" || passwd=="") {
+		  document.getElementById("search_account_info").innerText = "베이비리그 계정 정보를 입력해주세요.";
+		} else {
+			$.ajax({
+				type: "POST",
+				url: "/accounts/member_account_search",
+				data: { service_kind_id: service_kind_id, account: account, passwd: passwd },
+				success: function (res) {
+		    		if (res.result == "success"){
+						$("#searchAccountModal").modal("hide");
+						document.getElementById("service_kind_id").value = service_kind_id;
+						document.getElementById("member_code").value = res.member_code;
+						document.getElementById("member_name").value = res.member_name;
+		    		} else {
+						document.getElementById("input_account").className = "form-group label-floating is-empty";
+						document.getElementById("input_passwd").className = "form-group label-floating is-empty";
+						document.getElementById("search_account").value = "";
+						document.getElementById("search_passwd").value = "";
+						document.getElementById("search_account_info").innerText = res.message;
+					}
+				}
+			});
+		}
+	}
+
+
+</script>
+
+{% endblock %}
+

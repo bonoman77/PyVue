@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% from "macros/modal.html" import classic_modal %}
+
+{% block title %} 교사교육 메인 {% endblock %}
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-small" data-parallax="true" style="background-image: url('/static/images/main/bg_class.png');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+				     	<h5 class="text-title-black"><b>신입교육</b></h5>
+                        <ul class="nav nav-pills nav-pills-github" style="display: inline-block;">
+                            <li><a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=111) }}">특별교육</a></li>
+                            <li class="{{'active' if class_type_id == 108 }}"><a href="{{ url_for('educations.edu_main_list', class_type_id=108) }}">신입교육</a></li>
+							<!-- <li class="{{'active' if class_type_id == 109 }}"><a href="{{ url_for('educations.edu_main_list', class_type_id=109) }}">특강</a></li> -->
+                            <!-- <li><a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=112) }}">특강 자료실</a></li> -->
+                        </ul>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+            <div class="container">
+	        <a href="{{ url_for('homes.index') }}">메인</a> > {{'신입교육' if class_type_id == 108 else '특강'}}
+            	<div class="row">
+					<div class="ml-auto mr-auto">
+						<div class="row">
+               				{% for res in res_list %}
+							<div class="col-md-3 col-sm-6">
+								<div class="card card-profile card-plain">
+									<div class="card-body">
+										<img src="{{res.ImageURL | new_image_url}}" style="width:109px; height:99px">
+										<h6 class="card-title"><b>튼튼영어<br />{{res.ClassGroupName}}</b></h6>
+										<button onclick="classInfo({{ res.ClassGroupID }});" class="btn btn-behance btn-light">강의구성</button>
+										{% if res.ApplyDate %}
+											<a href="{{ url_for('educations.edu_list', class_group_id=res.ClassGroupID) }}" class="btn btn-warning btn-light">들어가기</a>
+										{% else %}
+											<button onclick="classAttend({{res.ClassGroupID}});" id="btn_{{res.ClassGroupID}}" class="btn btn-rose btn-light">수강신청</button>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+               				{% endfor %}
+						</div>
+						<div class="text-center">
+                            <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                                <i class="material-icons">arrow_back</i> 뒤로가기
+                            </button>
+						</div>
+					</div>
+				</div>
+           </div>
+        </div> <!-- section -->
+	</div> <!-- end-main-raised -->
+</div>
+
+
+{% call classic_modal('classModal', '강의 구성') %}
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th class="text-center" width="15%">번호</th>
+					<th>강좌명</th>
+				</tr>
+			</thead>
+			<tbody id="dataBody">
+				<!-- 데이터가 여기에 추가될 것입니다. -->
+			</tbody>
+		</table>
+	</div>
+{% endcall %}
+
+
+<script>
+	function classAttend(class_group_id) {
+		$.ajax({
+			type: "POST",
+			url: "/educations/edu_class_attend",
+			data: { class_group_id: class_group_id },
+			success: function (result) {
+				site.showNotification('top','center', '수강 신청이 완료되었습니다.', 'rose');
+				setTimeout(function() {
+					window.location.reload();
+				}, 1000);
+			}
+		});
+	};
+
+    function classInfo(class_group_id) {
+		$.ajax({
+			type: "GET",
+			url: "/educations/edu_info",
+			data: { class_group_id: class_group_id },
+			success: function (response) {
+				// 서버에서 받은 JSON 데이터를 모달 팝업에 표시
+				var dataBody = $('#dataBody');
+				dataBody.empty();  // 기존 데이터 제거
+				if (response.result === 'success') {
+					// 데이터를 받아온 경우
+					var dataList = response.data;
+					for (var i = 0; i < dataList.length; i++) {
+						var item = dataList[i];
+						// 데이터를 테이블의 행에 추가
+						dataBody.append('<tr><td class="text-center">' + item.class_id + '</td><td>' + item.class_name + '</td></tr>');
+					}
+					// 모달 팝업 열기
+					$('#classModal').modal('show');
+				} else {
+					// 실패한 경우
+					dataBody.html('<tr><td colspan="2">Failed to fetch data from server.</td></tr>');
+				}
+			},
+			error: function() {
+				// Ajax 요청에 실패한 경우
+				$('#dataBody').html('<tr><td colspan="2">Failed to fetch data from server.</td></tr>');
+			}
+		})
+    }
+</script>
+
+
+{% endblock %}
+

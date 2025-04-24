@@ -1,0 +1,326 @@
+{% extends "layout_nofooter.html" %}
+{% from "macros/modal.html" import classic_modal %}
+{% block title %} 메인 페이지 {% endblock %}
+
+{% block section %}
+
+{% if session.login_user and session.login_user.manager_yn %}
+	<div class="login-page teacher-area">
+		<div class="page-header" style="background:#FFF8F0 url('/static/images/teacher/bg_main.png') top center no-repeat;">
+			<div class="container">
+				<div class="brand">
+					<div class="title text-center">
+						<img src="/static/images/teacher/main_Title.png">
+					</div>
+					<div class="ml-auto mr-auto">
+						<div class="row">
+							<div class="col-md-3 col-sm-6">
+								<div class="main-box main-box-background content-yellow" style=" background-image: url('/static/images/teacher/BL_bg.jpg')">
+									<div class="card-content ">
+										<img src="/static/images/logo/brand_logo_bl.png" style="height:auto">
+										<h4 class="card-title text-title-main">
+											<b>튼튼영어 </br>베이비리그</b>
+										</h4>
+
+										<a href="{{ url_for('products.main_list', product_kind_id=3, product_kind_sub_id=0) }}" class="btn btn-main-white btn-round btn-block">
+											수업 연구
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=3, board_kind_id=105) }}" class="btn btn-main-white btn-round btn-block">
+											자료실
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=3, board_kind_id=106) }}" class="btn btn-main-white btn-round btn-block" style="margin:10px 0 ;">
+											체험/상담관리
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 col-sm-6">
+								<div class="main-box main-box-background" style="background-image: url('static/images/teacher/JRP_bg.jpg')">
+									<div class="card-content">
+										<img src="/static/images/logo/brand_logo_jrp.png" style="height:auto">
+										<h4 class="card-title text-title-main">
+											튼튼영어 </br>주니어플러스
+										</h4>
+										<a href="{{ url_for('products.main_group_list', product_kind_id=62) }}" class="btn btn-main-white btn-round btn-block">
+											수업 연구
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=62, board_kind_id=105) }}" class="btn btn-main-white btn-round btn-block">
+											자료실
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=62, board_kind_id=106) }}" class="btn btn-main-white btn-round btn-block" style="margin:10px 0 ;">
+											체험/상담관리
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 col-sm-6">
+								<div class="main-box main-box-background" style="background-image: url('static/images/teacher/JR_bg.jpg')">
+									<div class="card-content">
+										<img src="/static/images/logo/brand_logo_jr.png" style="height:auto">
+										<h4 class="card-title text-title-main" style="">
+											튼튼영어 </br>주니어
+										</h4>
+
+										<a href="{{ url_for('products.main_list', product_kind_id=4, product_kind_sub_id=0) }}" class="btn btn-main-white btn-round btn-block">
+											수업 연구
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=4, board_kind_id=105) }}" class="btn btn-main-white btn-round btn-block">
+											자료실
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=4, board_kind_id=106) }}" class="btn btn-main-white btn-round btn-block" style="margin:10px 0 ;">
+											체험/상담관리
+										</a>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3 col-sm-6">
+								<div class="main-box main-box-background" style="background-image: url('static/images/teacher/TR_bg.jpg')">
+									<div class="card-content">
+										<img src="/static/images/logo/brand_logo_tr.png" style="height:auto">
+										<h4 class="card-title text-title-main" style="">
+											튼튼영어 </br>튜터링
+										</h4>
+
+										<a href="{{ url_for('products.main_list', product_kind_id=5, product_kind_sub_id=0) }}" class="btn btn-main-white btn-round btn-block">
+											수업 연구
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=5, board_kind_id=105) }}" class="btn btn-main-white btn-round btn-block">
+											자료실
+										</a>
+										<a href="{{ url_for('boards.board_list', product_kind_id=5, board_kind_id=106) }}" class="btn btn-main-white btn-round btn-block" style="margin:10px 0 ;">
+											체험/상담관리
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="text-center">
+								<div class="col-md-6">
+									<div class="card btn-main-bottom">
+										<a href="{{ url_for('products.main_list', product_kind_id=103, product_kind_sub_id=0) }}">
+											<div class="card-body" style="padding:2.75em 0;">
+												<div class="text-btn-special">
+													<i class="fa fa-star" aria-hidden="true"></i>
+													<span>스페셜클래스</span>
+												</div>
+											</div>
+										</a>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('educations.edu_main_list', class_type_id=108) }}">
+													<div class="card-body" style="height:67px">
+														<div class="text-btn-small">
+															<i class="fa fa-graduation-cap" aria-hidden="true"></i>
+															<span>교사 교육</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=114) }}">
+													<div class="card-body" style="height:67px">
+														<div class="text-btn-small">
+															<i class="fa fa-comments" aria-hidden="true"></i>
+															<span>교육컨설팅/상담</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=110) }}">
+													<div class="card-body" style="height:67px;">
+														<div class="text-btn-small">
+															<i class="fa fa-users" aria-hidden="true"></i>
+															<span>맘스클래스</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=104) }}">
+													<div class="card-body" style="height:67px;">
+														<div class="text-btn-small">
+															<i class="fa fa-bullhorn" aria-hidden="true"></i>
+															<span>공지사항</span>
+														</div>
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- <div class="row">
+							<div class="text-center">
+								<div class="col-md-6">
+									<div class="card btn-main-bottom">
+										<a href="{{ url_for('products.main_list', product_kind_id=103, product_kind_sub_id=0) }}">
+											<div class="card-body select" style="padding:3.5em 0;">
+												<img src="/static/images/teacher/special_class.png" style="width:auto;">
+											</div>
+										</a>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('educations.edu_main_list', class_type_id=108) }}">
+													<div class="card-body" style="height:67px">
+														<img src="/static/images/teacher/class.png" style="width:auto;">
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=114) }}">
+													<div class="card-body" style="height:67px">
+														<img src="/static/images/teacher/educonsult.png" style="width:auto;">
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom" style="margin-bottom:10px">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=110) }}">
+													<div class="card-body" style="height:67px;">
+														<img src="/static/images/teacher/moms_class.png" style="width:auto;">
+													</div>
+												</a>
+											</div>
+										</div>
+										<div class="col-md-6 col-sm-6">
+											<div class="card btn-main-bottom">
+												<a href="{{ url_for('boards.board_list', product_kind_id=0, board_kind_id=104) }}">
+													<div class="card-body" style="height:67px;">
+														<img src="/static/images/teacher/notice.png" style="width:auto;">
+													</div>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> -->
+
+					</div>
+				</div>
+			</div>
+			{% include "includes/footer.html" ignore missing with context %}
+		</div>
+{% else %}
+	<div class="index-page"><!--20240715 혜인수정(S)_btnPush 추가-->
+       <div class="page-header" style="background:url('/static/images/main/main_bg3.png') top center no-repeat; background-size:cover">
+			<div class="container-fluid full-height">
+				<!--<div class="characters ">
+					<img src="/static/images/main/img-object--1.png" alt="Character 1" class="character character-1">
+					<img src="/static/images/main/img-object--2.png" alt="Character 2" class="character character-2">
+				</div>-->
+				<div class="row text-center">
+					<div class="title text-center">
+						<img src="/static/images/main/title.png">
+					</div>
+					<div class="buttonbox">
+						<div class="col-xs-6 col-sm-3 button-wrapper" >
+							<img class="CD-image" src="/static/images/main/bl_cd.png" alt="CD Image" >
+							<a href="{{ url_for('products.main_list', product_kind_id=3, product_kind_sub_id=0) }}" class="button-content btnPush">
+								<img src="/static/images/logo/brand_logo_bl.png" alt="Logo" style="height:50px">
+								<p>튼튼영어<br/>베이비리그</p>
+							</a>
+						</div>
+						<div class="col-xs-6 col-sm-3 button-wrapper" >
+							<img class="CD-image" src="/static/images/main/jrp_cd.png" alt="CD Image">
+							<a href="{{ url_for('products.main_group_list', product_kind_id=62) }}" class="button-content btnPush">
+								<img src="/static/images/logo/brand_logo_jrp.png" alt="Logo" style="height:50px">
+								<p>튼튼영어<br/>주니어플러스</p>
+							</a>
+						</div>
+						<div class="col-xs-6 col-sm-3 button-wrapper" >
+							<img class="CD-image" src="/static/images/main/jr_cd.png" alt="CD Image" >
+							<a href="{{ url_for('products.main_list', product_kind_id=4, product_kind_sub_id=0) }}" class="button-content btnPush">
+								<img src="/static/images/logo/brand_logo_jr.png" alt="Logo" style="height:50px">
+								<p>튼튼영어<br/>주니어</p>
+							</a>
+						</div>
+						<div class="col-xs-6 col-sm-3 button-wrapper">
+							<img class="CD-image" src="/static/images/main/tr_cd.png" alt="CD Image" >
+							<a href="{{ url_for('products.main_list', product_kind_id=5, product_kind_sub_id=0) }}" class="button-content btnPush">
+								<img src="/static/images/logo/brand_logo_tr.png" alt="Logo" style="height:50px">
+								<p>튼튼영어<br/>튜터링</p>
+							</a>
+						</div>
+					</div>
+        		</div>
+
+
+
+
+				</div>
+			</div>
+		</div>
+		{% include "includes/footer.html" ignore missing with context %}
+	</div><!--20240619 혜인수정(E)-->
+{% endif %}
+
+{% if res is not none %}
+	{% call classic_modal('noticeModal', res.Title, True, 'fn_close_after()', fn_comment='일주일동안 띄우지 않기') %}
+		<div class="col-md-12">
+			{% if res.UploadFileName %}
+				{% if res.LinkAddress %}
+					<a href="{{res.LinkAddress}}">
+						<img src="{{res.UploadPath | virtual_path }}" class="container img-no-padding img-responsive" style="max-width:500px; height: auto;">
+					</a>
+				{% else %}
+					<img src="{{res.UploadPath | virtual_path }}" class="container img-no-padding img-responsive" style="max-width:500px; height: auto;">
+				{% endif %}
+			{% endif %}
+			{% if res.Comments %}
+				<br />
+				{{res.Comments | safe}}
+			{% endif %}
+		</div>
+	{% endcall %}
+{% endif %}
+
+
+
+
+<script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(){
+		cookiedata = document.cookie;
+		if (cookiedata.indexOf("ncookie=done") < 0) {
+			$("#noticeModal").modal("show");
+		}
+	});
+
+    function setCookie(name, value, expire_days) {
+        var todayDate = new Date();
+        todayDate.setDate(todayDate.getDate() + expire_days);
+        document.cookie = name + "=" + escape(value) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+    }
+
+    function fn_close_after() {
+        setCookie("ncookie", "done", 7);
+        $("#noticeModal").modal("hide");
+    }
+</script>
+
+
+{% endblock %}
+
+
+

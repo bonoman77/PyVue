@@ -1,0 +1,115 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input, textarea %}
+{% from "macros/modal.html" import small_modal %}
+{% block title %} 회원 상세 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+		<div class="col-md-10">
+    	    <div class="card">
+                <div class="card-header card-header-icon" data-background-color="rose">
+                    <i class="material-icons">science</i>
+                </div>
+                <div class="card-content">
+                    <h4 class="card-title">GYURI와 영어로 대화해보세요.</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="chatbox" class="chat-box">
+                                <!-- Chat messages will appear here -->
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div>
+								{{ input('text', 'user_input', user_input, opt='required', placeholder="메시지를 입력해주세요.", onkeydown="handleKeyPress(event)") }}
+                                <button onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+    </div>
+</div>
+
+<script>
+	function sendMessage() {
+        user_input = document.getElementById("user_input").value;
+
+        var koreanCharacters = /[ㄱ-ㅎㅏ-ㅣ가-힣]/;
+        if (koreanCharacters.test(user_input)) {
+ 	        site.showNotification('top','center', '영어로만 입력해주세요.', 'info')
+            document.getElementById("user_input").value="";
+            document.getElementById("user_input").focus();
+            return;
+        }
+
+        if (user_input== "") {
+ 	        site.showNotification('top','center', '빈 내용은 보낼 수 없습니다.', 'info')
+            document.getElementById("user_input").value="";
+            document.getElementById("user_input").focus();
+            return;
+        }
+
+        $('#chatbox').append('<p><strong>USER:</strong> ' + user_input + '</p>');
+        document.getElementById("user_input").value="";
+
+        $.ajax({
+            type: "POST",
+            url: "/playgrounds/chat",
+            data: { user_input: user_input },
+            success: function (res) {
+                if (res.type == "toy_store"){
+                    $('#chatbox').append('<p><strong>Toy Store Info:</strong> ' + JSON.stringify(res.data) + '</p>');
+                } else {
+                    $('#chatbox').append('<p><strong><span class="text-success">GYURI:</span></strong> <span class="text-info">' + res.data + '</span></p>');
+                }
+                document.getElementById("user_input").focus();
+                $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+            }
+        });
+	}
+
+    function handleKeyPress(e) {
+        var key = e.keyCode || e.which;
+        if (key === 13) { // 13 is the Enter key code
+            sendMessage();
+            e.preventDefault(); // Prevent default action (form submission)
+        }
+    }
+</script>
+
+
+<style>
+    .chat-box {
+        max-height: 400px; /* 최대 높이 설정 */
+        overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
+        border: 0px solid #ccc; /* 선택적으로 테두리 추가 */
+        padding: 20px; /* 내부 여백 설정 */
+    }
+
+    body {
+        overflow: hidden; /* 바깥쪽 스크롤을 숨김 */
+    }
+
+    /* Webkit 기반 브라우저(예: Chrome, Safari)에서 스크롤바 스타일 조정 */
+    .chat-box::-webkit-scrollbar {
+        width: 8px; /* 스크롤바 너비 */
+        background-color: transparent; /* 배경색 투명하게 */
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2); /* 스크롤바 색상 */
+        border-radius: 10px; /* 둥근 모서리 설정 */
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+        background-color: transparent; /* 스크롤 트랙 배경색 투명하게 */
+    }
+
+</style>
+
+{% endblock %}			 
+
+			

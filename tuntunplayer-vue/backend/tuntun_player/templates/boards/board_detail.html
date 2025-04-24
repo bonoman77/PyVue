@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 교재 메인 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-mini" data-parallax="true" style="background-image: url('{{ product_kind_id | background_url('board_list') }}');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+						<h4><b>{{ product_kind_id | product_kind_name() }}</b></h4>
+                        <h4 class="text-title"><b>{{ board_kind_id | board_kind_name() }}</b></h4>
+				    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+    <div class="main main-raised">
+        <div class="section">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<h5 class="title">{{res.Title}}</h5>
+						<br/>
+						<form role="form" id="form" method="post">
+							<div class="form-group label-floating">
+								<label class="control-label">설명</label>
+								<div class="">
+									<br>{{res.Comments | safe}}
+								</div>
+								<span class="material-input"></span>
+							</div>
+							<div class="form-group label-floating">
+								<label class="control-label">첨부파일</label>
+								<div class="table-responsive">
+									<table class="table table-striped">
+										{% for file in file_list %}
+											<tr id="row_{{file.BoardFileID}}">
+												<td class="text-left" style="padding:7px; border-top:0px">
+													<a href="{{ url_for('file_download', file_path=file.UploadFilePath, file_name=file.UploadFileName, download_yn=1) }}">
+														<i class="material-icons" style="margin-right: 8px; font-size: 20px;">file_download</i>
+														{{file.UploadFileName}}
+													</a>
+													{% if (file.UploadPath | image_file_yn) %}
+	<!--																<img src="{{file.UploadPath | virtual_path }}" style="max-width: 100%; height: auto;">-->
+													{% endif %}
+												</td>
+											</tr>
+										{% else %}
+											<tr>
+												<td class="text-left" style="padding:7px; border-top:0px">
+													첨부파일 없음
+												</td>
+											</tr>
+										{% endfor %}
+									</table>
+								</div>
+							</div>
+                   		</form>
+			            <div class="text-center">
+							<button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+								<i class="material-icons">arrow_back</i> 뒤로가기
+							</button>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div> <!--section end -->
+    </div>
+</div>
+
+
+{% endblock %}
+
+

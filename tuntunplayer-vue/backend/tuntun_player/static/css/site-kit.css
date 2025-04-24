@@ -1,0 +1,643 @@
+/* 혜인 추가 main-page 시작 */
+.brand-main a {
+    margin-right: 20px; /* 원하는 간격 크기로 조정 */
+}
+
+.teacher-area .page-header .container {
+    padding-top: 8vh !important;
+}
+.teacher-area .page-header .title {
+    margin-bottom:50px;
+}
+
+.main-box {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    margin-bottom: 30px;
+    border-radius: 50px;
+    color: rgba(0,0,0, 0.87);
+    padding: 60px 20px 40px 20px;
+    background:#fff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.main-box-background{
+    background-position: center center;
+    background-size: auto;
+    text-align: center;
+}
+
+.main-box .card-content {
+    position: relative;
+    z-index: 2;
+    min-height: 280px;
+    max-width: 350px;
+    margin: 0 auto;
+}
+.main-box .card-content a{
+    font-size:15px;
+    font-weight:800;
+}
+.main-box .card-content .card-title{
+    letter-spacing:-0.5px; margin-bottom:25px;
+}
+.main-box-background .category,
+.main-box-background .card-description,
+.main-box-background small,
+.main-box-background .category,
+.main-box-background .card-description,
+.main-box-background small{
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.main-box-background .card-title,
+.main-box-background .card-title,
+.main-box-background .card-title {
+    margin-top: 20px;
+}
+
+.btn.btn-main-white {
+    box-shadow: 0 4px 0px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn.btn-main-white, .btn.btn-main-white:hover, .btn.btn-main-white:focus, .btn.btn-main-white:active, .btn.btn-main-white.active, .btn.btn-main-white:active:focus, .btn.btn-main-white:active:hover, .btn.btn-main-white.active:focus, .btn.btn-main-white.active:hover,
+.open > .btn.btn-main-white.dropdown-toggle,
+.open > .btn.btn-main-white.dropdown-toggle:focus,
+.open > .btn.btn-main-white.dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #110B02;
+}
+
+.btn-main-white:active {
+    /* 버튼이 눌렸을 때의 스타일 */
+    box-shadow: 0 0px 4px rgba(0, 0, 0, 0.2); /* 그림자 효과 변경 */
+    transform: translateY(2px); /* 버튼이 눌린 것처럼 보이게 하기 위한 변형 */
+}
+
+.btn-main-bottom{
+    border-radius:1em;
+    box-shadow: 0 4px 0px #F5D8B5;
+}
+
+.btn-main-bottom:active {
+    /* 버튼이 눌렸을 때의 스타일 */
+    box-shadow: 0 0px 0px #F5D8B5;
+    transform: translateY(2px); /* 버튼이 눌린 것처럼 보이게 하기 위한 변형 */
+}
+
+/* 혜인 추가 main-page 종료 */
+
+/* 교재 슬라이드 스타일링 */
+.carousel-inner .item img {
+    max-height: 600px; /* 최대 높이 설정 */
+    width: auto; /* 너비는 자동으로 조정됩니다. */
+    height: auto; /* 높이도 자동으로 조정됩니다. */
+    max-width: 100%; /* 최대 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬을 위한 마진 설정 */
+}
+
+/* 교재 소개 상단 타이틀 스타일링 */
+h3.text-title {
+    font-weight: 800;
+    font-size: 3.0em;
+    text-shadow: 3px 3px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
+    color: #fff !important;
+}
+
+h4.text-title {
+    font-weight: 600;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
+    color: #fff !important;
+}
+
+h5.text-title {
+    font-weight: 600;
+    font-size: 1.3em;
+    text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
+    color: #fff !important;
+}
+
+h6.text-title {
+    font-weight: 400;
+    font-size: 1.0em;
+    text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;
+    color: #fff !important;
+}
+
+h5.text-title-black {
+    font-weight: 600;
+    font-size: 1.3em;
+    letter-spacing:-1.1px;
+    /*text-shadow: 1px 1px 0 #000000, -1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;*/
+    color: #000 !important;
+}
+
+h4.text-title-main {
+    color: #110B02;
+    font-weight:700;
+}
+
+
+/* 오디오 플레이어 스타일링 */
+.audio-player {
+    width: 330px;
+    margin: 10px auto;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+.progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    height: 10px;
+    cursor: pointer;
+    box-shadow: none;
+}
+.progress {
+    height: 100%;
+    background-color: #4caf50;
+    width: 0;
+}
+.audio-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+.audio-controls button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: 0 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 기본 그림자 */
+    transition: box-shadow 0.3s ease, transform 0.1s ease; /* 부드러운 전환 효과 */
+}
+.audio-controls button:hover {
+    background-color: #555;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* 강조된 그림자 */
+}
+.audio-controls button:active {
+    background-color: #222; /* 눌렸을 때 색상 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 눌렸을 때 그림자 */
+    transform: translateY(2px); /* 눌렸을 때 약간 아래로 이동 */
+}
+
+
+/*3d button css*/
+.list_btn{
+    display: inline-block;
+}
+.brand a.button {
+    display: block;
+    position: relative;
+    float: left;
+    width: 170px;
+    padding: 0;
+    margin: 10px 20px 10px;
+    font-weight: 800;
+    font-size: 1.5em;
+    text-align: center;
+    line-height: 50px;
+    color: #FFFFFF;
+    border-radius: 25px;
+    transition: all 0.2s ;
+    letter-spacing: -0.5px;
+}
+a.button.btnYellow{
+    color: #e94909;
+    font-size: 1.4em;
+}
+a.button.btnLightGreen{
+    color: #963b92;
+    font-size: 1.4em;
+}
+a.button.btnDarkBlue{
+    color: #ffda16;
+    font-size: 1.4em;
+}
+.btnOrange {
+    background: #faa716;
+}
+.btnGreen {
+    background: #2bc77f;
+}
+.btnBlue {
+    background: #4099f2;
+}
+.btnYellow {
+    background: #feda15;
+}
+.btnLightGreen {
+    background: #bed500;
+}
+.btnDarkBlue {
+    background: #075dac;
+}
+.btnGreen.btnPush {
+    box-shadow: 0px 5px 0px 0px #15955a;
+}
+
+.btnBlue.btnPush {
+    box-shadow: 0px 5px 0px 0px #0f74d9;
+}
+
+.btnOrange.btnPush {
+    box-shadow: 0px 5px 0px 0px #d98d00;
+}
+
+.btnLightGreen.btnPush {
+    box-shadow: 0px 5px 0px 0px #a8bc00;
+}
+
+.btnDarkBlue.btnPush {
+    box-shadow: 0px 5px 0px 0px #003d75;
+}
+
+.btnYellow.btnPush {
+    box-shadow: 0px 5px 0px 0px #ffc200;
+}
+.brand .btnPush:hover {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+.btnGreen.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #15955a;
+}
+
+.btnBlue.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #0f74d9;
+}
+
+.btnOrange.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #d98d00;
+}
+.btnLightGreen.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #a8bc00;
+}
+
+.btnDarkBlue.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #003d75;
+}
+
+.btnYellow.btnPush:hover {
+    box-shadow: 0px 0px 0px 0px #ffc200;
+}
+/*3d button css end*/
+
+/* Bounce In */
+.hvr-bounce-in {
+    display: inline-block;
+    -webkit-transform: perspective(1px) translateZ(0);
+    transform: perspective(1px) translateZ(0);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+}
+.hvr-bounce-in:hover, .hvr-bounce-in:focus, .hvr-bounce-in:active {
+    -webkit-transform: scale(1.2);
+    transform: scale(1.2);
+    -webkit-transition-timing-function: cubic-bezier(0.47, 2.02, 0.31, -0.36);
+    transition-timing-function: cubic-bezier(0.47, 2.02, 0.31, -0.36);
+}
+/* Bounce In end*/
+
+@media screen and (max-width: 768px) {
+    .card-container {
+        justify-content: center;
+    }
+    .card-container-sm .col-sm-6{
+        float:left; width:50%
+    }
+    .page-header.header-small{
+        background-size: 500%;
+    }
+    .index-page .page-header .container{
+        padding: 160px 0 70px;
+    }
+    .index-page .page-header{
+        height: auto;
+        background-position: top;
+        background-size: cover;
+    }
+    .brand a.button{
+        float: none;
+        margin-bottom: 20px;
+    }
+}
+
+@media screen and (max-width: 950px) and (orientation: landscape) {
+    /* width 950px이하 + 가로 모드일 때 적용할 CSS */
+
+    .index-page .page-header{
+        height: auto;
+        background-size: 150%;
+    }
+    .page-header.header-small{
+        height: auto;
+        padding: 30px 0;
+        background-size: 135%;
+    }
+}
+
+/* 메인페이지 관련: 혜인 추가 20240619 */
+/*20240715 혜인 btn animation추가_변경하면서 클래스 추가때문에 약간의 변동사항이 있어서 복붙해주시면 될것같아요!*/
+
+.full-height {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ .button-wrapper {
+    position: relative;
+    text-align: center;
+    margin-top: 150px;
+}
+
+.button-wrapper .CD-image {
+    position: absolute;
+    top: -77px;
+    left: 50%;
+    width:12em;
+    transform: translateX(-50%);
+    animation: rotate360 9s linear infinite;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    will-change: transform;
+    transition: top 0.5s ease;
+}
+
+.button-wrapper:hover .CD-image {
+    animation: none;
+    top: -30px;
+    transform: translateX(-50%);
+}
+
+.btnPush:active,
+.btnPush:hover {
+    box-shadow: none;
+    transform: translateY(10px);
+    box-shadow:none !important;
+    transition: 0.3s all ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btnPush {
+    margin: 0;
+    transform: translateY(7px);
+    transition: 0.3s all ease;
+    -webkit-touch-callout: none;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.button-content {
+    display: flex;
+    padding: 30px 55px 10px;
+    background:#fff;
+    text-align: center;
+    border-radius: 25px;
+    position: relative;
+    box-shadow: 0 5px 0px 0 #e8d0c0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition:0.3s all ease;
+}
+
+.button-content p {
+    color: rgba(0, 0, 0, 0.88);
+    font-weight: 600;
+    font-size: 1.1em;
+    margin-top: 10px;
+}
+.button-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-size: 0% 100%;
+    transition: top 0.3s ease, background-color 0.3s ease;
+}
+
+.nav .button-container .btnPush {
+    transform: translateY(1.5px);
+}
+.nav .button-container .btnPush:active,
+.nav .button-container .btnPush:hover {
+   transform: translateY(3px);
+}
+
+
+.button-wrapper:hover:nth-child(1) .button-content{
+    background: #FFE86E;
+}
+.button-wrapper:hover:nth-child(2) .button-content{
+    background: #DDD8D3;
+}
+.button-wrapper:hover:nth-child(3) .button-content{
+    background: #FF9A94;
+}
+.button-wrapper:hover:nth-child(4) .button-content{
+    background: #CBD2E9;
+}
+
+
+@keyframes rotate360 {
+    from {
+        transform: translateX(-50%) rotate(0deg);
+    }
+    to {
+        transform: translateX(-50%) rotate(360deg);
+    }
+}
+
+@media (max-width: 767px) {
+    .button-wrapper {
+        width: 50%;
+        float: left;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .button-wrapper {
+        width: 50%;
+        float: left;
+    }
+}
+@media (max-width: 932px) and (orientation: landscape) {
+    .full-height {
+        height: auto;
+        padding:80px 16px;
+    }
+}
+@media (max-width: 480px) {
+    .full-height {/*높이가운데정렬*/
+        height: inherit;
+        padding:100px 0;
+    }
+
+    /*-----------20240717 혜인수정(S)-----------*/
+    .container-fluid .buttonbox{
+        margin-top:100px;
+    }
+    .buttonbox .button-wrapper {
+        width: 100%;
+        float: inherit;
+        margin-top:10px;
+    }
+
+    .button-content {
+        padding: 30px 50px 30px 50px;
+        margin-top:100px;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .button-wrapper .CD-image {
+        top: -59px;
+        left: 30%;
+        width: 9em;
+
+    }
+    .button-wrapper:nth-child(1) .button-content{
+        background: #FFE86E;
+    }
+    .button-wrapper:nth-child(2) .button-content{
+        background: #DDD8D3;
+    }
+    .button-wrapper:nth-child(3) .button-content{
+        background: #FF9A94;
+    }
+    .button-wrapper:nth-child(4) .button-content{
+        background: #CBD2E9;
+    }
+}/*-----------20240717 혜인수정(E)-----------*/
+
+
+
+/*텍스트 버튼 스타일 - 메인 페이지 하단 버튼*/
+.text-btn-special {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 1.8em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    transition: all 0.3s ease;
+}
+
+.text-btn-special i {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #F5A623;
+}
+
+.text-btn-special span {
+    display: block;
+}
+
+.text-btn-small {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.text-btn-small i {
+    font-size: 1.3em;
+    margin-bottom: 5px;
+    color: #F5A623;
+}
+
+.text-btn-small span {
+    display: block;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.btn-main-bottom:hover .text-btn-special,
+.btn-main-bottom:hover .text-btn-small {
+    transform: scale(1.05);
+    color: #000;
+}
+
+.btn-main-bottom:hover .text-btn-special i,
+.btn-main-bottom:hover .text-btn-small i {
+    color: #E67E22;
+}
+
+.btn-main-bottom:active .text-btn-special,
+.btn-main-bottom:active .text-btn-small {
+    transform: scale(0.95);
+}
+
+.btn-main-white:hover {
+    z-index: 1;
+    box-shadow: 0 0 0 2px #b3e0ff, 0 0 16px 2px #007bff55;
+    background: #f8fbff;
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-light-bluelamp:hover {
+    z-index: 1;
+    box-shadow: 0 0 0 2px #b3e0ff, 0 0 16px 2px #007bff55;
+    background: #f8fbff;
+    color: #007bff;
+    border-color: #007bff;
+}
+
+
+.card.card-profile.main-list-card {
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s, background 0.3s;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+.card.card-profile.main-list-card:hover {
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    transform: translateY(-8px) scale(1.04);
+    border-color: #007bff;
+    background: #f5faff;
+    z-index: 2;
+}
+
+.card.card-profile.main-list-card .card-body img,
+.card.card-profile.main-list-card .card-image img {
+    transition: transform 0.35s;
+}
+
+.card.card-profile.main-list-card:hover .card-body img,
+.card.card-profile.main-list-card:hover .card-image img {
+    transform: scale(1.07) rotate(-2deg);
+    filter: brightness(1.07) saturate(1.1);
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% from "macros/modal.html" import classic_modal, hidden_modal %}
+{% block title %} 교재 타이틀 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-auto" data-parallax="true" style="background-image: url('{{ res.ProductKindID | background_url('title_list') }}');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="">
+                        <img src="{{ res.ContentGroupLogoURL | new_image_url }}" style="max-width:150px; max-height:auto;" />
+                        {% if res.Comment %}
+                            <h5 class="text-title-black">{{res.Comment}}</h5>
+                        {% endif %}
+<!--                        <div class="brand text-muted">-->
+<!--                            <ul class="nav nav-pills nav-pills-github" style="display: inline-block">-->
+<!--                              <li class="active"><a data-toggle="tab">영상모음</a></li>-->
+<!--                              <li><a href="{{ url_for('boards.board_list', board_kind_id=105, product_kind_id=res.ProductKindID) }}">음원모음</a></li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+                    </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+                        {% for u in upper_list %}
+                            {% if u.AuthYn %}
+                                <a class="btn btn-white btn-light btn-light-bluelamp {{'js-modal-vimeo-showcase' if u.ShowcaseYn else 'js-modal-vimeo'}}" data-video-id="{{u.StreamID}}">
+                                    {{u.Title}}
+                                </a>
+                            {% else %}
+                                <a class="btn btn-default btn-light" data-toggle="popover" data-placement="bottom" title="" data-content="{{ '등록된 사업에 대한 컨텐츠만 열람이 가능합니다.' if session.login_user.manager_yn else '구매한 교재만 이용이 가능합니다.'  }}" data-container="body" data-original-title="안내">
+                                    {{u.Title}}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+            <div class="container">
+                <div class="text-left">
+                    <a href="{{ url_for('homes.index') }}">메인</a> > <a href="{{ url_for('products.main_list', product_kind_id=res.ProductKindID, product_kind_sub_id=0) }}">교재 그룹</a> > 교재 타이틀
+                </div>
+
+<!--                <div class="row" style="padding-top: 40px;">-->
+<!--                    <div class="col-md-10 col-md-offset-1">-->
+<!--                        <div class="table-responsive">-->
+<!--                            <table class="table table-shopping">-->
+<!--                                <tbody>-->
+<!--                                {% for item in res_list %}-->
+<!--                                    <tr>-->
+<!--                                        <td width="30%">-->
+<!--                                            <div class="img-container">-->
+<!--                                                <img src="{{item.ContentImageURL | new_image_url}}" alt="...">-->
+<!--                                            </div>-->
+<!--                                        </td>-->
+<!--                                        <td width="70%" class="td-name">-->
+<!--                                            <a href="#jacket">{{item.WeekTitle}}</a>-->
+<!--                                            <br><small>{{item.ContentTitle}}</small>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                {% endfor %}-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div class="row card-container-sm" style="display: flex; flex-wrap: wrap;">
+                {% for item in res_list %}
+                    <div class="{% if res.ProductKindID not in (3, 121) %}col-lg-2{% endif %} col-md-3 col-sm-6">
+                        <div class="card card-profile card-plain" style="margin-bottom: 0px;">
+                            {% if item.AuthYn %}
+                                <a href="{{ url_for('products.content_list', product_kind_id=res.ProductKindID, content_title_id=item.ContentTitleID) }}">
+                                    <div class="card-image">
+                                        <img src="{{item.ContentImageURL | new_image_url}}"  />
+                                    </div>
+                                </a>
+                            {% else %}
+                                <a data-toggle="popover" data-placement="bottom" title="" data-content="{{ '등록된 사업에 대한 컨텐츠만 열람이 가능합니다.' if session.login_user.manager_yn else '구매한 교재만 이용이 가능합니다.'  }}" data-container="body" data-original-title="안내">
+                                    <div class="card-image" style="filter: grayscale(100%);">
+                                        <img src="{{item.ContentImageURL | new_image_url}}" />
+                                    </div>
+                                </a>
+                            {% endif %}
+
+                            {% if item.WeekTitle and session.login_user.manager_yn %}
+                               <h5 class="card-title font-weight-bold">{{item.WeekTitle}}</h5>
+                            {% endif %}
+                            <h6 class="card-title">{{item.ContentTitle}}</h6>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                        <i class="material-icons">arrow_back</i> 뒤로가기
+                    </button>
+                </div>
+            </div>
+        </div> <!-- section end -->
+	</div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+

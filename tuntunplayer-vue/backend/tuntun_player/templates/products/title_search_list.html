@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import classic_modal, hidden_modal %}
+{% block title %} 교재 검색 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-mini" data-parallax="true" style="background-image: url('{{ product_kind_id | background_url('main_list') }}');">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2">
+                    <div class="brand text-muted">
+                        <h4 class="text-title">
+                            <b>{{ product_kind_id | product_kind_name() }}</b>
+                        </h4>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div class="main main-raised">
+        <div class="section" style="padding: 10px">
+            <div class="container">
+                <a href="{{ url_for('homes.index') }}">메인</a> > <a href="{{ url_for('products.main_list', product_kind_id=product_kind_id, product_kind_sub_id=0) }}">교재 그룹</a> > 교재명 검색 결과
+                
+                
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <form method="GET" action="{{ url_for(request.endpoint, product_kind_id=product_kind_id) }}" class="form-horizontal">
+                            <div class="form-group form-file-upload">
+                                <div class="input-group text-center">
+                                    {{ input('text', 'search_text', search_text, min=3, max=20, opt="required autofocus", placeholder='교재 제목 검색') }}
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-sm btn-just-icon btn-round btn-warning">
+                                            <i class="material-icons">search</i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
+                {% if res_list|length > 0 %}
+                    <div class="row card-container" style="display: flex; flex-wrap: wrap;">
+                        {% for item in res_list %}
+                            <div class="col-lg-2 col-md-3 col-sm-6">
+                                <div class="card card-profile card-plain">
+                                    {% if item.AuthYn %}
+                                        <a href="{{ url_for('products.content_list', product_kind_id=product_kind_id, content_title_id=item.ContentTitleID) }}">
+                                            <div class="card-image">
+                                                <img src="{{item.ContentImageURL | new_image_url}}"  />
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <a data-toggle="popover" data-placement="bottom" title="" data-content="{{ '등록된 사업에 대한 컨텐츠만 열람이 가능합니다.' if session.login_user.manager_yn else '구매한 교재만 이용이 가능합니다.'  }}" data-container="body" data-original-title="안내">
+                                            <div class="card-image" style="filter: grayscale(100%);">
+                                                <img src="{{item.ContentImageURL | new_image_url}}" />
+                                            </div>
+                                        </a>
+                                    {% endif %}
+
+                                    {% if session.login_user.manager_yn %}
+                                       <h6 class="card-title font-weight-bold">{{item.WeekTitle}}</h6>
+                                    {% endif %}
+                                    <h6 class="card-title">{{item.ContentTitle | highlight_search(search_text) | safe}}</h6>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                            <i class="material-icons">arrow_back</i> 뒤로가기
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+                        <img src="/static/images/notice/illust_2.png" width="180px">
+                        <h5>{{search_text | highlight_search(search_text) | safe}} (으)로 검색한 자료가 존재하지 않습니다.</h5>
+                        <button type="button" class="btn btn-github btn-round" onclick="javascript:history.back()">
+                            <i class="material-icons">arrow_back</i> 뒤로가기
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div><!-- section -->
+	</div> <!-- end-main-raised -->
+</div>
+
+{% endblock %}
+

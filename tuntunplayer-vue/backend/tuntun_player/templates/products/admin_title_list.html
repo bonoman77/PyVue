@@ -1,0 +1,108 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 컨텐츠 관리 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">{{route_kind_id | route_kind_info('icon')}}</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{route_kind_id | route_kind_info('name')}} ({{content_group}})</h4>
+                        {% if route_kind_id==1 %}
+                            <p class="card-category">
+                                교사용/회원용은 <strong>순서, 네이밍, 사용여부</strong>에 따라 차이가 있으나 타이틀 내의 컨텐츠 관리는 동일합니다. <br />
+                                관리자 페이지에서의 <strong>컨텐츠 순서나 네이밍</strong> 은 실제 서비스 화면에서도 동일하게 보여집니다.
+                            </p>
+                            <ul class="nav nav-pills nav-pills-icons nav-pills-warning">
+                                <li class="{{'active' if manager_yn==0}}"><a href="{{url_for('products.admin_title_list', route_kind_id=route_kind_id, product_kind_id=product_kind_id, content_group_id=content_group_id, manager_yn=0)}}">회원</a></li>
+                                <li class="{{'active' if manager_yn}}"><a href="{{url_for('products.admin_title_list', route_kind_id=route_kind_id, product_kind_id=product_kind_id, content_group_id=content_group_id, manager_yn=1)}}">교사</a></li>
+                            </ul>
+                        {% endif %}
+                        <div class="row card-container" style="display: flex; flex-wrap: wrap;">
+                            {% for res in res_list %}
+                                {% if route_kind_id==4 and not res.BookletUseYn %}
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card card-profile card-plain">
+                                            <a data-toggle="popover" data-placement="bottom" title="" data-content="서비스가 제공되는 컨텐츠가 아닙니다." data-container="body" data-original-title="안내">
+                                                <div class="card-image" style="filter: grayscale(100%);">
+                                                    <img src="{{res.ContentImageURL | new_image_url}}"  />
+                                                </div>
+                                            </a>
+                                            <br />
+                                            {% if res.WeekTitle %}
+                                               <h6 class="card-title font-weight-bold"><b>{{res.WeekTitle}}</b><br />{{res.ContentTitle}}</h6>
+                                            {% else %}
+                                               <h6 class="card-title">{{res.ContentTitle}}</h6>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-2 col-sm-4">
+                                        <div class="card card-profile card-plain">
+                                            {% set link_url = 'products.admin_content_music_list' if route_kind_id==2 else 'products.admin_content_reference_list' if route_kind_id==3 else 'products.admin_content_booklet_list' if route_kind_id==4 else 'products.admin_content_list' %}
+                                            <a href="{{url_for(link_url, route_kind_id=route_kind_id, product_kind_id=product_kind_id, content_title_id=res.ContentTitleID)}}">
+                                                <div class="card-image" id="card_{{res.ContentTitleID}}" >
+                                                    <img src="{{res.ContentImageURL | new_image_url}}" />
+                                                </div>
+                                            </a>
+                                            <br />
+                                            {% if res.WeekTitle %}
+                                               <h6 class="card-title font-weight-bold"><b>{{res.WeekTitle}}</b><br />{{res.ContentTitle}}</h6>
+                                            {% else %}
+                                                <h6 class="card-title">{{res.ContentTitle}}</h6>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="col-md-8">
+                                    <h4>등록된 자료가 없습니다.</h4>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="btn btn-fill btn-github" onclick="javascript:history.back()">뒤로가기</button>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function isDisplay(content_title_id, display_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/products/title_display_update",
+            data: { content_title_id: content_title_id, display_yn: display_yn },
+            success: function (result) {
+                btnElement = document.getElementById("btn_" + content_title_id);
+                cardElement = document.getElementById("card_" + content_title_id);
+
+                if (display_yn === 1) {
+                    btnElement.className = 'btn btn-sm';
+                    btnElement.innerText = '비활성화';
+                    btnElement.setAttribute('onclick', 'isDisplay(' + content_title_id + ', 0)');
+                    cardElement.style = '';
+                } else {
+                    btnElement.className = 'btn btn-info btn-sm';
+                    btnElement.innerText = '활성화';
+                    btnElement.setAttribute('onclick', 'isDisplay(' + content_title_id + ', 1)');
+                    cardElement.style = 'filter: grayscale(100%);';
+                }
+            }
+        });
+    }
+</script>
+
+{% endblock %}
+
+
+
+

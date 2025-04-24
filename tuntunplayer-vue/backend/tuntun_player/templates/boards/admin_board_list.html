@@ -1,0 +1,221 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 게시판 관리 {% endblock %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">assignment</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{ board_kind_id | board_kind_name() }} ({{product_kind_id | product_kind_name if product_kind_id | product_kind_name else '공통'}})</h4>
+<!--                        <p class="card-category">-->
+<!--                        </p>-->
+                        <div class="row">
+                            <div class="col-md-12">
+	                			<form method="GET" action="{{url_for(request.endpoint, board_kind_id=board_kind_id, product_kind_id=product_kind_id)}}" class="form-horizontal">
+                                    {% if board_kind_id in (105, 106, 107) %}
+                                        <label class="form-group">
+                                            <select id="product_kind" onchange="product_kind_change(this)" class="form-control" >
+                                                <option value="3" {{'selected' if product_kind_id==3}}>베이비리그</option>
+                                                <option value="4" {{'selected' if product_kind_id==4}}>주니어</option>
+                                                <option value="62" {{'selected' if product_kind_id==62}}>주니어플러스</option>
+                                                <option value="5" {{'selected' if product_kind_id==5}}>튜터링</option>
+                                                {% if board_kind_id==105 %}
+                                                   <option value="103" {{'selected' if product_kind_id==103}}>스페셜 클래스</option>
+                                                {% endif %}
+                                            </select>
+                                        </label> &nbsp;
+                                    {% endif %}
+                                    <label class="form-group">
+                                        <select id="row_size" onchange="row_size_change(this)" class="form-control" >
+                                            <option value="20" {{'selected' if paging.row_size == 20}}>20개씩 보기</option>
+                                            <option value="30" {{'selected' if paging.row_size == 30}}>30개씩 보기</option>
+                                            <option value="50" {{'selected' if paging.row_size == 50}}>50개씩 보기</option>
+                                        </select>
+                                    </label> &nbsp;
+                                    <label class="form-group">
+                                        {{ input('text', 'search_text', search.search_text, opt='required', placeholder='검색') }}
+                                        <input type="submit" hidden>
+                                    </label>
+                                    <button class="btn btn-facebook btn-round btn-fab btn-fab-mini">
+                                        <i class="material-icons">search</i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="text-primary">
+                                    <tr>
+                                        <th class="text-center" width="10%">번호</th>
+                                        <th class="text-center" width="40%">제목</th>
+                                        <th class="text-center" width="15%">작성자</th>
+                                        <th class="text-center" width="15%">등록일</th>
+                                        <th class="text-center" width="15%">옵션</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for res in res_list %}
+                                        <tr id="row_{{res.BoardID}}">
+                                            <td class="text-center" width="10%">{{res.BoardID}}</td>
+                                            <td class="text-left" width="40%">
+                                                <a href="{{ url_for('boards.admin_board_update', board_kind_id = board_kind_id, board_id = res.BoardID) }}">{{res.Title}}</a>
+	  				   		        			{% if res.FileExistYn %}
+													<i class="fa fa-archive text-success"></i>
+                        						{% endif %}
+												{% if res.RecommendYn %}
+													<i id="star_{{res.BoardID}}" class="fa fa-star text-warning"></i>
+												{% else %}
+													<i id="star_{{res.BoardID}}" class=""></i>
+                        						{% endif %}
+                                            </td>
+                                            <td class="text-center" width="15%">{{res.MemberName}}</td>
+                                            <td class="text-center" width="15%">{{res.CreateDate}}</td>
+                                            <td class="text-center td-actions" width="15%">
+                                                <button id="recommend_{{res.BoardID}}" type="button" onclick="recommendUpdate({{res.BoardID}}, {{0 if res.RecommendYn else 1}});" class="btn btn-round {{'btn-warning' if res.RecommendYn}}">
+                                                    <i class="material-icons">star</i>
+                                                </button>
+                                                <button id="display_{{res.BoardID}}" type="button" onclick="displayUpdate({{res.BoardID}}, {{0 if res.DisplayYn else 1}});" class="btn btn-round {{'btn-info' if res.DisplayYn}}">
+                                                    <i class="material-icons">visibility</i>
+                                                </button>
+                                                <button type="button" onclick="itemDelete({{res.BoardID}});" class="btn btn-round btn-github">
+                                                    <i class="material-icons">delete</i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                <h4>데이터가 존재하지 않습니다.</h4>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="">
+                                <ul class="pagination pagination-info">
+                                    {% set board_list_url = url_for(request.endpoint, board_kind_id=board_kind_id, product_kind_id=product_kind_id, row_size=paging.row_size, start_date=search.start_date, end_date=search.end_date, search_text=search.search_text if search) %}
+
+                                    {% if paging.pre_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.pre_page}}">prev</a></li>
+                                    {% endif %}
+
+                                    {% for i in range(paging.start_page, paging.max_page) %}
+                                        {% if paging.page == i %}
+                                            <li class="active"><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% else %}
+                                            <li><a href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if paging.next_page_yn %}
+                                        <li><a href="{{board_list_url}}&page={{paging.next_page}}">next</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+<!--                        <button type="button" class="btn btn-fill btn-github" onclick="javascript:history.back()">뒤로가기</button>-->
+<!--                        <button type="button" class="btn btn-fill btn-success">엑셀출력</button>-->
+<!--                        <button type="button" class="btn btn-fill btn-info">이메일발송</button>-->
+                        <a href="{{ url_for('boards.admin_board_insert', board_kind_id=board_kind_id, product_kind_id=product_kind_id) }}" class="btn btn-fill btn-facebook">신규등록</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function row_size_change(select) {
+        var row_size = select.value;
+        window.location.href="{{ url_for(request.endpoint, board_kind_id=board_kind_id, product_kind_id=product_kind_id) }}?page=1&row_size="+row_size;
+   }
+
+   function product_kind_change(select) {
+        var product_kind_id = select.value;
+        window.location.href="/boards/admin_board_list/{{board_kind_id}}/" + product_kind_id + "?page=1&row_size={{paging.row_size}}";
+   }
+
+   function recommendUpdate(board_id, recommend_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/boards/admin_board_recommend_update",
+            data: { board_id: board_id, recommend_yn: recommend_yn },
+            success: function (result) {
+                btnElement = document.getElementById("recommend_" + board_id);
+                starElement = document.getElementById("star_" + board_id);
+
+                if (recommend_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-warning';
+                    btnElement.setAttribute('onclick', 'recommendUpdate(' + board_id + ', 0)');
+                    starElement.className = 'fa fa-star text-warning';
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'recommendUpdate(' + board_id + ', 1)');
+                    starElement.className = '';
+                }
+            }
+        });
+   }
+
+   function displayUpdate(board_id, display_yn) {
+        $.ajax({
+            type: "POST",
+            url: "/boards/admin_board_display_update",
+            data: { board_id: board_id, display_yn: display_yn },
+            success: function (result) {
+                btnElement = document.getElementById("display_" + board_id);
+
+                if (display_yn === 1) {
+                    btnElement.className = 'btn btn-round btn-info';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + board_id + ', 0)');
+                } else {
+                    btnElement.className = 'btn btn-round';
+                    btnElement.setAttribute('onclick', 'displayUpdate(' + board_id + ', 1)');
+                }
+            }
+        });
+   }
+
+   function itemDelete(board_id) {
+        swal({
+            title: '삭제',
+            text: "선택한 등록글을 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/boards/admin_board_delete",
+                data: { board_id: board_id },
+                success: function (result) {
+                    swal({
+                        title: '삭제완료!',
+                        text: '정상적으로 삭제하였습니다.',
+                        type: 'success',
+                        confirmButtonClass: "btn btn-success",
+                        buttonsStyling: false
+                    }),
+                        $("#row_" + board_id).remove();
+                }
+            })
+        }).catch(swal.noop);
+   }
+
+</script>
+
+{% endblock %}
+
+
+
+

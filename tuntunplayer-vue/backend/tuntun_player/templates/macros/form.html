@@ -1,0 +1,78 @@
+
+{% macro input(type='text', name='', value='', class='', opt='', min='', max='', placeholder='', onclick='', onchange='', onkeydown='') -%}
+    {% if type=='number' %}
+        <input type="number" inputmode="numeric" id="{{name}}" name="{{name}}" value="{{value}}" class="form-control {{class}}" min="{{min}}" max="{{max}}" placeholder="{{placeholder}}" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" onclick="{{onclick}}" onchange="{{onchange}}" onkeydown="{{onkeydown}}" {{opt}}>
+    {% else %}
+        <input type="{{type}}" id="{{name}}" name="{{name}}" value="{{value}}" class="form-control {{class}}" minlength="{{min}}" maxlength="{{max}}" placeholder="{{placeholder}}" onclick="{{onclick}}" onchange="{{onchange}}" onkeydown="{{onkeydown}}" {{opt}}>
+    {% endif %}
+{%- endmacro %}
+
+{% macro textarea(name='', value='', row='5', class='', placeholder='') -%}
+    <textarea id="{{name}}" name="{{name}}" row="{{row}}" class="form-control {{class}}" placeholder="{{placeholder}}">{{value}}</textarea>
+{%- endmacro %}
+
+{% macro select(lst, title='') -%}
+<!--  {{ select([dict(), dict(), dict()])}}   -->
+<div class="form-group">
+    <select class="custom-select" name="" id="">
+        {% if title %}
+            <option selected>{{title}}</option>
+        {% endif %}
+        {% for d in lst %}
+            <option value="{{d.value}}" {% if d.selected %} selected {% endif %}>{{d.text}}</option>
+        {% endfor %}
+    </select>
+</div>
+{%- endmacro %}
+
+{% macro checkbox(dict) -%}
+<!-- {{ checkbox(dict(id='chk1', name='chkname1', checked='checked', text='comment')) }}     -->
+<div class="form-group">
+    <div class="form-check">
+        <input class="form-check-input {{dict.class}}" type="checkbox"
+            id="{{dict.id}}"
+            value="{{dict.value}}"
+            {{checked}}>
+        <label class="form-check-label" for="{{dict.id}}">
+            {{dict.text}}
+        </label>
+    </div>
+</div>
+{%- endmacro %}
+
+{% macro radio(name='', value='', text='', checked='false', class='circle') -%}
+    <div class="radio">
+        <label>
+            {% if checked=='true' %}
+                <input type="radio" name="{{name}}" value="{{value}}" checked="{{checked}}">
+            {% else %}
+               <input type="radio" name="{{name}}" value="{{value}}">
+            {% endif %}
+            <span class="{{class}}"></span>
+            {{text}}
+        </label>
+    </div>
+{%- endmacro %}
+
+{% macro radios(lst, checked='', class='') -%}
+<div class="form-group">
+    {% for r in lst %}
+       {{ radio(r.id, r.name, r.value, r.text, r.checked) }}
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+
+
+
+
+
+
+<!--Upload & Download File -->
+
+<!--upfile = request.file['file']-->
+
+<!--from werkzeug.utils import secure_filename -->
+<!--filename =secure_filename(upfile.filename)-->
+
+<!--send_file(path, as_a)-->

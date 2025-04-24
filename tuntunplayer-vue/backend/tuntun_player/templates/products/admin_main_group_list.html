@@ -1,0 +1,44 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input %}
+
+{% block title %} 컨텐츠 관리 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">{{route_kind_id | route_kind_info('icon')}}</i>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title">{{route_kind_id | route_kind_info('name')}} ({{product_kind_id | product_kind_name}})</h4>
+                        <p class="card-category">
+<!--                            필요한 코멘트 -->
+                        </p>
+                        <div class="row">
+                            {% for res in res_list %}
+                                <div class="col-md-2 col-sm-4">
+                                    <div class="card card-profile main-list-card">
+                                        <a href="{{url_for('products.admin_main_list', route_kind_id=route_kind_id, product_kind_id=res.ProductKindID, manager_yn=0)}}">
+                                            <div class="card-body">
+                                                <img src="{{res.ImageURL | new_image_url}}" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+

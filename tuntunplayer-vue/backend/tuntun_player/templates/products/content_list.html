@@ -1,0 +1,726 @@
+{% extends "layout.html" %}
+{% from "macros/modal.html" import classic_modal %}
+{% block title %} 교재 타이틀 {% endblock %}
+
+{% block section %}
+
+<div class="ecommerce-page">
+    <div class="page-header header-auto" data-parallax="true" style="background-image: url('{{ product_kind_id | background_url('content_list') }}');">
+		<div class="container">
+			<div class="row" style="display:flex; flex-direction: column;align-items: center;" ><!--혜인수정-->
+				<div class="col-md-6" style="display:flex; justify-content: center">
+					{% if res.PreContentTitleID %}
+						<a class="btn btn-github btn-fab btn-fab-mini btn-round" href="{{ url_for('products.content_list', product_kind_id=product_kind_id, content_title_id=res.PreContentTitleID) }}" rel="tooltip" title="이전교재" data-original-title="이전교재">
+							<i class="material-icons category">skip_previous</i>
+						</a>
+					{% else %}
+						<button class="btn btn-default btn-fab btn-fab-mini btn-round" rel="tooltip" title="처음입니다." data-original-title="처음입니다.">
+							<i class="material-icons category">skip_previous</i>
+						</button>
+					{% endif %}
+
+					<div class="" style="margin:0 20px;">
+						<div id="videoCard" style="">
+							{% if res_list|length > 0 %}
+								<a class="card card-background close" onclick="allVideoPlay(0);" style="">
+									<img src="{{ res.ContentImageURL | new_image_url }}" class="img-rounded img-raised" style="max-height:150px; width: auto;">
+									<div style="position:absolute;top:50%;left:50%;color:#fff;z-index:6; transform:translate(-50%, -50%);">
+										<h5 class="text-title">전체<br />재생</h5>
+										<i class="material-icons">play_arrow</i>
+									</div>
+								</a>
+							{% else %}
+								<div class="card">
+									<img src="{{ res.ContentImageURL | new_image_url }}" class="img-rounded img-raised" style="max-height:150px; width: auto;">
+								</div>
+							{% endif %}
+						</div>
+						<div id="musicCard" style="display: none;">
+							{% if music_list|length > 0 %}
+								<a class="card card-background close" onclick="playAll(0);" style="">
+									<img src="{{ res.ContentImageURL | new_image_url }}" class="img-rounded img-raised" style="max-height:150px; width: auto;">
+									<div style="position:absolute;top:50%;left:50%;color:#fff;z-index:6; transform:translate(-50%, -50%);">
+										<h5 class="text-title">전체<br />재생</h5>
+										<i class="material-icons">play_arrow</i>
+									</div>
+								</a>
+							{% else %}
+								<div class="card">
+									<img src="{{ res.ContentImageURL | new_image_url }}" class="img-rounded img-raised" style="max-height:150px; width: auto;">
+								</div>
+							{% endif %}
+						</div>
+					</div>
+
+					{% if res.NextContentTitleID %}
+						<a class="btn btn-github btn-fab btn-fab-mini btn-round" href="{{ url_for('products.content_list', product_kind_id=product_kind_id, content_title_id=res.NextContentTitleID) }}" rel="tooltip" title="다음교재" data-original-title="다음교재">
+								<i class="material-icons">skip_next</i>
+						</a>
+					{% else %}
+						<button class="btn btn-default btn-fab btn-fab-mini btn-round" rel="tooltip" title="마지막입니다." data-original-title="마지막입니다.">
+							<i class="material-icons category">skip_next</i>
+						</button>
+					{% endif %}
+				</div>
+				<div class="col-md-6 center-block">
+					<h4 class="info-title" style="margin-bottom: 0px; margin-top: 0px;">{{res.WeekTitle if res.WeekTitle}}</h4>
+					<p style="color:#000;"> {{res.ContentTitle}}</p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+    <div class="main" style="background-color: #f5f5f5;">
+        <div class="section">
+			<div class="container">
+				<div class="row">
+                    <div class="col-md-12">
+						<div class="col-md-8 col-md-offset-2">
+			                <a href="{{ url_for('homes.index') }}">메인</a> > <a href="{{ url_for('products.main_list', product_kind_id=product_kind_id, product_kind_sub_id=0) }}">교재 그룹</a> > <a href="{{ url_for('products.title_list', product_kind_id=product_kind_id, content_group_id=res.ContentGroupID) }}">교재 타이틀</a> > 컨텐츠
+						</div>
+        	   	    </div>
+				</div>
+				<br />
+                {% if session.login_user and session.login_user.manager_yn %}
+					<div class="row">
+						<div class="col-md-6 col-md-offset-3">
+							<div class="profile-tabs">
+								<div class="nav-align-center">
+									<ul class="nav nav-pills nav-pills-icons" role="tablist">
+<!--                                    <li class="">-->
+<!--										<a href="#music-area" role="tab" data-toggle="tab" aria-expanded="false">-->
+<!--											<i class="material-icons">music_note</i>-->
+<!--											음원-->
+<!--										</a>-->
+<!--									</li>-->
+									{% if res.BookletUseYn and session.login_user.manager_yn %}
+										<li class="active">
+											<a href="#stream-area" role="tab" data-toggle="tab" aria-expanded="true">
+												<i class="material-icons">slideshow</i>
+												영상
+											</a>
+										</li>
+										<li class="">
+											<a href="#image-area" role="tab" data-toggle="tab" aria-expanded="true">
+												<i class="material-icons">image</i>
+												화상수업
+											</a>
+										</li>
+									{% endif %}
+								</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br />
+				{% endif %}
+				<div class="tab-content">
+			        <div class="tab-pane active" id="stream-area">
+						{% if res_list|length > 0 %}
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<h4><strong>영상</strong></h4>
+										<div id="screen" class="embed-responsive embed-responsive-16by9">
+											<div class="text-center" id="vimeo-player" style="max-width: 100%; overflow: hidden;">
+												<!-- 영상 플레이어 코드를 여기에 추가 -->
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<div class="text-center">
+											<button type="button" class="btn btn-fill btn-success btn-round btn-md" onclick="selectVideoPlay(0);"><i class="material-icons">play_arrow</i> 선택 재생</button>
+											<button type="button" class="btn btn-fill btn-info btn-round btn-md" onclick="selectVideoPlay(1);"><i class="material-icons">restart_alt</i> 선택 반복재생</button>
+											<!--							<button type="button" class="btn btn-fill btn-info" onclick="allVideoPlay(0);">전체 재생</button>-->
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th class="text-left" width="10%">
+															<div class="checkbox">
+																<label>
+																	<input type="checkbox" name="stream_check_all" value="">
+																</label>
+															</div>
+														</th>
+														<th class="text-left" width="60%">제목</th>
+														<th class="text-center" width="30%">재생</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% for item in res_list %}
+														<tr id="content_row_{{item.ContentID}}">
+															<td class="text-center" width="10%">
+																<div class="checkbox">
+																	<label>
+																		<input type="checkbox" name="stream_check" value="{{item.StreamID}}">
+																	</label>
+																</div>
+															</td>
+															<td class="text-left" width="60%">
+																<a href="javascript:videoPlay({{item.StreamID | int}},0);">
+																	{{item.ListName}}
+																</a>
+															</td>
+															<td class="text-center td-actions" width="30%">
+																<button id="favorite_{{item.ContentID}}" type="button" onclick="favoriteUpdate({{item.ContentID}}, {{0 if item.FavoriteYn else 1}});" class="btn btn-round {{'btn-warning' if item.FavoriteYn}}" data-toggle="tooltip" data-placement="left" data-original-title="좋아요 {{'제외' if item.FavoriteYn else '추가'}}">
+																	<i class="material-icons">thumb_up</i>
+																</button>
+																&nbsp;
+																<button type="button" rel="tooltip" class="btn btn-success btn-round" onclick="videoPlay({{item.StreamID | int}},0);">
+																	<i class="material-icons">play_arrow</i>
+																</button>
+<!--																<button type="button" rel="tooltip" class="btn btn-info btn-round"  onclick="videoPlay({{item.StreamID | int}}, 1);">-->
+<!--																	<i class="material-icons">restart_alt</i>-->
+<!--																</button>-->
+															</td>
+														</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+										<div class="text-left">
+											<strong>최상단 체크박스</strong>를 클릭하면 전체 선택이 가능합니다. <br />
+											<strong>엄지</strong> 버튼을 누르면 "좋아요 표시한 영상" 페이지로 영상이 이동합니다.
+										</div>
+									</div>
+								</div>
+							</div>
+						{% else %}
+							<div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+								<img src="/static/images/notice/illust_2.png" width="180px">
+								<h5>영상 자료가 존재하지 않습니다.</h5>
+							</div>
+						{% endif %}
+					</div> <!-- 영상 -->
+			        <div class="tab-pane" id="music-area">
+						{% if music_list|length > 0 %}
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<h4><strong>음원</strong></h4>
+										<div class="audio-player">
+											<h5><strong><span id="audioTitle">음원을 선택해주세요.</span></strong></h5>
+											<audio id="myAudio">
+												<source id="audioSource" src="" type="audio/mpeg">
+												Your browser does not support the audio element.
+											</audio>
+											<div class="progress-bar" onclick="setProgress(event)">
+												<div class="progress"></div>
+											</div>
+											<div class="time">
+												<span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+											</div>
+											<div class="audio-controls">
+												<button onclick="controlAudio('prev')"><<</button>
+												<button onclick="controlAudio('play')">Play</button>
+												<button onclick="controlAudio('pause')">Pause</button>
+												<button onclick="controlAudio('restart')">Restart</button>
+<!--												<button onclick="controlAudio('mute')">Mute</button>-->
+												<button onclick="controlAudio('next')">>></button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<div class="text-center">
+											<button type="button" class="btn btn-fill btn-success btn-round btn-md" onclick="selectMusicPlay(0);"><i class="material-icons">play_arrow</i> 선택 재생</button>
+											<button type="button" class="btn btn-fill btn-info btn-round btn-md" onclick="selectMusicPlay(1);"><i class="material-icons">restart_alt</i> 선택 반복재생</button>
+											<!--							<button type="button" class="btn btn-fill btn-info" onclick="allVideoPlay(0);">전체 재생</button>-->
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="col-md-8 col-md-offset-2">
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th class="text-left" width="10%">
+															<div class="checkbox">
+																<label>
+																	<input type="checkbox" name="music_check_all" value="">
+																</label>
+															</div>
+														</th>
+														<th class="text-left" width="60%">제목</th>
+														<th class="text-center" width="30%">재생</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% for item in music_list %}
+														<tr id="content_music_row_{{item.ContentMusicID}}">
+															<td class="text-center" width="10%">
+																<div class="checkbox">
+																	<label>
+																		<input type="checkbox" name="music_check" value="{{item.ContentMusicID}}">
+																		<input type="hidden" id="music_url_{{item.ContentMusicID}}" value="{{item.UploadPath}}">
+																		<input type="hidden" id="music_title_{{item.ContentMusicID}}" value="{{item.Title}}">
+																	</label>
+																</div>
+															</td>
+															<td class="text-left" width="60%">
+																<a href="javascript:playSingle({{item.ContentMusicID}},0);">
+																	{{item.Title}}
+																</a>
+															</td>
+															<td class="text-center td-actions" width="30%">
+																<button id="favorite_music_{{item.ContentMusicID}}" type="button" onclick="favoriteMusicUpdate({{item.ContentMusicID}}, {{0 if item.FavoriteYn else 1}});" class="btn btn-round {{'btn-warning' if item.FavoriteYn}}" data-toggle="tooltip" data-placement="left" data-original-title="좋아요 {{'제외' if item.FavoriteYn else '추가'}}">
+																	<i class="material-icons">thumb_up</i>
+																</button>
+																&nbsp;
+																<button type="button" rel="tooltip" class="btn btn-success btn-round" onclick="playSingle({{item.ContentMusicID}},0);">
+																	<i class="material-icons">play_arrow</i>
+																</button>
+<!--																<button type="button" rel="tooltip" class="btn btn-info btn-round"  onclick="playSingle({{item.ContentMusicID}}, 1);">-->
+<!--																	<i class="material-icons">restart_alt</i>-->
+<!--																</button>-->
+															</td>
+														</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+										</div>
+										<div class="text-left">
+											<strong>최상단 체크박스</strong>를 클릭하면 전체 선택이 가능합니다. <br />
+											<strong>엄지</strong> 버튼을 누르면 "좋아요 표시한 음원" 페이지로 음원이 이동합니다.
+										</div>
+									</div>
+								</div>
+							</div>
+						{% else %}
+							<div class="text-center" style="margin-top: 50px; margin-bottom: 100px;">
+								<img src="/static/images/notice/illust_2.png" width="180px">
+								<h5>음원 자료가 존재하지 않습니다.</h5>
+							</div>
+						{% endif %}
+					</div> <!-- 음원 -->
+                </div>
+				{% if file_list|length > 0 %}
+					<br />
+					<div class="row">
+						<div class="col-md-12">
+							<div class="col-md-8 col-md-offset-2">
+								<h4><strong>첨부파일</strong></h4>
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<tbody>
+											{% for f in file_list %}
+												<tr id="row_{{f.ReferenceID}}">
+													<td class="text-center" width="15%">{{f.RefeKind}}</td>
+													<td class="text-left text-muted" width="60%">
+														{{f.Title}}
+													</td>
+													<td class="text-center td-actions" width="25%">
+														{% if f.UploadFileName %}
+															<a href="{{ url_for('file_download', file_path=f.UploadFilePath, file_name=f.UploadFileName, download_yn=1) }}" class="btn btn-info btn-facebook btn-round">
+																<i class="material-icons">download</i>
+															</a>
+														{% endif %}
+														{% if f.Comments %}
+															<a href="javascript:commentOpen({{f.ReferenceID}});" class="btn btn-info btn-github btn-round">
+																<i class="material-icons">description</i>
+															</a>
+															<span id="comment_{{f.ReferenceID}}" hidden>{{f.Comments | safe}}</span>
+														{% endif %}
+													</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+				<div class="row">
+					<div class="col-md-12">
+						<div id="videoStar" class="col-md-8 col-md-offset-2 text-center">
+							<button type="button" class="btn btn-fill btn-round btn-github btn-md" onclick="javascript:history.back()">
+								<i class="material-icons">arrow_back</i> 뒤로가기
+							</button>
+							<a class="btn btn-fill btn-round btn-warning btn-md" href="{{url_for('products.content_favorite_list', product_kind_id=62 if product_kind_id in (63,64,65,91,121) else product_kind_id, content_group_id=0 )}}">
+								<i class="material-icons">thumb_up</i> 좋아요 표시한 영상
+							</a>
+						</div>
+						<div id="musicStar" class="col-md-8 col-md-offset-2 text-center" style="display:none">
+							<button type="button" class="btn btn-fill btn-round btn-github btn-md" onclick="javascript:history.back()">
+								<i class="material-icons">arrow_back</i> 뒤로가기
+							</button>
+							<a class="btn btn-fill btn-round btn-warning btn-md" href="{{url_for('products.content_favorite_music_list', product_kind_id=62 if product_kind_id in (63,64,65,91,121) else product_kind_id, content_group_id=0 )}}">
+								<i class="material-icons">thumb_up</i> 좋아요 표시한 음원
+							</a>
+						</div>
+					</div>
+		        </div>
+	        </div>
+        </div> <!-- section end -->
+	</div>
+</div>
+
+{% call classic_modal('commentModal', '설명 보기') %}
+    <span id="comment"></span>
+{% endcall %}
+
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+
+var initList = [
+	{% for item in res_list %}
+		"{{ item.StreamID | trim }}",
+	{% endfor %}
+];
+
+var initialVideoIds = initList;
+initializePlayer(initialVideoIds, false, false);
+
+function commentOpen(reference_id) {
+	$("#commentModal").modal('show');
+	modal_comment = document.getElementById("comment_"+reference_id).innerHTML;
+	document.getElementById("comment").innerHTML = modal_comment;
+}
+
+function videoPlay(stream_id, loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+    var newVideoIds = [stream_id];
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function allVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+    var newVideoIds = initList;
+	var init_yn = true;
+    initializePlayer(newVideoIds, init_yn, loop_yn);
+};
+
+function selectVideoPlay(loop_yn) {
+	document.getElementById("screen").className = "embed-responsive embed-responsive-16by9"
+	var selectedStreamIds = [];
+	var checkboxes = document.querySelectorAll('input[name="stream_check"]:checked');
+	checkboxes.forEach(function(checkbox) {
+		selectedStreamIds.push(checkbox.value);
+	});
+
+	if (selectedStreamIds.length > 0) {
+		var newVideoIds = selectedStreamIds;
+		var init_yn = true;
+		initializePlayer(newVideoIds, init_yn, loop_yn);
+	} else {
+        site.showNotification('top','center', '먼저 실행을 원하는 영상을 체크해 주세요.', 'info')
+	}
+};
+
+function initializePlayer(videoIds, init_yn, loop_yn) {
+	var options = {
+		id: videoIds[0],
+		width: 640,
+		loop: (videoIds.length === 1 && loop_yn === 1),
+		autoplay: init_yn,
+	};
+
+	if (init_yn) {
+		$.ajax({
+			type: "GET",
+			url: "/products/content_view",
+			data: { stream_id: videoIds[0] },
+			success: function (result) {
+			   console.log('첫번째 비디오가 재생되었습니다.');
+			}
+		});
+
+		// 이전 플레이어 제거
+		var oldPlayer = document.getElementById('vimeo-player');
+		oldPlayer.innerHTML = '';
+
+		// 새로운 플레이어 생성
+		var newPlayer = document.createElement('div');
+		newPlayer.className = 'text-center';
+		newPlayer.id = 'vimeo-player';
+		oldPlayer.parentNode.replaceChild(newPlayer, oldPlayer);
+
+		// 새로운 플레이어로 초기화
+		var player = new Vimeo.Player(newPlayer, options);
+	} else {
+ 		var player = new Vimeo.Player('vimeo-player', options);
+	}
+
+	function loadAndPlayVideo(index) {
+		player.loadVideo(videoIds[index]).then(function() {
+			player.play();
+		});
+	}
+
+	var currentIndex = 0;
+
+	// 플레이 버튼 클릭 이벤트 처리
+	player.on('play', function() {
+		// 현재 재생 중인 비디오 ID 가져오기
+		player.getVideoId().then(function(videoId) {
+			// 이미 로그가 기록된 비디오인지 확인
+			if (!window.playedVideos) {
+				window.playedVideos = {};
+			}
+			
+			// 아직 로그가 기록되지 않은 경우에만 로그 기록
+			if (!window.playedVideos[videoId]) {
+				$.ajax({
+					type: "GET",
+					url: "/products/content_view",
+					data: { stream_id: videoId },
+					success: function (result) {
+						console.log('비디오 재생 로그가 기록되었습니다: ' + videoId);
+						window.playedVideos[videoId] = true;
+					}
+				});
+			}
+		});
+	});
+
+    player.on('ended', function() {
+        currentIndex++;
+        if (currentIndex < videoIds.length) {
+			loadAndPlayVideo(currentIndex);
+        } else {
+			if (loop_yn==1) {
+ 			   currentIndex = 0; // currentIndex 초기화
+ 			   loadAndPlayVideo(currentIndex);
+			} else {
+ 	           console.log('모든 비디오가 재생되었습니다.');
+			}
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	{% if res_list|length > 0 %}
+		var streamCheckAll = document.querySelector('input[name="stream_check_all"]');
+
+		streamCheckAll.addEventListener('change', function() {
+			var streamCheckboxes = document.querySelectorAll('input[name="stream_check"]');
+			for (var i = 0; i < streamCheckboxes.length; i++) {
+				streamCheckboxes[i].checked = streamCheckAll.checked;
+			}
+		});
+	{% endif %}
+
+	{% if music_list|length > 0 %}
+		var musicCheckAll = document.querySelector('input[name="music_check_all"]');
+		musicCheckAll.addEventListener('change', function() {
+			var musicCheckboxes = document.querySelectorAll('input[name="music_check"]');
+			for (var i = 0; i < musicCheckboxes.length; i++) {
+				musicCheckboxes[i].checked = musicCheckAll.checked;
+			}
+		});
+	{% endif %}
+
+	var tabs = document.querySelectorAll('.nav-pills a');
+
+	tabs.forEach(function(tab) {
+		tab.addEventListener('click', function(event) {
+			// 기본 클릭 동작 방지
+			event.preventDefault();
+
+			// 탭을 클릭할 때의 현재 탭 ID를 가져옴
+			var targetId = this.getAttribute('href');
+
+			// 탭에 따라 다른 액션을 실행
+			if (targetId === '#stream-area') {
+				videoCard.style.display = 'block';
+				videoStar.style.display = 'block';
+				musicCard.style.display = 'none';
+				musicStar.style.display = 'none';
+				console.log('영상 탭이 클릭되었습니다.');
+			} else if (targetId === '#music-area') {
+				videoCard.style.display = 'none';
+				videoStar.style.display = 'none';
+				musicCard.style.display = 'block';
+				musicStar.style.display = 'block';
+				console.log('음원 탭이 클릭되었습니다.');
+			} else {
+			    var url = "{{ url_for('products.content_booklet_list', product_kind_id=product_kind_id, content_title_id=res.ContentTitleID, booklet_id=0) }}";
+	  	 	 	window.open(url, '_blank');  // 새 탭에서 열리도록 설정
+   			}
+		});
+	});
+});
+
+
+const audio = document.getElementById('myAudio');
+const audioTitle = document.getElementById('audioTitle');
+const audioSource = document.getElementById('audioSource');
+let currentTrack = 0;
+let tracks = [];
+
+function loadTrack(index) {
+	audioSource.src = tracks[index].src;
+	audioTitle.innerText = tracks[index].title;
+	audio.load();
+}
+
+const progressBar = document.querySelector('.progress-bar');
+const progress = document.querySelector('.progress');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+
+audio.addEventListener('timeupdate', updateProgress);
+audio.addEventListener('loadedmetadata', () => {
+	durationEl.textContent = formatTime(audio.duration);
+});
+
+function updateProgress() {
+	const { currentTime, duration } = audio;
+	const progressPercent = (currentTime / duration) * 100;
+	progress.style.width = `${progressPercent}%`;
+	currentTimeEl.textContent = formatTime(currentTime);
+}
+
+function setProgress(e) {
+	const width = progressBar.clientWidth;
+	const clickX = e.offsetX;
+	const duration = audio.duration;
+	audio.currentTime = (clickX / width) * duration;
+}
+
+function formatTime(seconds) {
+	const minutes = Math.floor(seconds / 60);
+	seconds = Math.floor(seconds % 60);
+	return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
+function controlAudio(action) {
+	switch(action) {
+		case 'prev':
+			currentTrack = (currentTrack > 0) ? currentTrack - 1 : tracks.length - 1;
+			loadTrack(currentTrack);
+			audio.play();
+			break;
+		case 'next':
+			currentTrack = (currentTrack < tracks.length - 1) ? currentTrack + 1 : 0;
+			loadTrack(currentTrack);
+			audio.play();
+			break;
+		case 'play':
+			audio.play();
+			break;
+		case 'pause':
+			audio.pause();
+			break;
+		case 'restart':
+			audio.currentTime = 0;
+			audio.play();
+			break;
+		case 'mute':
+			audio.muted = !audio.muted;
+			break;
+	}
+}
+
+function playAll(loop_yn) {
+	const allMusicIds = [];
+	const checkboxes = document.querySelectorAll('input[name="music_check"]');
+	checkboxes.forEach(function(checkbox) {
+		allMusicIds.push(checkbox.value);
+	});
+	initializeMusicPlayer(allMusicIds, loop_yn);
+}
+
+function selectMusicPlay(loop_yn) {
+	const selectedMusicIds = [];
+	const checkboxes = document.querySelectorAll('input[name="music_check"]:checked');
+
+	checkboxes.forEach(function(checkbox) {
+		selectedMusicIds.push(checkbox.value);
+	});
+
+	if (selectedMusicIds.length > 0) {
+		initializeMusicPlayer(selectedMusicIds, loop_yn);
+	} else {
+        site.showNotification('top','center', '먼저 실행을 원하는 음원을 체크해 주세요.', 'info')
+	}
+}
+
+function playSingle(trackId, loop_yn = false) {
+	initializeMusicPlayer([trackId], loop_yn);
+}
+
+function initializeMusicPlayer(musicIds, loop_yn) {
+	tracks = musicIds.map((id, index) => {
+    	const title = document.getElementById('music_title_'+id).value;
+		const src = document.getElementById('music_url_'+id).value;
+		return { title: title, src: src };
+	});
+	currentTrack = 0;
+	loadTrack(currentTrack);  // 첫 번째 트랙 로드
+	loop = loop_yn;
+	audio.play();
+}
+
+// 트랙 끝날 때 다음 트랙으로 자동 이동 (마지막 트랙에서는 멈추거나 루프 설정에 따라 반복 재생)
+audio.addEventListener('ended', function() {
+	if (currentTrack < tracks.length - 1) {
+		currentTrack++;
+		loadTrack(currentTrack);
+		audio.play();
+	} else if (loop) {
+		currentTrack = 0;
+		loadTrack(currentTrack);
+		audio.play();
+	}
+});
+
+function favoriteUpdate(content_id, favorite_yn) {
+	$.ajax({
+		type: "GET",
+		url: "/products/content_favorite_update",
+		data: { content_id: content_id, favorite_yn: favorite_yn },
+		success: function (result) {
+			btnElement = document.getElementById("favorite_" + content_id);
+
+			if (favorite_yn === 1) {
+				btnElement.className = 'btn btn-round btn-warning';
+           		btnElement.setAttribute('data-original-title', "좋아요 제외");
+				btnElement.setAttribute('onclick', 'favoriteUpdate(' + content_id + ', 0)');
+			} else {
+				btnElement.className = 'btn btn-round';
+           		btnElement.setAttribute('data-original-title', "좋아요 추가");
+				btnElement.setAttribute('onclick', 'favoriteUpdate(' + content_id + ', 1)');
+			}
+		}
+	});
+}
+
+function favoriteMusicUpdate(content_music_id, favorite_yn) {
+	$.ajax({
+		type: "GET",
+		url: "/products/content_favorite_music_update",
+		data: { content_music_id: content_music_id, favorite_yn: favorite_yn },
+		success: function (result) {
+			btnElement = document.getElementById("favorite_music_" + content_music_id);
+
+			if (favorite_yn === 1) {
+				btnElement.className = 'btn btn-round btn-warning';
+         		btnElement.setAttribute('data-original-title', "좋아요 제외");
+				btnElement.setAttribute('onclick', 'favoriteMusicUpdate(' + content_music_id + ', 0)');
+			} else {
+				btnElement.className = 'btn btn-round';
+         		btnElement.setAttribute('data-original-title', "좋아요 추가");
+				btnElement.setAttribute('onclick', 'favoriteMusicUpdate(' + content_music_id + ', 1)');
+			}
+		}
+	});
+}
+
+</script>
+
+{% endblock %}
+

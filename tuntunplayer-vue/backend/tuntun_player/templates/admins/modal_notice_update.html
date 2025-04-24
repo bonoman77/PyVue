@@ -1,0 +1,207 @@
+{% extends "layout_admin.html" %}
+{% from "macros/form.html" import input, textarea %}
+
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+		<div class="col-md-8">
+			<div class="card">
+				<form id="modal_notice_update" name="modal_notice_update" method="POST" enctype="multipart/form-data" action="{{ url_for('admins.modal_notice_update_post') }}" class="form-horizontal">
+					<div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">new_releases</i>
+                    </div>
+					<div class="card-content">
+                        <h4 class="card-title">팝업공지 수정</h4>
+                        <p class="card-category">
+                            팝업 이미지로의 적절한 크기는 <strong>너비 기준 500px</strong> 정도입니다. 업로드 이후에 적절한 크기인지 확인해보세요.<br />
+							이미지와 내용이 함께 올라가는 경우 <strong>이미지 하단</strong>으로 내용이 위치합니다.
+                        </p>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">제목</label>
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('hidden', 'modal_notice_id', res.ModalNoticeID, opt='required') }}
+									{{ input('text', 'title', res.Title, opt='required') }}
+									<span class="help-block">제목을 입력해 주세요.</span>
+								</div>
+                            </div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="row">
+									<label class="col-sm-4 label-on-left">게시 시작일</label>
+									<div class="col-sm-8">
+										<div class="form-group label-floating is-empty">
+											<label class="control-label"></label>
+											{{ input('date', 'open_date', res.OpenDate, opt='required') }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="row">
+									<label class="col-sm-4 label-on-left">게시 종료일</label>
+									<div class="col-sm-8">
+										<div class="form-group label-floating is-empty">
+											<label class="control-label"></label>
+											{{ input('date', 'close_date', res.CloseDate) }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-sm-2 label-on-left">내용</label>
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ textarea(name='comments', value=res.Comments, row='5', class='trumbo',  placeholder='내용을 입력하세요.') }}
+								</div>
+                            </div>
+						</div>
+
+						<div class="row">
+							<label class="col-sm-2 label-on-left">첨부이미지</label>
+
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('file', 'upload_file_path', upload_file_path, opt='', onchange='checkFiles(this)') }}
+									<span class="help-block">허용된 파일: "jpg", "png"</span>
+								</div>
+                        	</div>
+						</div>
+
+						{% if res.UploadFileName %}
+							<div class="row">
+								<label class="col-sm-2 label-on-left"></label>
+								<div class="col-sm-10">
+									<div class="table-responsive">
+										<table class="table">
+											<tbody>
+												<tr id="row_{{res.ModalNoticeID}}">
+													<td class="text-left" style="padding:3px; border-top:0px">
+														<a href="{{ url_for('file_download', file_path=res.UploadFilePath, file_name=res.UploadFileName, download_yn=1) }}">{{res.UploadFileName}}</a> &nbsp;&nbsp;
+														<a href="javascript:deleteFile({{res.ModalNoticeID}});" class="text-danger">x</a>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						{% endif %}
+
+						<div class="row">
+							<label class="col-sm-2 label-on-left">연결링크</label>
+
+                        	<div class="col-sm-10">
+								<div class="form-group label-floating is-empty">
+									<label class="control-label"></label>
+									{{ input('text', 'link_address', res.LinkAddress if res.LinkAddress else 'https://') }}
+								</div>
+                        	</div>
+						</div>
+
+						<br />
+
+						<div class="row">
+							<label class="col-sm-2 label-on-left"></label>
+							<div class="col-md-10">
+								<div class="form-group form-button">
+									<button type="button" onclick="javascript:history.back()" class="btn btn-fill btn-github">뒤로가기</button>
+ 	                            	<button type="submit" class="btn btn-fill btn-facebook">수정하기</button>
+ 	                            	<button type="button" onclick="deleteContents({{res.ModalNoticeID}})" class="btn btn-fill btn-danger">삭제하기</button>
+	                        	</div>
+	                    	</div>
+						</div>
+                    </div>
+				</form>
+			</div>
+		</div>
+    </div>
+</div>
+
+<script>
+   function checkFiles(input) {
+		const files = input.files;
+		const maxSizeInBytes = 1024 * 1024 * 10;
+        const allowedExtensions = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG"];
+
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+
+			// 파일 크기 체크
+			if (file.size > maxSizeInBytes) {
+ 	            site.showNotification('top','center', '최대 크기(10메가)를 초과하는 파일이 있습니다.', 'danger')
+				input.value = ''; // 파일 선택을 취소합니다.
+				input.type = 'file'; // 파일을 리셋합니다.
+				return;
+			}
+
+			// 파일 확장명 체크
+			const fileNameParts = file.name.split('.');
+			const fileExtension = fileNameParts[fileNameParts.length - 1].toLowerCase();
+			if (!allowedExtensions.includes(fileExtension)) {
+ 	            site.showNotification('top','center', '허용되지 않은 확장명이 포함된 파일이 있습니다.', 'warning')
+				input.value = ''; // 파일 선택을 취소합니다.
+				input.type = 'file'; // 파일을 리셋합니다.
+				return;
+			}
+		}
+	}
+
+	var form_submit = function() {
+		document.modal_notice_update.submit();
+  	};
+
+	var deleteContents = function (modal_notice_id) {
+        swal({
+            title: '삭제',
+            text: "등록된 게시글을 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admins/modal_notice_delete",
+                data: { modal_notice_id: modal_notice_id },
+                success: function (result) {
+                    window.location.href = "/admins/modal_notice_list";
+                }
+            });
+        }).catch(swal.noop);
+    }
+
+    var deleteFile = function (modal_notice_id) {
+        swal({
+            title: '삭제',
+            text: "선택한 파일을 정말로 삭제하시겠습니까?",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: 'Yes, delete it!',
+            buttonsStyling: false
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admins/modal_notice_file_delete",
+                data: { modal_notice_id: modal_notice_id },
+                success: function (result) {
+                    $("#row_" + modal_notice_id).remove();
+                }
+            })
+        }).catch(swal.noop);
+    }
+
+</script>
+
+{% endblock %}
+
