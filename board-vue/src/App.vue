@@ -2,18 +2,22 @@
 <template>
   <div class="container">
     <h2>Todo List</h2>  
-    <form @submit.prevent="onSubmit" class="d-flex">
-      <div class="flex-grow-1 mr-2">
-        <input class="form-control" type="text" v-model="todo" placeholder="Enter new to-do">
-      </div>
-      <div class="form-group">
-        <button class="btn btn-primary" type="submit">Add</button>
-      </div>
-    </form>
-    {{ todos }}
-    <div class="card"> 
-      <div class="card-body p-2">
-        ㅁ;ㅣㄴ아ㅓㄹ
+    <TodoSimpleForm />
+    
+    <div v-if="todos.length === 0" class="text-muted">
+      No todos available.
+    </div>
+    <div class="card p-1" v-for="(todo, index) in todos" :key="todo.id">
+      <div class="card-body p-2 text-start d-flex align-items-center">
+        <div class="form-check flex-grow-1">
+          <input class="form-check-input" type="checkbox" v-model="todo.completed">
+          <label class="form-check-label" :class="{todo: todo.completed}">
+            &nbsp;{{ todo.subject }}
+          </label>
+        </div>
+        <button class="btn btn-danger btn-sm" type="button" @click="deleteTodo(index)">
+          Delete
+        </button>
       </div>
     </div>
   </div>
@@ -21,33 +25,51 @@
 
 <script>
   import { ref } from 'vue';
+  import TodoSimpleForm from './components/TodoSimpleForm.vue';
 
   export default {
+    components: {
+      TodoSimpleForm,
+    },
+    
     setup() {
       const todo = ref('');
-      const todos = ref([
-        {id: 1, subject: '휴대폰 사기'}, 
-        {id: 2, subject: '우유 주문하기'}, 
-      ]); 
+      const todos = ref([]); 
 
+      const hasError = ref(false); 
+      const deleteTodo = (index) => {
+        todos.value.splice(index, 1);
+      };
       const onSubmit = () => {
-        todos.value.push({
-          id: Date.now(), 
-          subject: todo.value
-        });
+        if (todo.value === '') {
+          hasError.value = true;
+        } else { 
+          todos.value.push({
+            id: Date.now(), 
+            subject: todo.value,
+            completed: false, 
+          });
+          hasError.value = false;
+          todo.value = ''; 
+        }
       };
 
       return {
         todo,
         todos, 
+        hasError,
         onSubmit, 
+        deleteTodo
       };
     }
   }
 </script>
 
 <style>
-
+  .todo {
+   color: gray;
+   text-decoration: line-through; 
+  }
 </style>
 
 
