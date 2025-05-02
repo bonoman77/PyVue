@@ -2,9 +2,9 @@
     <div class="card p-1 mt-2" v-for="(todo, index) in todos" :key="todo.id">
     <div class="card-body p-2 text-start d-flex align-items-center">
         <div class="form-check flex-grow-1">
-        <input class="form-check-input" type="checkbox" v-model="todo.completed">
+        <input class="form-check-input" type="checkbox" :value="todo.completed" @change="toggleTodo(index)">
         <label class="form-check-label" :class="{todo: todo.completed}">
-            &nbsp;{{ todo.subject }}
+            {{ todo.subject }}
         </label>
         </div>
         <button class="btn btn-danger btn-sm" type="button" @click="deleteTodo(index)">
@@ -22,4 +22,13 @@ const props = defineProps({
     }
 })
 
+const emit = defineEmits(['delete-todo', 'toggle-todo'])
+
+const deleteTodo = (index) => {
+    emit('delete-todo', index)
+}
+
+const toggleTodo = (index) => {
+    emit('toggle-todo', index)
+}
 </script>
