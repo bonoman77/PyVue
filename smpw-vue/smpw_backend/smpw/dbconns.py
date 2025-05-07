@@ -2,15 +2,17 @@ import os
 import time
 import threading
 import pymysql
-from flask import current_app
+import logging
 from contextlib import contextmanager
 from dotenv import load_dotenv
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 # MariaDB 연결 설정
 server = 'localhost'
-database = 'mpw_manager'
+database = 'smpw'
 username = os.environ.get("db_user", "root")
 password = os.environ.get("db_password", "")
 port = 3306  # MariaDB 기본 포트
@@ -34,7 +36,7 @@ class ConnectionPool:
                     conn = self._create_connection()
                     self.pool.append(conn)
                 except Exception as e:
-                    current_app.logger.error(f"연결 풀 초기화 중 오류: {str(e)}")
+                    logger.error(f"연결 풀 초기화 중 오류: {str(e)}")
     
     def _create_connection(self):
         """새 데이터베이스 연결 생성"""
@@ -50,7 +52,7 @@ class ConnectionPool:
             )
             return conn
         except Exception as e:
-            current_app.logger.error(f"데이터베이스 연결 생성 중 오류: {str(e)}")
+            logger.error(f"데이터베이스 연결 생성 중 오류: {str(e)}")
             raise
     
     def get_connection(self, timeout=5):
@@ -72,7 +74,7 @@ class ConnectionPool:
                         try:
                             conn = self._create_connection()
                         except Exception as e:
-                            current_app.logger.error(f"손상된 연결 재생성 중 오류: {str(e)}")
+                            logger.error(f"손상된 연결 재생성 중 오류: {str(e)}")
                             if len(self.pool) + len(self.in_use) < self.min_connections:
                                 continue  # 최소 연결 수 유지를 위해 재시도
                             raise
@@ -88,7 +90,7 @@ class ConnectionPool:
                         self.in_use[id(conn)] = conn
                         return conn
                     except Exception as e:
-                        current_app.logger.error(f"새 연결 생성 중 오류: {str(e)}")
+                        logger.error(f"새 연결 생성 중 오류: {str(e)}")
                         raise
             
             # 연결을 얻지 못했다면 잠시 대기 후 재시도
@@ -128,7 +130,7 @@ class ConnectionPool:
                             new_conn = self._create_connection()
                             self.pool.append(new_conn)
                         except Exception as e:
-                            current_app.logger.error(f"연결 풀 재생성 중 오류: {str(e)}")
+                            logger.error(f"연결 풀 재생성 중 오류: {str(e)}")
     
     def close_all(self):
         """모든 연결 닫기"""
@@ -165,14 +167,14 @@ def get_db_connection():
                 conn.rollback()
             except:
                 pass
-        current_app.logger.error(f"데이터베이스 연결 사용 중 오류: {str(e)}")
+        logger.error(f"데이터베이스 연결 사용 중 오류: {str(e)}")
         raise
     finally:
         if conn:
             try:
                 connection_pool.release_connection(conn)
             except Exception as e:
-                current_app.logger.error(f"연결 반환 중 오류: {str(e)}")
+                logger.error(f"연결 반환 중 오류: {str(e)}")
 
 def execute_without_return(query, params=None):
     """쿼리 실행 (반환값 없음)"""
@@ -185,7 +187,7 @@ def execute_without_return(query, params=None):
                     cursor.execute(query)
                 conn.commit()
     except Exception as e:
-        current_app.logger.error(f"쿼리 실행 중 오류 (반환값 없음): {str(e)}")
+        logger.error(f"쿼리 실행 중 오류 (반환값 없음): {str(e)}")
         raise
 
 def execute_return(query, params=None):
@@ -200,7 +202,7 @@ def execute_return(query, params=None):
                 result = cursor.fetchone()
                 return result
     except Exception as e:
-        current_app.logger.error(f"쿼리 실행 중 오류 (단일 결과): {str(e)}")
+        logger.error(f"쿼리 실행 중 오류 (단일 결과): {str(e)}")
         raise
 
 def execute_return_all(query, params=None):
@@ -215,7 +217,42 @@ def execute_return_all(query, params=None):
                 results = cursor.fetchall()
                 return results
     except Exception as e:
-        current_app.logger.error(f"쿼리 실행 중 오류 (모든 결과): {str(e)}")
+        logger.error(f"쿼리 실행 중 오류 (모든 결과): {str(e)}")
+        raise
+
+def callproc_without_return(proc_name, params=None):
+    """프로시저 실행 (반환값 없음)"""
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.callproc(proc_name, params or [])
+                conn.commit()
+    except Exception as e:
+        logger.error(f"프로시저 실행 중 오류 (반환값 없음): {str(e)}")
+        raise
+
+def callproc_return(proc_name, params=None):
+    """프로시저 실행 (단일 결과 반환)"""
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.callproc(proc_name, params or [])
+                result = cursor.fetchone()
+                return result
+    except Exception as e:
+        logger.error(f"프로시저 실행 중 오류 (단일 결과): {str(e)}")
+        raise
+
+def callproc_return_all(proc_name, params=None):
+    """프로시저 실행 (모든 결과 반환)"""
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.callproc(proc_name, params or [])
+                results = cursor.fetchall()
+                return results
+    except Exception as e:
+        logger.error(f"프로시저 실행 중 오류 (모든 결과): {str(e)}")
         raise
 
 # 애플리케이션 종료 시 모든 연결 정리

@@ -1,7 +1,7 @@
 import random
-import mpw_manager.dbconns as conn
+import smpw.dbconns as conn
 from flask import Blueprint, current_app, request, session, render_template, redirect, flash, url_for, jsonify
-from mpw_manager.utils.auth_handler import login_required, admin_required
+from smpw.utils.auth_handler import login_required, admin_required
 
 bp = Blueprint('manages', __name__)
 

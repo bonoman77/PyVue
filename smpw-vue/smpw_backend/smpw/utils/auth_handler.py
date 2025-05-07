@@ -1,5 +1,5 @@
 from flask import request, session, redirect, url_for
-import mpw_manager.dbconns as conn
+import smpw.dbconns as conn
 from functools import wraps
 
 LOGIN_ENDPOINT = 'accounts.login'

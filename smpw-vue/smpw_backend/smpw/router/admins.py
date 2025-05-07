@@ -1,13 +1,13 @@
 import os
 import random
-import mpw_manager.dbconns as conn
+import smpw.dbconns as conn
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, current_app, request, session, render_template, redirect, flash, url_for, jsonify
-from mpw_manager.utils.auth_handler import admin_required
-from mpw_manager.utils.page_handler import paged_list
-from mpw_manager.utils.mail_handler import send_mail
-from mpw_manager.utils.file_handler import FileHandler
+from smpw.utils.auth_handler import admin_required
+from smpw.utils.page_handler import paged_list
+from smpw.utils.mail_handler import send_mail
+from smpw.utils.file_handler import FileHandler
 
 bp = Blueprint('admins', __name__)
 

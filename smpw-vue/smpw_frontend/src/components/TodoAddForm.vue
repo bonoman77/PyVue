@@ -31,12 +31,12 @@ const onSubmit = () => {
 
     const todoData = {
       id: Date.now(),
-      subject: todo.value,
+      title: todo.value,
       completed: false,
     }
     emit('add-todo', todoData)
     
-    toast.success('Todo added successfully');
+    // toast.success('Todo added successfully');
     hasError.value = false;
     todo.value = ''; 
   }

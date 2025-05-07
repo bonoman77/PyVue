@@ -1,7 +1,7 @@
 import random
 from datetime import datetime
-import mpw_manager.dbconns as conn
-from mpw_manager.utils.auth_handler import login_required
+import smpw.dbconns as conn
+from smpw.utils.auth_handler import login_required
 from flask import Blueprint, current_app, request, session, render_template, redirect, flash, url_for, jsonify
 
 bp = Blueprint('homes', __name__)

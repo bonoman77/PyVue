@@ -5,8 +5,8 @@
     <input class="form-control" type="text" v-model="searchText" placeholder="Search...">
     <hr />
     <TodoAddForm @add-todo="addTodo" />
-    <div v-if="filteredTodos.length === 0">
-      No todos found.
+    <div v-if="err" class="text text-danger">
+      {{ err }}
     </div>
     <TodoList :todos="filteredTodos" @delete-todo="deleteTodo" @toggle-todo="toggleTodo" />
   </div>
@@ -19,27 +19,40 @@ import TodoList from './components/TodoList.vue';
 import axios from 'axios';
 
 const todos = ref([]); 
+const err = ref('');
 const searchText = ref('');
 
 const filteredTodos = computed(() => {
   return todos.value.filter((todo) => {
-    return todo.subject.toLowerCase().includes(searchText.value.toLowerCase());
+    return todo.title.toLowerCase().includes(searchText.value.toLowerCase());
   });
 });
 
-const addTodo = (todo) => {
+const getTodos = async () => {
+  try {
+    const res = await axios.get('http://localhost:4000/boards/todo_list');
+    print(res)
+    todos.value = res.data;
+  } catch (error) {
+    console.error('Error fetching todos:', error);
+    err.value = 'Error fetching todos';
+  }
+};
 
-  axios.post('http://localhost:4000/todo_insert', {
-    subjects: todo.subject,
-    completed: todo.completed, 
-  })
-  .then((response) => {
-    todos.value.push(response.data);
-  })
-  .catch((error) => {
+getTodos(); 
+
+const addTodo = async (todo) => {
+  err.value = '';
+  try {
+    const res = await axios.post('http://localhost:4000/boards/todo_insert', {
+      title: todo.title,
+      completed: todo.completed,
+    })
+    todos.value.push(res.data);
+  } catch (error) {
     console.error('Error adding todo:', error);
-  });
-
+    err.value = 'Error adding todo';
+  }
 };
 
 const deleteTodo = (index) => {

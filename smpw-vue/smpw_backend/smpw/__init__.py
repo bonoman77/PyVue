@@ -1,15 +1,19 @@
 import os
 from flask import Flask, url_for
-from mpw_manager.utils.file_handler import file_download
-from mpw_manager.utils.log_handler import setup_logger
-from mpw_manager.config import get_config
+from smpw.utils.file_handler import file_download
+from smpw.utils.log_handler import setup_logger
+from smpw.config import get_config
 from flask_cors import CORS
 
 def create_app(config_class=None):
     """애플리케이션 팩토리 함수"""
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
-    
+    # 모든 라우트에 대해 localhost:5173에서 오는 요청 허용
+    CORS(
+        app,
+        resources={r"/*": {"origins": "http://localhost:5173"}},
+        supports_credentials=True,
+    )    
     # 설정 로드
     if config_class is None:
         config_class = get_config()
@@ -29,14 +33,10 @@ def create_app(config_class=None):
 
 def register_blueprints(app):
     """모든 블루프린트를 앱에 등록"""
-    from mpw_manager.router import homes, accounts, admins, boards, manages
+    from smpw.router import homes, accounts, admins, boards, manages
     # 각 모듈의 블루프린트 등록
     app.register_blueprint(homes.bp)
     app.register_blueprint(accounts.bp, url_prefix='/accounts')
     app.register_blueprint(admins.bp, url_prefix='/admins')
     app.register_blueprint(boards.bp, url_prefix='/boards')
     app.register_blueprint(manages.bp, url_prefix='/manages')
-
-
-
-

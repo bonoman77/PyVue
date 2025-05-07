@@ -4,7 +4,7 @@
         <div class="form-check flex-grow-1">
         <input class="form-check-input" type="checkbox" :value="todo.completed" @change="toggleTodo(index)">
         <label class="form-check-label" :class="{todo: todo.completed}">
-            {{ todo.subject }}
+            {{ todo.title }}
         </label>
         </div>
         <button class="btn btn-danger btn-sm" type="button" @click="deleteTodo(index)">

@@ -10,7 +10,7 @@ class Config:
     SESSION_TYPE = 'filesystem'
 
     # 애플리케이션 이름
-    APP_NAME = 'mpw_manager'
+    APP_NAME = 'smpw_manager'
 
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024
     UPLOAD_EXTENSIONS = ["jpg", "jpeg", "png", "JPG", "JPEG", "PNG", "txt", "doc", "docx", "xls", "xlsx", "pdf", "ppt", "pptx", "mp3", "stk"]
@@ -32,7 +32,7 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_NAME = 'mpw_manager_session'
+    SESSION_COOKIE_NAME = 'smpw_manager_session'
 
 
 class DevelopmentConfig(Config):
