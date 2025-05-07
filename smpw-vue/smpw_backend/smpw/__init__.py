@@ -7,12 +7,13 @@ from flask_cors import CORS
 
 def create_app(config_class=None):
     """애플리케이션 팩토리 함수"""
+
     app = Flask(__name__)
     # 모든 라우트에 대해 localhost:5173에서 오는 요청 허용
-    CORS(
-        app,
+    CORS(app,
         resources={r"/*": {"origins": "http://localhost:5173"}},
         supports_credentials=True,
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],    
     )    
     # 설정 로드
     if config_class is None:

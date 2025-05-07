@@ -31,8 +31,8 @@ const filteredTodos = computed(() => {
 const getTodos = async () => {
   try {
     const res = await axios.get('http://localhost:4000/boards/todo_list');
-    print(res)
-    todos.value = res.data;
+    console.log(res.data)
+    todos.value = res.data.todo_list;
   } catch (error) {
     console.error('Error fetching todos:', error);
     err.value = 'Error fetching todos';
@@ -48,6 +48,7 @@ const addTodo = async (todo) => {
       title: todo.title,
       completed: todo.completed,
     })
+    console.log(res.data)
     todos.value.push(res.data);
   } catch (error) {
     console.error('Error adding todo:', error);
@@ -55,8 +56,16 @@ const addTodo = async (todo) => {
   }
 };
 
-const deleteTodo = (index) => {
-  todos.value.splice(index, 1);
+const deleteTodo = async (index) => {
+  err.value = '';
+  const todoId = todos.value[index].todo_id;
+  try {
+    await axios.delete(`http://localhost:4000/boards/todo_delete/${todoId}`);
+    todos.value.splice(index, 1);
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+    err.value = 'Error deleting todo';
+  }
 };
 
 const toggleTodo = (index) => {

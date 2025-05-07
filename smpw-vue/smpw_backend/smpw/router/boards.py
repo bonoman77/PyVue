@@ -9,13 +9,7 @@ bp = Blueprint('boards', __name__)
 def todo_list():
     user_id = 1
     result = conn.callproc_return_all('sp_get_user_todo_list', [user_id, 1, 10, ''])
-    
-    # BLOB(bytes) 데이터를 문자열로 디코딩
-    for item in result:
-        for key, value in item.items():
-            if isinstance(value, (bytes, bytearray)):
-                item[key] = value.decode('utf-8')
-                
+    print(result)
     # 응답 데이터 구성
     response_data = {
         'todo_list': result,
@@ -23,6 +17,15 @@ def todo_list():
     
     # JSON 응답 반환
     return jsonify(response_data)
+
+
+@bp.route("/todo_delete/<int:todo_id>", methods=['DELETE'])
+def todo_delete(todo_id):
+    print(todo_id)
+    conn.callproc_without_return('sp_set_user_todo_delete', [todo_id])
+    
+    # JSON 응답 반환
+    return jsonify({"todo_id": todo_id})
 
 
 @bp.route("/todo_insert", methods=['POST'])
@@ -34,15 +37,11 @@ def todo_insert():
     title = data.get('title')
     completed = data.get('completed', False)
     
-    print(title)
-    print(completed)
-    
     # 데이터베이스에 저장
     # member_id = session['login_user']['member_id']
     user_id = 1
     result = conn.callproc_return('sp_set_user_todo_insert', [user_id, title, int(completed), ''])
     todo_id = list(result.values())[0] if result else None
-    print(todo_id)
     
     # 응답 데이터 구성
     response_data = {

@@ -10,12 +10,24 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
+import base64
 # MariaDB 연결 설정
 server = 'localhost'
 database = 'smpw'
 username = os.environ.get("db_user", "root")
 password = os.environ.get("db_password", "")
 port = 3306  # MariaDB 기본 포트
+
+def _convert_bytes(obj):
+    """딕셔너리/리스트 내 bytes 타입을 base64 문자열로 변환"""
+    if isinstance(obj, dict):
+        return {k: _convert_bytes(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_convert_bytes(item) for item in obj]
+    elif isinstance(obj, bytes):
+        return base64.b64encode(obj).decode('utf-8')
+    else:
+        return obj
 
 class ConnectionPool:
     """데이터베이스 연결 풀 클래스"""
@@ -200,7 +212,7 @@ def execute_return(query, params=None):
                 else:
                     cursor.execute(query)
                 result = cursor.fetchone()
-                return result
+                return _convert_bytes(result)
     except Exception as e:
         logger.error(f"쿼리 실행 중 오류 (단일 결과): {str(e)}")
         raise
@@ -215,7 +227,7 @@ def execute_return_all(query, params=None):
                 else:
                     cursor.execute(query)
                 results = cursor.fetchall()
-                return results
+                return _convert_bytes(results)
     except Exception as e:
         logger.error(f"쿼리 실행 중 오류 (모든 결과): {str(e)}")
         raise
@@ -238,7 +250,7 @@ def callproc_return(proc_name, params=None):
             with conn.cursor() as cursor:
                 cursor.callproc(proc_name, params or [])
                 result = cursor.fetchone()
-                return result
+                return _convert_bytes(result)
     except Exception as e:
         logger.error(f"프로시저 실행 중 오류 (단일 결과): {str(e)}")
         raise
@@ -250,7 +262,7 @@ def callproc_return_all(proc_name, params=None):
             with conn.cursor() as cursor:
                 cursor.callproc(proc_name, params or [])
                 results = cursor.fetchall()
-                return results
+                return _convert_bytes(results)
     except Exception as e:
         logger.error(f"프로시저 실행 중 오류 (모든 결과): {str(e)}")
         raise
