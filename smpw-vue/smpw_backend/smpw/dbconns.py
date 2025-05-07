@@ -60,6 +60,7 @@ class ConnectionPool:
                 database=database,
                 port=port,
                 charset='utf8mb4',
+                autocommit=True,
                 cursorclass=pymysql.cursors.DictCursor
             )
             return conn
