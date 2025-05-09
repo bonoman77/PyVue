@@ -2,8 +2,8 @@
     <div class="card p-1 mt-2" v-for="(todo, index) in todos" :key="todo.id">
     <div class="card-body p-2 text-start d-flex align-items-center">
         <div class="form-check flex-grow-1">
-        <input class="form-check-input" type="checkbox" :value="!todo.completed" @change="toggleTodo(index)">
-        <label class="form-check-label" :class="{todo: !todo.completed}">
+        <input class="form-check-input" type="checkbox" :checked="todo.completed" @change="toggleTodo(index)">
+        <label class="form-check-label" :class="{todo: todo.completed}">
             {{ todo.title }}
         </label>
         </div>

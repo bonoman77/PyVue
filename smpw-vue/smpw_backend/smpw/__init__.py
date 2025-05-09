@@ -13,7 +13,7 @@ def create_app(config_class=None):
     CORS(app,
         resources={r"/*": {"origins": "http://localhost:5173"}},
         supports_credentials=True,
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],    
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],    
     )    
     # 설정 로드
     if config_class is None:

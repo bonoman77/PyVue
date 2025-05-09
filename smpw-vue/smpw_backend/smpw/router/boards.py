@@ -21,12 +21,18 @@ def todo_list():
 
 @bp.route("/todo_delete/<int:todo_id>", methods=['DELETE'])
 def todo_delete(todo_id):
-    print(todo_id)
     conn.callproc_without_return('sp_set_user_todo_delete', [todo_id])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})
 
+@bp.route("/todo_toggle/<int:todo_id>/<int:completed>", methods=['PATCH'])
+def todo_toggle(todo_id, completed):
+    print(todo_id, completed)
+    conn.callproc_without_return('sp_set_user_todo_toggle', [todo_id, completed])
+    
+    # JSON 응답 반환
+    return jsonify({"todo_id": todo_id})
 
 @bp.route("/todo_insert", methods=['POST'])
 def todo_insert():

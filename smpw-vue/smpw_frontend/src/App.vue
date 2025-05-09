@@ -9,6 +9,16 @@
       {{ err }}
     </div>
     <TodoList :todos="filteredTodos" @delete-todo="deleteTodo" @toggle-todo="toggleTodo" />
+    <hr />
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -21,6 +31,8 @@ import axios from 'axios';
 const todos = ref([]); 
 const err = ref('');
 const searchText = ref('');
+const page = ref(1);
+const totalCount = ref(0);
 
 const filteredTodos = computed(() => {
   return todos.value.filter((todo) => {
@@ -31,8 +43,8 @@ const filteredTodos = computed(() => {
 const getTodos = async () => {
   try {
     const res = await axios.get('http://localhost:4000/boards/todo_list');
-    console.log(res.data)
     todos.value = res.data.todo_list;
+    totalCount.value = res.data.todo_list.length;
   } catch (error) {
     console.error('Error fetching todos:', error);
     err.value = 'Error fetching todos';
@@ -68,8 +80,16 @@ const deleteTodo = async (index) => {
   }
 };
 
-const toggleTodo = (index) => {
-  todos.value[index].completed = !todos.value[index].completed;
+const toggleTodo = async (index) => {
+  err.value = '';
+  const todoId = todos.value[index].todo_id;
+  try {
+    await axios.patch(`http://localhost:4000/boards/todo_toggle/${todoId}/${+!todos.value[index].completed}`);
+    todos.value[index].completed = !todos.value[index].completed;
+  } catch (error) {
+    console.error('Error toggling todo:', error);
+    err.value = 'Error toggling todo';
+  }
 };
 
 </script>
