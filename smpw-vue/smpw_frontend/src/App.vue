@@ -12,11 +12,17 @@
     <hr />
     <nav aria-label="Page navigation example">
       <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        <li class="page-item" :class="{disabled: currentPage === 1}">
+          <a style="cursor: pointer;" class="page-link" @click="getTodos(currentPage - 1)">Previous</a>
+        </li>
+
+        <li v-for="(page, index) in totalPage" :key="index" class="page-item" :class="{active: currentPage === page}">
+          <a style="cursor: pointer;" class="page-link" @click="getTodos(page)">{{ page }}</a>
+        </li>
+
+        <li class="page-item" :class="{disabled: currentPage === totalPage}">
+          <a style="cursor: pointer;" class="page-link" @click="getTodos(currentPage + 1)">Next</a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -31,8 +37,13 @@ import axios from 'axios';
 const todos = ref([]); 
 const err = ref('');
 const searchText = ref('');
-const page = ref(1);
+const currentPage = ref(1);
 const totalCount = ref(0);
+const limit = 5;
+
+const totalPage = computed(() => {
+  return Math.ceil(totalCount.value / limit);
+});
 
 const filteredTodos = computed(() => {
   return todos.value.filter((todo) => {
@@ -40,11 +51,17 @@ const filteredTodos = computed(() => {
   });
 });
 
-const getTodos = async () => {
+const getTodos = async (page = currentPage.value) => {
+  currentPage.value = page;
   try {
-    const res = await axios.get('http://localhost:4000/boards/todo_list');
+    const res = await axios.get('http://localhost:4000/boards/todo_list', {
+      params: {
+        page: page,
+        row_size: limit,
+      }
+    });
     todos.value = res.data.todo_list;
-    totalCount.value = res.data.todo_list.length;
+    totalCount.value = res.data.total_cnt;
   } catch (error) {
     console.error('Error fetching todos:', error);
     err.value = 'Error fetching todos';
