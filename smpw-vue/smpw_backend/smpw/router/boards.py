@@ -10,8 +10,9 @@ def todo_list():
     user_id = 1
     page = int(request.args.get('page', 1))
     row_size = int(request.args.get('row_size', 10))
-    result = conn.callproc_return_all('sp_get_user_todo_list', [user_id, page, row_size, ''])
-    total_cnt = conn.callproc_return('sp_get_user_todo_total_cnt', [user_id, ''])
+    search_text = request.args.get('search_text', '')
+    result = conn.callproc_return_all('sp_get_user_todo_list', [user_id, page, row_size, search_text])
+    total_cnt = conn.callproc_return('sp_get_user_todo_total_cnt', [user_id, search_text])
     # 응답 데이터 구성
     response_data = {
         'todo_list': result,

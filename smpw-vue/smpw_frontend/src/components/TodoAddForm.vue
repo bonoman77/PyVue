@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="onSubmit">
       <div class="d-flex">
-        <div class="flex-grow-1 mr-2">
+        <div class="flex-grow-1 input-margin-right">
           <input class="form-control" type="text" v-model="todo" placeholder="Enter new to-do">
         </div>
         <div class="form-group">
@@ -44,4 +44,8 @@ const onSubmit = () => {
 
 </script>
 
-<style></style>
+<style>
+.input-margin-right {
+  margin-right: 12px;
+}
+</style>
