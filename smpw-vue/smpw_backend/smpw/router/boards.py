@@ -23,6 +23,19 @@ def todo_list():
     return jsonify(response_data)
 
 
+@bp.route("/todo_detail/<int:todo_id>", methods=['GET'])
+def todo_detail(todo_id):
+    user_id = 1
+    result = conn.callproc_return('sp_get_user_todo_select', [user_id, todo_id])
+    # 응답 데이터 구성
+    response_data = {
+        'todo_detail': result,
+    }
+    
+    # JSON 응답 반환
+    return jsonify(response_data)
+
+
 @bp.route("/todo_delete/<int:todo_id>", methods=['DELETE'])
 def todo_delete(todo_id):
     conn.callproc_without_return('sp_set_user_todo_delete', [todo_id])
@@ -62,3 +75,17 @@ def todo_insert():
     
     # JSON 응답 반환
     return jsonify(response_data)
+
+
+@bp.route("/todo_update/<int:todo_id>", methods=['PUT'])
+def todo_update(todo_id):
+    # 요청에서 JSON 데이터 가져오기
+    data = request.get_json()
+
+    title = data.get('title')
+    completed = data.get('completed', False)
+    
+    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, title, int(completed), ''])
+    
+    # JSON 응답 반환
+    return jsonify({"todo_id": todo_id})

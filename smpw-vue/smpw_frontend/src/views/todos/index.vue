@@ -108,12 +108,12 @@
     }
   };
   
-  const toggleTodo = async (index) => {
+  const toggleTodo = async (index, checked) => {
     err.value = '';
     const todoId = todos.value[index].todo_id;
     try {
-      await axios.patch(`http://localhost:4000/boards/todo_toggle/${todoId}/${+!todos.value[index].completed}`);
-      todos.value[index].completed = !todos.value[index].completed;
+      await axios.patch(`http://localhost:4000/boards/todo_toggle/${todoId}/${+checked}`);
+      todos.value[index].completed = checked;
     } catch (error) {
       console.error('Error toggling todo:', error);
       err.value = 'Error toggling todo';
