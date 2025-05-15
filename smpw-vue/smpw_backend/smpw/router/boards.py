@@ -59,18 +59,20 @@ def todo_insert():
     # 필요한 데이터 추출
     title = data.get('title')
     completed = data.get('completed', False)
+    contents = data.get('contents', '')
     
     # 데이터베이스에 저장
     # member_id = session['login_user']['member_id']
     user_id = 1
-    result = conn.callproc_return('sp_set_user_todo_insert', [user_id, title, int(completed), ''])
+    result = conn.callproc_return('sp_set_user_todo_insert', [user_id, title, int(completed), contents])
     todo_id = list(result.values())[0] if result else None
     
     # 응답 데이터 구성
     response_data = {
         'todo_id': todo_id,
         'title': title,
-        'completed': completed
+        'completed': completed,
+        'contents': contents
     }
     
     # JSON 응답 반환
@@ -84,8 +86,9 @@ def todo_update(todo_id):
 
     title = data.get('title')
     completed = data.get('completed', False)
+    contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, title, int(completed), ''])
+    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, title, int(completed), contents])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})

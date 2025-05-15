@@ -2,7 +2,12 @@
 <template>
     <router-view />
     <div class="container">
-      <h2>Todo List</h2>  
+
+      <div class="d-flex justify-content-between">
+        <h2>Todo List</h2>  
+        <button class="btn btn-primary" @click="moveToTodoCreatePage">Create Todo</button>
+      </div>
+
       <input class="form-control" type="text" v-model="searchText" placeholder="Search..." @keyup.enter="searchTodo">
       <hr />
       <TodoAddForm @add-todo="addTodo" />
@@ -34,6 +39,9 @@
   import TodoAddForm from '@/components/TodoAddForm.vue';
   import TodoList from '@components/TodoList.vue';
   import axios from 'axios';
+  import { useRouter } from 'vue-router';
+  
+  const router = useRouter();
   
   const todos = ref([]); 
   const err = ref('');
@@ -42,12 +50,13 @@
   const totalCount = ref(0);
   const limit = 5;
   
-  
+  const moveToTodoCreatePage = () => {
+    router.push({name: 'TodoCreate'});
+  };
   
   const totalPage = computed(() => {
     return Math.ceil(totalCount.value / limit);
   });
-  
   
   let timeout = null; 
   watch(searchText, () => {
