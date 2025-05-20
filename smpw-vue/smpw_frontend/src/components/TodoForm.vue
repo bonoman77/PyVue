@@ -12,6 +12,7 @@
                     <div>
                         <input type="text" id="title" v-model="todoData.title">
                     </div>
+                    <span v-if="titleError" class="text-danger">{{ titleError }}</span>
                 </div>
             </div>
             <div v-if="editing" class="col-6">
@@ -55,6 +56,7 @@ const toast = useToast();
 
 const todo_id = ref(route.params.todo_id);
 const isLoading = ref(false);
+const titleError = ref('');
 
 const todoData = ref({
     subject: '',
@@ -71,8 +73,9 @@ const props = defineProps({
 })
 
 const onSave = async () => {
+    titleError.value = '';
     if (!todoData.value.title) {
-        toast.error('Title is required');
+        titleError.value = "Title is required";
         return;
     }
 
