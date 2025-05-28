@@ -105,11 +105,10 @@
     }
   };
   
-  const deleteTodo = async (index) => {
+  const deleteTodo = async (id) => {
     err.value = '';
-    const todoId = todos.value[index].todo_id;
     try {
-      await axios.delete(`http://localhost:4000/boards/todo_delete/${todoId}`);
+      await axios.delete(`http://localhost:4000/boards/todo_delete/${id}`);
       getTodos(1);
     } catch (error) {
       console.error('Error deleting todo:', error);

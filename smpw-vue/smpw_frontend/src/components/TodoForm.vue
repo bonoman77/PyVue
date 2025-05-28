@@ -7,13 +7,11 @@
     <form v-else @submit.prevent="onSave">
         <div class="row">
             <div class="col-6">
-                <div class="form-group text-start">
-                    <label for="title">Title:</label>
-                    <div>
-                        <input type="text" id="title" v-model="todoData.title">
-                    </div>
-                    <span v-if="titleError" class="text-danger">{{ titleError }}</span>
-                </div>
+                <Input
+                    label="Title"
+                    v-model:subject="todoData.title"
+                    :error="titleError"
+                    />
             </div>
             <div v-if="editing" class="col-6">
                 <div class="form-group text-start">
@@ -49,6 +47,7 @@ import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import _ from 'lodash'; 
 import { useToast } from 'vue-toastification';
+import Input from '@/components/Input.vue';
 
 const route = useRoute();
 const router = useRouter();

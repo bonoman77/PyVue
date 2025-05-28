@@ -5,23 +5,39 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title">
+            <slot name="title"></slot>
+        </h5>
+        <button type="button" class="close" style="color: black;" @click="closeModal">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
+        <slot name="body"></slot>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <slot name="footer"></slot>
       </div>
     </div>
   </div>
 </div>
 </template>
 
+
+<script setup>
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const closeModal = () => {
+  emit('close');
+}
+
+const emit = defineEmits(['close'])
+</script>
 
 
 <style scoped>
@@ -56,9 +72,7 @@
   background: rgba(0,0,0,0.5);
   z-index: 1040;
 }
+
 </style>
 
-<script setup>
-
-</script>
 
