@@ -1,4 +1,4 @@
-import smpw.dbconns as conn
+import todo.dbconns as conn
 from flask import Blueprint, request, jsonify
 
 
@@ -43,9 +43,12 @@ def todo_delete(todo_id):
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})
 
-@bp.route("/todo_toggle/<int:todo_id>/<int:completed>", methods=['PATCH'])
-def todo_toggle(todo_id, completed):
-    print(todo_id, completed)
+@bp.route("/todo_toggle/<int:todo_id>", methods=['PATCH'])
+def todo_toggle(todo_id):
+
+    data = request.get_json()
+    completed = data.get('completed', False)
+
     conn.callproc_without_return('sp_set_user_todo_toggle', [todo_id, completed])
     
     # JSON 응답 반환

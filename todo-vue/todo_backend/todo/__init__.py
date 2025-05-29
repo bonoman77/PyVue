@@ -1,8 +1,8 @@
 import os
 from flask import Flask, url_for
-from smpw.utils.file_handler import file_download
-from smpw.utils.log_handler import setup_logger
-from smpw.config import get_config
+from todo.utils.file_handler import file_download
+from todo.utils.log_handler import setup_logger
+from todo.config import get_config
 from flask_cors import CORS
 
 def create_app(config_class=None):
@@ -34,7 +34,7 @@ def create_app(config_class=None):
 
 def register_blueprints(app):
     """모든 블루프린트를 앱에 등록"""
-    from smpw.router import homes, accounts, admins, boards, manages
+    from todo.router import homes, accounts, admins, boards, manages
     # 각 모듈의 블루프린트 등록
     app.register_blueprint(homes.bp)
     app.register_blueprint(accounts.bp, url_prefix='/accounts')

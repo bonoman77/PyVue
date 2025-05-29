@@ -1,5 +1,5 @@
 from flask import request, session, redirect, url_for
-import smpw.dbconns as conn
+import todo.dbconns as conn
 from functools import wraps
 
 LOGIN_ENDPOINT = 'accounts.login'

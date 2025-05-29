@@ -1,0 +1,9 @@
+Flask
+pyodbc
+python-dateutil
+python-dotenv
+Flask-Mail
+werkzeug
+xlsxwriter
+openpyxl
+apscheduler

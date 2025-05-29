@@ -1,0 +1,13 @@
+<div class="dropdown">
+    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=1) }}">방문사업</a>
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=77) }}">주니어플러스</a>
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=2) }}">베이비리그</a>
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=3) }}">마스터클럽</a>
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=4) }}">프리스쿨</a>
+        <a class="dropdown-item" href="{{ url_for(request.endpoint, channel_id=5) }}">라트주니어</a>
+    </div>
+</div>    

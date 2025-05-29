@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header_info {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .header_info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-left: 10px;
+        }
+        .footer {
+            text-align: left;
+            margin-top: 5px;
+            color: #666;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" >
+        <div class="header_info">
+            <span style="display: inline-block; width: 65px; height: 25px; background: red; color: white; text-align: center; line-height: 25px; font-size: 14px; border-radius: 3px;">&nbsp;대외비&nbsp;</span>
+            <h2>{{ data.title }}</h2>
+            <h4>{{ data.report_date }}</h4>
+            <p>전체 수신자: {{ data.recipients }}</p>
+            <p style="color: #999; font-size: 13px; margin-bottom: 20px;">
+                # 수신자 대상 가운데 IT실 소속은 서비스 모니터링을 위해 포함됩니다.
+            </p>
+        </div>
+
+        <div class="section">
+            <h3>매출 현황</h3>
+            <table border="1" cellspacing="0" cellpadding="5" width="100%">
+                <tr bgcolor="#4a90e2">
+                    <th align="center"><font color="white">지역</font></th>
+                    <th align="center"><font color="white">당월 목표</font></th>
+                    <th align="center"><font color="white">전년 동월 매출</font></th>
+                    <th align="center"><font color="white">당일 매출</font></th>
+                    <th align="center"><font color="white">당월 누적 매출</font></th>
+                    <th align="center"><font color="white">목표 달성률</font></th>
+                </tr>
+                {% for item in data.product_region_sales %}
+                <tr>
+                    <td align="left"><b>{{ item.GoalGroupName }}</b></td>
+                    <td align="right">{{ item.Amount|number_format if item.Amount else "-" }}</td>
+                    <td align="right">{{ item.LastYearMonthlySales|number_format }}</td>
+                    <td align="right">{{ item.DailySales|number_format }}</td>
+                    <td align="right"><b>{{ item.MonthlySales|number_format }}</b></td>
+                    <td align="right">
+                        {% if item.MonthlyGoalRate > 0 %}    
+                            {% if item.MonthlyGoalRate >= 100 %}
+                                <font color="green"><b>{{ item.MonthlyGoalRate|number_format }}%</b></font>
+                            {% else %}
+                                <font color="red"><b>{{ item.MonthlyGoalRate|number_format }}%</b></font>
+                            {% endif %}
+                        {% else %}
+                            <font color="black"><b>-</b></font> 
+                        {% endif%}    
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        {% if data.channel_consult %}
+            <div class="section">
+                <h3>일일 채널관리 상담 이력 (최대 50건)</h3>
+                <table border="1" cellspacing="0" cellpadding="5" width="100%">
+                    <tr bgcolor="#3e8e41">
+                        <th align="center"><font color="white">사업</font></th>
+                        <th align="center"><font color="white">상담</font></th>
+                        <th align="center"><font color="white">작성자</font></th>
+                        <th align="center"><font color="white">대상지사</font></th>
+                        <th align="center"><font color="white">내용</font></th>
+                    </tr>
+                    {% for item in data.channel_consult %}
+                    <tr>
+                        <td align="left"><b>{{ item.ChannelKind }}</b></td>
+                        <td align="left"><b>{{ item.RecordKind }}</b></td>
+                        <td align="left">{{ item.UserName }}</td>
+                        <td align="left">{{ item.AgencyName }}</td>
+                        <td align="left">{{ item.Contents }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}    
+
+        {% if data.customer_consult %}
+            <div class="section">
+                <h3>일일 고객센터 상담 이력 (최대 50건)</h3>
+                <table border="1" cellspacing="0" cellpadding="5" width="100%">
+                    <tr bgcolor="#3e8e41">
+                        <th align="center"><font color="white">사업</font></th>
+                        <th align="center"><font color="white">상담일</font></th>
+                        <th align="center"><font color="white">상담분류</font></th>
+                        <th align="center"><font color="white">세부분류</font></th>
+                        <th align="center"><font color="white">내용</font></th>
+                    </tr>
+                    {% for item in data.customer_consult %}
+                    <tr>
+                        <td align="left"><b>{{ item.CounselType }}</b></td>
+                        <td align="left">{{ item.CreateDate|datetime_str(fmt='only_time') }}</td>
+                        <td align="left">{{ item.CounselDepth }}</td>
+                        <td align="left">{{ item.CounselDepthSub }}</td>
+                        <td align="left">{{ item.Comment }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}    
+
+        <div class="footer">
+            <p>* 본 보고서는 튼튼영어 채널관리에서 자동으로 생성되었습니다.</p>
+            <p>* 본 보고서는 튼튼영어의 기업 정보로서, 귀하에게만 한정적으로 제공된 자료이므로 제 3자에게 공개할 수 없습니다.</p>
+            <br />
+            <p>© {{ data.report_date[:4] }} 튼튼영어. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

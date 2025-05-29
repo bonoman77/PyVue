@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input, textarea, checkboxes, select %}
+{% block title %} 프로모션 {% endblock %}
+
+{% block section %}
+
+<div class="row">
+	<div class="col-lg-10">
+		<div class="card-wrapper">
+			<!-- Form controls -->
+			<div class="card">
+				<!-- Card header -->
+				<div class="card-header">
+					<h3 class="mb-0">프로모션 {{'수정' if channel_promo_id else '등록'}}</h3>
+				</div>
+				<!-- Card body -->
+				<div class="card-body">
+					<form method="POST" action="{{ url_for('manages.promo_modify_post') }}">
+						<div class="row">
+							<div class="col-md-6">
+								{{ input('hidden', 'channel_id', channel_id, opt='required') }}
+								{{ input('hidden', 'channel_promo_id', channel_promo_id) }}
+								<div class="form-group">
+									<label class="form-control-label" for="exampleFormControlInput1">제목</label>
+									{{ input('text', 'title', res.Title if res, opt='required') }}
+								</div>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="start_date">시작일 (mm/dd/yyyy)</label>
+											{{ input('text', 'start_date', res.StartDate if res else
+											today.strftime('%m/%d/%Y'),
+											class="datepicker bg-white", opt='required') }}
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="end_date">종료일 (mm/dd/yyyy)</label>
+											{{ input('text', 'end_date', res.EndDate if res and res.EndDate else '', class="datepicker bg-white", opt='readonly') }}
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="promo_kind_id">유형</label>
+											{{ select('promo_kind_id', promo_kind)}}
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="promo_sub_kind_id">세부유형</label>
+											{{ select('promo_sub_kind_id', promo_sub_kind)}}
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="form-control-label" for="title">첨부파일</label>
+									{{ input('file', 'upload_file_path', upload_file_path, opt='multiple',
+									onchange='checkFiles(this)') }}
+									<span class="text-sm text-muted">허용된 파일: "jpg", "png", "txt", "docx", "xlsx",
+										"pdf"</span>
+								</div>
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<div class="table-responsive">
+												<table class="table table-striped">
+													<tbody>
+														{% for file in file_list %}
+														<tr id="row_{{file.ChannelPromoFileID}}">
+															<td class="text-left"
+																style="padding-left:0px; padding-top:3px; padding-bottom:3px; border-top:0px">
+																<a
+																	href="{{ url_for('file_download', file_path=file.UploadFilePath, file_name=file.UploadFileName, download_yn=1) }}">{{file.UploadFileName}}</a>
+																&nbsp;&nbsp;
+																<a href="javascript:deleteFile({{file.ChannelPromoFileID}});"
+																	class="text-danger">x</a>
+															</td>
+														</tr>
+														{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="form-control-label" for="exampleFormControlInput1">기대효과</label>
+									{{ textarea('expect_comment', res.ExpectComment if res, rows=3, opt='required') }}
+								</div>
+								<div class="form-group">
+									<label class="form-control-label" for="exampleFormControlInput1">실제성과</label>
+									{{ textarea('result_comment', res.ResultComment if res and res.ResultComment else '', rows=3) }}
+								</div>
+								<div class="form-group">
+									<label class="form-control-label">기대효과 타겟</label>
+									{{ checkboxes('promo_target_id', promo_target) }}
+								</div>
+								<button class="btn btn-outline-default" type="button"
+									onclick="javascript:history.back()">뒤로가기</button>
+								<button class="btn {{'btn-success' if channel_promo_id else 'btn-primary'}}"
+									type="submit">
+									{{'수정' if channel_promo_id else '등록'}}
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const searchInput = document.querySelector('input[name="title"]');
+		if (searchInput) {
+			searchInput.focus();
+
+			if (searchInput.value) {
+				searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+			}
+		}
+	});
+
+	var deleteFile = function (promo_file_id) {
+    swal({
+      title: '삭제',
+      text: "선택한 파일을 정말로 삭제하시겠습니까?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonClass: 'btn btn-danger',
+      cancelButtonClass: 'btn btn-outline-danger',
+      confirmButtonText: 'Yes, delete it!',
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "/manages/set_promo_file_delete",
+          data: { promo_file_id: promo_file_id },
+          success: function (result) {
+            $("#row_" + promo_file_id).remove();
+          }
+        });
+      }
+    });
+  }
+</script>
+</script>
+
+{% endblock %}

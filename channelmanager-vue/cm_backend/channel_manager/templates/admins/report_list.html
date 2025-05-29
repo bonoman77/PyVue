@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+{% block title %} 메일리포트 관리 {% endblock %}
+
+{% block section %}
+
+<!-- Table -->
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h3 class="mb-0">메일리포트 목록</h3>
+                        <p class="text-sm mb-0">
+                            관리자가 비즈니스 리포트의 생성 및 수신자를 관리합니다.
+                        </p>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a href="javascript:history.back();" class="btn btn-sm btn-outline-default btn-round btn-icon">
+                            뒤로가기
+                        </a>
+                        <a href="{{ url_for('admins.report_modify', channel_id=channel_id, channel_report_id=0) }}"
+                            class="btn btn-sm btn-info btn-round btn-icon" data-toggle="tooltip"
+                            data-original-title="Create Item">
+                            <span class="btn-inner--text">신규생성</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive py-4">
+                <table class="table table-flush table-striped table-hover" id="datatable-basic">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>No.</th>
+                            <th>제목</th>
+                            <th>리포트종류</th>
+                            <th>작성자</th>
+                            <th>사용여부</th>
+                            <th>등록일</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>No.</th>
+                            <th>제목</th>
+                            <th>리포트종류</th>
+                            <th>작성자</th>
+                            <th>사용여부</th>
+                            <th>등록일</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for res in res_list %}
+                        <tr>
+                            <td>{{res.ChannelReportID}}</td>
+                            <td>
+                                <a href="{{ url_for('admins.report_modify', channel_id=channel_id, channel_report_id=res.ChannelReportID) }}"
+                                    class="table-action table-action-edit">
+                                    {{res.Title}}
+                                </a>
+                            </td>
+                            <td>{{res.ReportKind}}</td>
+                            <td>{{res.UserName}}</td>
+                            <td>
+                                <span style="display: none;">{{res.UseYn}}</span>
+                                <label class="custom-toggle custom-toggle-success">
+                                    <input type="checkbox" {{"checked" if res.UseYn}}
+                                        onchange="updateReportStatus('UseYn', {{res.ChannelReportID}}, this.checked)">
+                                    <span class="custom-toggle-slider rounded-circle" data-label-off="No"
+                                        data-label-on="Yes"></span>
+                                </label>
+                            </td>
+                            <td>{{res.CreateDate}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    function updateReportStatus(column, reportId, isChecked) {
+        fetch('/admins/set_report_status_update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                column: column,
+                report_id: reportId,
+                bool_yn: isChecked
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('User status updated successfully');
+                } else {
+                    console.error('Failed to update user status');
+                }
+            });
+    }
+</script>
+
+
+{% endblock %}

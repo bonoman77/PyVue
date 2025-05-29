@@ -1,0 +1,261 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% from "macros/modal.html" import classic_modal %}
+{% block title %} 지원 {% endblock %}
+
+{% block section %}
+
+<!-- Table -->
+<div class="row">
+  <div class="col">
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header border-0">
+        <div class="row">
+          <div class="col-6">
+            <h3 class="mb-0">{{channel_id | channel_name}} 지원 ({{search.total | number_format}}개)
+              {% include 'includes/channel_list.html' %}
+            </h3>
+          </div>
+          <div class="col-6 text-right">
+            <a href="javascript:history.back();" class="btn btn-sm btn-outline-default btn-round btn-icon">
+                뒤로가기
+            </a>
+            <a href="javascript:uploadFormOpen();" class="btn btn-sm btn-warning btn-round btn-icon">
+              <span class="btn-inner--icon"><i class="fas fa-upload"></i></span>
+              <span class="btn-inner--text">업로드</span>
+            </a>
+            {% if res_list %}
+            <a href="{{ url_for(request.endpoint, channel_id=channel_id, export_yn=true, start_date=search.start_date, end_date=search.end_date, search_text=search.search_text) }}"
+              class="btn btn-sm btn-success btn-round btn-icon" data-toggle="tooltip"
+              data-original-title="Export Excel File">
+              Excel
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          {% include 'includes/search_card.html' %}
+        </div>
+      </div>
+
+      <!-- Light table -->
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush table-striped table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>No.</th>
+              <th>파트너</th>
+              <th>카테고리</th>
+              <th>제목</th>
+              <th>지원금액(수량)</th>
+              <th>등록(수정)</th>
+              <th>지원일</th>
+              <th>옵션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in res_list %}
+            <tr id="row_{{res.ChannelManageID}}">
+              <td>
+                <b>{{res.ChannelManageID}}</b>
+              </td>
+              <td>
+                <span class="font-weight-bold">
+                  {{res.AgencyName}}
+                </span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.CategoryName}}</span>
+              </td>
+              <td>
+                <a href="{{ url_for('counsels.support_modify', channel_id=channel_id, channel_agency_id=res.ChannelAgencyID, channel_manage_id=res.ChannelManageID) }}"
+                  class="table-action table-action-edit">
+                  {{res.Title}}
+                </a>
+              </td>
+              <td>
+                <span class="text-muted">{{res.SupportAmt|number_format}}원 ({{res.SupportQty|number_format}}ea)</span>
+              </td>
+              <td>
+                <span class="{{'text-primary' if res.UserUseYn else 'text-muted'}}">
+                  {{res.UserName}}
+                  {{'('+res.UpdateUserName+')' if res.UpdateChannelUserID and res.UpdateChannelUserID != res.ChannelUserID}}
+                </span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.ContactDate}}</span>
+              </td>
+              <td class="table-actions">
+                <a href="{{ url_for('counsels.support_modify', channel_id=channel_id, channel_agency_id=res.ChannelAgencyID, channel_manage_id=res.ChannelManageID) }}"
+                  class="table-action table-action-edit" data-toggle="tooltip" data-original-title="Edit item">
+                  <i class="fas fa-user-edit"></i>
+                </a>
+                {% if session.login_user.finance_yn %}
+                <a href="javascript:itemDelete({{res.ChannelManageID}});" class="table-action table-action-delete"
+                  data-toggle="tooltip" data-original-title="Delete item">
+                  <i class="fas fa-trash"></i>
+                </a>
+                {% endif %}  
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" class="text-center">
+                <b>검색 결과가 없습니다.</b>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Card footer -->
+      <div class="card-footer py-4">
+        <nav aria-label="...">
+          <ul class="pagination justify-content-end mb-0">
+            {% set board_list_url = url_for(request.endpoint, channel_id=channel_id, row_size=paging.row_size,
+            search_text=search.search_text if search, start_date=search.start_date, end_date=search.end_date if search)
+            %}
+
+            {% if paging.pre_page_yn %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{paging.pre_page}}"><i
+                  class="fas fa-angle-left"></i></a></li>
+            {% endif %}
+
+            {% for i in range(paging.start_page, paging.max_page) %}
+            {% if paging.page == i %}
+            <li class="page-item active"><a class="page-link" href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if paging.next_page_yn %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{paging.next_page}}"><i
+                  class="fas fa-angle-right"></i></a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+{% call classic_modal('uploadModal', '엑셀자료 업로드', submit_fn='uploadExcelFile()', fn_comment='업로드') %}
+<div id="uploadContent">
+  <form id="uploadForm" enctype="multipart/form-data" method="POST">
+    <div class="col">
+      <div class="form-group">
+        <label class="form-control-label" for="title">양식링크</label><br />
+        <a class="text-sm text-info"
+          href="https://www.dropbox.com/scl/fi/nkszniz2ndn9hsvm29ui2/ChannelSupport-Ver-6.0.xlsx?rlkey=6w4zaaj9jqo5ygkjyeh1l1ken&dl=0"
+          target="_blank">
+          엑셀양식 6.0 다운로드 링크
+        </a>
+      </div>
+      <div class="form-group">
+        <label class="form-control-label" for="title">규칙 컬럼</label><br />
+        <span class="text-sm text-muted"><strong>ContactStyle:</strong> 인콜, 아웃콜, 방문, 메시지</span> <br />
+        <span class="text-sm text-muted"><strong>SupportKind:</strong> 성장장려금, 정착지원금, 페이백(기타), 기타</span> 
+      </div>
+      <div class="form-group">
+        <label class="form-control-label" for="title">첨부파일</label>
+        {{ input('file', 'upload_file_path', upload_file_path) }}
+        <span class="text-sm text-muted">허용된 파일: "xls", "xlsx"</span>
+      </div>
+    </div>
+  </form>
+</div>
+{% endcall %}
+
+<script type="text/javascript">
+  function itemDelete(manage_id) {
+    swal({
+      title: '삭제',
+      text: "선택한 등록글을 정말로 삭제하시겠습니까?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonClass: 'btn btn-danger',
+      cancelButtonClass: 'btn btn-outline-danger',
+      confirmButtonText: 'Yes, delete it!',
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "/counsels/set_manage_delete",
+          data: { manage_id: manage_id },
+          success: function (result) {
+            $("#row_" + manage_id).remove();
+          }
+        });
+      }
+    });
+  }
+
+  function uploadFormOpen() {
+    $("#uploadModal").modal('show');
+  }
+
+  function uploadExcelFile() {
+    var formData = new FormData($("#uploadForm")[0]);
+    var fileInput = $("#uploadForm input[type='file']")[0];
+    var fileName = fileInput.files[0].name;
+    var fileExtension = fileName.split('.').pop().toLowerCase();
+
+    if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
+      swal({
+        title: '오류',
+        text: '엑셀 파일(.xlsx 또는 .xls)만 업로드 가능합니다.',
+        type: 'error'
+      });
+      return;
+    }
+
+    $.ajax({
+      url: '/counsels/set_support_upload_excel',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        if (response.result === "success") {
+          swal({
+            title: '성공',
+            text: '엑셀 파일이 성공적으로 업로드되었습니다.',
+            type: 'success'
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          swal({
+            title: '오류',
+            text: '업로드 중 오류가 발생했습니다.',
+            type: 'error'
+          });
+        }
+        console.log('Response:', response);
+      },
+      error: function(xhr, status, error) {
+        var errorMessage;
+        try {
+          var response = JSON.parse(xhr.responseText);
+          errorMessage = response.error;
+        } catch (e) {
+          errorMessage = '알 수 없는 오류가 발생했습니다.';
+        }
+        
+        swal({
+          title: '오류',
+          text: errorMessage,
+          type: 'error'
+        });
+        console.error('Error Message:', errorMessage);
+      }
+    });
+  }
+</script>
+
+{% endblock %}

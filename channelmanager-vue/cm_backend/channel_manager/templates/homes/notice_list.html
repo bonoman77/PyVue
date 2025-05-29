@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% from "macros/modal.html" import classic_modal %}
+{% block title %} 공지사항 {% endblock %}
+
+{% block section %}
+
+<!-- Table -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h3 class="mb-0">공지사항 목록</h3>
+                        <p class="text-sm mb-0">
+                            채널과 구분 없는 공지사항 글입니다.
+                        </p>
+                    </div>
+                    <div class="col-6 text-right">
+                        <a href="javascript:history.back();" class="btn btn-sm btn-outline-default btn-round btn-icon">
+                            뒤로가기
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive py-4">
+                <table class="table table-flush table-striped table-hover" id="datatable-basic">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>No.</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>등록일</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>No.</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>등록일</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for res in res_list %}
+                        <tr>
+                            <td data-sort="desc">{{res.ChannelNoticeID}}</td>
+                            <td>
+                                <a href="javascript:void(0)"
+                                    onclick="noticeOpen({{res.ChannelNoticeID}})">{{res.Title}}</a>
+                                {% if res.TopExposeYn %}<i class="ni ni-bell-55 text-yellow"></i>{% endif %}
+                            </td>
+                            <td>{{res.UserName}}</td>
+                            <td>{{res.CreateDate}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% call classic_modal('noticeModal', '공지글 보기', is_show_footer=False) %}
+<div id="noticeContent"></div>
+{% endcall %}
+
+<script type="text/javascript">
+    function noticeOpen(noticeId) {
+        $("#noticeModal").modal('show');
+
+        $.ajax({
+            url: '{{ url_for('homes.get_notice_content') }}',
+            type: 'GET',
+            data: { channel_notice_id: noticeId },
+            success: function (response) {
+                var content = response.content;
+                var textarea = document.createElement('textarea');
+                textarea.value = content;
+                textarea.readOnly = true;
+                textarea.style.width = '100%';
+                textarea.style.height = '300px';
+                textarea.style.border = 'none';
+                textarea.style.outline = 'none';
+                textarea.style.resize = 'none';
+                document.getElementById("noticeContent").innerHTML = '';
+                document.getElementById("noticeContent").appendChild(textarea);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching notice:", error);
+                document.getElementById("noticeContent").innerHTML = "공지를 불러오는 중 오류가 발생했습니다.";
+            }
+        });
+    }
+</script>
+
+{% endblock %}

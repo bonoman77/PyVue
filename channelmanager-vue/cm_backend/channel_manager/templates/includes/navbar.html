@@ -1,0 +1,114 @@
+<nav class="navbar navbar-top navbar-expand navbar-dark {{channel_id | channel_color }} border-bottom">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
+          <div class="form-group mb-0">
+              <h3 class="text-white" style="margin-bottom: 0px;">{{channel_id | channel_name }}</h3>
+          </div>
+        </form>
+
+        <!-- Navbar links -->
+        <ul class="navbar-nav align-items-center ml-md-auto">
+          <li class="nav-item d-xl-none">
+            <!-- Sidenav toggler -->
+            <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin" data-target="#sidenav-main">
+              <div class="sidenav-toggler-inner">
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+                <i class="sidenav-toggler-line"></i>
+              </div>
+            </div>
+          </li>
+          {% if session.login_user.admin_yn %}
+            <li class="nav-item dropdown">
+              <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top:0.5rem">
+                <i class="ni ni-settings-gear-65"></i>
+              </a>
+              <div class="dropdown-menu  dropdown-menu-right ">
+                <a href="{{ url_for('admins.user_list', channel_id=channel_id) }}" class="dropdown-item">
+                  <span>사용자 관리</span>
+                </a>
+                <a href="{{ url_for('admins.notice_list', channel_id=channel_id) }}" class="dropdown-item">
+                  <span>공지사항 관리</span>
+                </a>
+                <a href="{{ url_for('admins.report_list', channel_id=channel_id) }}" class="dropdown-item">
+                  <span>메일리포트 관리</span>
+                </a>
+              </div>
+            </li>
+          {% endif %}
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-top:0.5rem">
+              <i class="ni ni-ungroup"></i>
+            </a>
+            <div class="dropdown-menu  dropdown-menu-right ">
+              <a href="{{ url_for('homes.index', channel_id=1) }}" class="dropdown-item">
+                <span>방문사업</span>
+              </a>
+              <a href="{{ url_for('homes.index', channel_id=77) }}" class="dropdown-item">
+                <span>주니어플러스</span>
+              </a>
+              <a href="{{ url_for('homes.index', channel_id=2) }}" class="dropdown-item">
+                <span>베이비리그</span>
+              </a>
+              <a href="{{ url_for('homes.index', channel_id=3) }}" class="dropdown-item">
+                <span>마스터클럽</span>
+              </a>
+              <a href="{{ url_for('homes.index', channel_id=4) }}" class="dropdown-item">
+                <span>프리스쿨</span>
+              </a>
+              <a href="{{ url_for('homes.index', channel_id=5) }}" class="dropdown-item">
+                <span>라트주니어</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+          <li class="nav-item dropdown">
+            <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="media align-items-center">
+                <div class="media-body  ml-2  d-none d-lg-block">
+                  <span class="mb-0 text-sm  font-weight-bold">{{session.login_user.user_name}}</span>
+                </div>
+              </div>
+            </a>
+            <div class="dropdown-menu  dropdown-menu-right ">
+              <!-- <div class="dropdown-header noti-title">
+                <h6 class="text-overflow m-0">Welcome!</h6>
+              </div> -->
+              <a href="{{url_for('accounts.user_update', channel_id=channel_id)}}" class="dropdown-item">
+                <i class="ni ni-settings"></i>
+                <span>사용자정보 변경</span>
+              </a>
+              <!-- <div class="dropdown-divider"></div> -->
+              <a href="{{url_for('accounts.logout')}}" class="dropdown-item">
+                <i class="ni ni-button-power"></i>
+                <span>로그아웃</span>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Header -->
+
+  <div class="header {{channel_id | channel_color }} pb-6">
+    <div class="container-fluid">
+      <div class="header-body">
+        <div class="row align-items-center py-4">
+          <div class="col-lg-6 col-7">
+            <h6 class="h2 text-white d-inline-block mb-0">{{request.endpoint | endpoint_info('title')}}</h6>
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+              <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                <li class="breadcrumb-item"><a href="{{ url_for('homes.index', channel_id=channel_id) }}"><i class="fas fa-home"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{request.endpoint | endpoint_info('name')}}</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+

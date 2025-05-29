@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input %}
+{% block title %} 파트너 {% endblock %}
+
+{% block section %}
+
+<!-- Table -->
+<div class="row">
+  <div class="col">
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header border-0">
+        <div class="row">
+          <div class="col-6">
+            <h3 class="mb-0">검색 결과 ({{search.total | number_format}}개)</h3>
+          </div>
+          <div class="col-6 text-right">
+            <a href="javascript:history.back();" class="btn btn-sm btn-outline-default btn-round btn-icon">
+              뒤로가기
+            </a>
+            <a href="{{ url_for(request.endpoint, channel_id=channel_id, source_type_id=85) }}"
+            class="btn btn-sm btn-round btn-icon {{'btn-primary' if source_type_id == 85 else 'btn-outline-primary'}}">
+            <span class="btn-inner--text">캠페인</span>
+            </a>
+            <a href="{{ url_for(request.endpoint, channel_id=channel_id, source_type_id=86) }}"
+            class="btn btn-sm btn-round btn-icon {{'btn-primary' if source_type_id == 86 else 'btn-outline-primary'}}">
+            <span class="btn-inner--text">시즈널</span>
+            </a>
+            <a href="{{ url_for(request.endpoint, channel_id=channel_id, source_type_id=87) }}"
+            class="btn btn-sm btn-round btn-icon {{'btn-primary' if source_type_id == 87 else 'btn-outline-primary'}}">
+            <span class="btn-inner--text">시즈널2</span>
+            </a>
+
+            {% if res_list %}
+              <a href="{{ url_for(request.endpoint, channel_id=channel_id, export_yn=true, start_date=search.start_date, end_date=search.end_date, search_text=search.search_text) }}"
+                class="btn btn-sm btn-success btn-round btn-icon">
+                Excel
+              </a>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          {% include 'includes/search_card.html' %}
+        </div>
+      </div>
+
+      <!-- Light table -->
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush table-striped">
+          <thead class="thead-light">
+            <tr>
+              <th>No.</th>
+              <th>이름</th>
+              <th>나이</th>
+              <th>연락처</th>
+              <th>주소</th>
+              <th>소스종류</th>
+              <th>프리미엄</th>
+              <th>접수일</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in res_list %}
+            <tr>
+              <td>
+                <b>{{res.SourceID}}</b>
+              </td>
+              <td>
+                <span class="font-weight-bold">{{res.RegistrantName}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.Age}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.Mobile}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.RegistrantAddress}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.SourceKind}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.PremiumYn}}</span>
+              </td>
+              <td>
+                <span class="text-muted">{{res.ReceiptDate}}</span>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="9" class="text-center">
+                <b>검색 결과가 없습니다.</b>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card footer -->
+      <div class="card-footer py-4">
+        <nav aria-label="...">
+          <ul class="pagination justify-content-end mb-0">
+            {% set board_list_url = url_for(request.endpoint, channel_id=channel_id, source_type_id=source_type_id, row_size=paging.row_size,
+            search_text=search.search_text if search, start_date=search.start_date, end_date=search.end_date if search)
+            %}
+
+            {% if paging.pre_page_yn %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{paging.pre_page}}"><i
+                  class="fas fa-angle-left"></i></a></li>
+            {% endif %}
+
+            {% for i in range(paging.start_page, paging.max_page) %}
+            {% if paging.page == i %}
+            <li class="page-item active"><a class="page-link" href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{i}}">{{ i }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if paging.next_page_yn %}
+            <li class="page-item"><a class="page-link" href="{{board_list_url}}&page={{paging.next_page}}"><i
+                  class="fas fa-angle-right"></i></a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

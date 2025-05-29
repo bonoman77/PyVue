@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% from "macros/form.html" import input, textarea, checkboxes, select %}
+{% block title %} 채널목표 {% endblock %}
+
+{% block section %}
+
+<div class="row">
+	<div class="col-lg-10">
+		<div class="card-wrapper">
+			<!-- Form controls -->
+			<div class="card">
+				<!-- Card header -->
+				<div class="card-header">
+					<h3 class="mb-0">채널목표 {{'수정' if channel_promo_id else '등록'}}</h3>
+				</div>
+				<!-- Card body -->
+				<div class="card-body">
+					<form method="POST" action="{{ url_for('manages.goal_modify_post') }}">
+						<div class="row">
+							<div class="col-md-6">
+								{{ input('hidden', 'channel_id', channel_id, opt='required') }}
+								{{ input('hidden', 'channel_goal_id', channel_goal_id) }}
+								<div class="row">
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="promo_kind_id">유형</label>
+											{{ select('goal_kind_id', goal_kind)}}
+										</div>
+									</div>
+									<div class="col">
+										<div class="form-group">
+											<label class="form-control-label" for="goal_month">목표월</label>
+											{{ input('month', 'goal_month', res.GoalMonth.strftime('%Y-%m') if res else
+											next_month.strftime('%Y-%m'), opt='required') }}
+										</div>
+									</div>
+								</div>
+                                {% for g in goal_group %}
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="exampleFormControlInput1">{{g.Item}}</label>
+                                        {{ input('number', g.ID, 
+                                        res_list|selectattr('GoalGroupID', 'equalto', g.ID)|map(attribute='Amount')|first|default(''), 
+                                        opt='required') }}
+                                    </div>
+                                {% endfor %}
+                                <button class="btn btn-outline-default" type="button"
+									onclick="javascript:history.back()">뒤로가기</button>
+								<button class="btn {{'btn-success' if channel_goal_id else 'btn-primary'}}"
+									type="submit">
+									{{'수정' if channel_goal_id else '등록'}}
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const searchInput = document.querySelector('input[name="title"]');
+		if (searchInput) {
+			searchInput.focus();
+
+			if (searchInput.value) {
+				searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+			}
+		}
+	});
+
+	var deleteFile = function (promo_file_id) {
+    swal({
+      title: '삭제',
+      text: "선택한 파일을 정말로 삭제하시겠습니까?",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonClass: 'btn btn-danger',
+      cancelButtonClass: 'btn btn-outline-danger',
+      confirmButtonText: 'Yes, delete it!',
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          type: "POST",
+          url: "/manages/set_promo_file_delete",
+          data: { promo_file_id: promo_file_id },
+          success: function (result) {
+            $("#row_" + promo_file_id).remove();
+          }
+        });
+      }
+    });
+  }
+</script>
+</script>
+
+{% endblock %}

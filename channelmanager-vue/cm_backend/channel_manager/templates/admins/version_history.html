@@ -1,0 +1,87 @@
+{% extends "layout_admin.html" %}
+
+{% block title %} 버전관리 {% endblock %}
+{% block main_section %}
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="header text-center">
+            <h3 class="title">개발 히스토리</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-plain">
+                    <div class="card-content">
+                        <ul class="timeline">
+<!--                            <li class="timeline-inverted">-->
+<!--                                <div class="timeline-badge danger">-->
+<!--                                    <i class="material-icons">card_travel</i>-->
+<!--                                </div>-->
+<!--                                <div class="timeline-panel">-->
+<!--                                    <div class="timeline-heading">-->
+<!--                                        <span class="label label-danger">Some Title</span>-->
+<!--                                    </div>-->
+<!--                                    <div class="timeline-body">-->
+<!--                                        <p>Wifey made the best Father's Day meal ever. So thankful so happy so blessed. Thank you for making my family We just had fun with the “future” theme !!!   It was a fun night all together ... The always rude Kanye Show at 2am Sold Out Famous viewing @ Figueroa and 12th in downtown.</p>-->
+<!--                                    </div>-->
+<!--                                    <h6>-->
+<!--                                        <i class="ti-time"></i>-->
+<!--                                        11 hours ago via Twitter-->
+<!--                                    </h6>-->
+<!--                              </div>-->
+<!--                            </li>-->
+                             <li>
+                                <div class="timeline-badge success">
+                                    <i class="material-icons">group</i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                      <span class="label label-success">ver 3.2 (2024-12-09)</span>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>교육신청/관리 오픈</p>
+                                        <p>TSZ 학습페이지 분리구성</p>
+                                        <p>LTR 학습페이지 개편</p>
+                                        <p>LTR A-Z Phonics Song 컨텐츠 분리구성</p>
+                                        <p>교사 레벨 테스트 오픈</p>
+                                    </div>
+                                </div>
+                             </li>
+
+                             <li class="timeline-inverted">
+                                <div class="timeline-badge info">
+                                    <i class="material-icons">new_releases</i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                        <span class="label label-info">ver 3.1 (2024-07-10)</span>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>교재연구 오픈</p>
+                                        <p>팝업공지관리 오픈</p>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="timeline-badge warning">
+                                    <i class="material-icons">flight_takeoff</i>
+                                </div>
+                                <div class="timeline-panel">
+                                    <div class="timeline-heading">
+                                      <span class="label label-warning">ver 3.0 (2024-02-22)</span>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>데일리튼튼 3.0 신규 개편</p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

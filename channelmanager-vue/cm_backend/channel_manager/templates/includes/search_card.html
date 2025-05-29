@@ -1,0 +1,47 @@
+{% from "macros/form.html" import input %}
+
+<!-- Card Inner body -->
+<div class="card-body" style="padding-bottom: 0px;padding-top: 0px;">
+    <form method="GET" action="{{ url_for(request.endpoint, channel_id=channel_id, source_type_id=source_type_id) }}">
+        <div class="form-row">
+            <div class="col-md-3 mb-1">
+                <label class="form-control-label" for="start_date">검색 시작일</label>
+                {{ input('text', 'start_date', search.start_date, class="form-control datepicker", opt='required') }}
+            </div>
+            <div class="col-md-3 mb-1">
+                <label class="form-control-label" for="end_date">검색 종료일</label>
+                {{ input('text', 'end_date', search.end_date, class="form-control datepicker", opt='required') }}
+            </div>
+
+            <div class="col-md-3 mb-1">
+                <label class="form-control-label" for="search_text">검색어</label>
+                <div class="form-group">
+                    <div class="input-group input-group-merge">
+                        {{ input('text', 'search_text', search.search_text if search.search_text else '') }}
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-1">
+                <label class="form-control-label">&nbsp;</label>
+                <button class="form-control btn btn-primary" type="submit">검색</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.querySelector('input[name="search_text"]');
+        if (searchInput) {
+            searchInput.focus();
+
+            // 값이 있으면 커서를 맨 끝으로 이동
+            if (searchInput.value) {
+                searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+            }
+        }
+    });
+</script>

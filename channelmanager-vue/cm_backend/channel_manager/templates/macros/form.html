@@ -1,0 +1,53 @@
+
+{% macro input(type='text', name='', value='', class='', opt='', min='', max='', placeholder='', onchange='') -%}
+    {% if type=='number' %}
+        <input type="number" inputmode="numeric" id="{{name}}" name="{{name}}" value="{{value}}" class="form-control {{class}}" min="{{min}}" max="{{max}}" placeholder="{{placeholder}}" required oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');" onchange="{{onchange}}" {{opt}}>
+    {% elif type=='tag' %}
+        <input type="text" id="{{name}}" name="{{name}}" value="{{value}}" class="form-control {{class}}" data-toggle="tags">
+    {% else %}
+        <input type="{{type}}" id="{{name}}" name="{{name}}" value="{{value}}" class="form-control {{class}}" minlength="{{min}}" maxlength="{{max}}" placeholder="{{placeholder}}" onchange="{{onchange}}" {{opt}}>
+    {% endif %}
+{%- endmacro %}
+
+{% macro textarea(name='', value='', rows='5', class='', placeholder='', opt='') -%}
+    <textarea id="{{name}}" name="{{name}}" rows="{{rows}}" class="form-control {{class}}" placeholder="{{placeholder}}" {{opt}}>{{value}}</textarea>
+{%- endmacro %}
+
+
+{% macro select(name, select_lst, title='') -%}
+    <select class="form-control" name="{{name}}" id="{{name}}">
+        {% if title %}
+            <option selected>{{title}}</option>
+        {% endif %}
+        {% for s in select_lst %}
+            <option value="{{s.ID}}" {% if s.Selected %} selected {% endif %}>{{s.Item}}</option>
+        {% endfor %}
+    </select>
+{%- endmacro %}
+
+
+{% macro checkbox(name='', value='', checked=False, comment='') -%}
+    <div class="custom-control custom-checkbox mb-1">
+        <input class="custom-control-input" name="{{name}}" id="{{name}}_{{value}}" type="checkbox" value="{{value}}" {{"checked" if checked}}>
+        <label class="custom-control-label" for="{{name}}_{{value}}">{{comment}}</label>
+    </div>
+{%- endmacro %}
+
+{% macro checkboxes(name, check_list) -%}
+    {% for c in check_list %}
+        <div class="custom-control custom-checkbox mb-1">
+            <input class="custom-control-input" name="{{name}}" id="{{name}}_{{c.ID}}" type="checkbox" value="{{c.ID}}" {{"checked" if c.IsChecked}}>
+            <label class="custom-control-label" for="{{name}}_{{c.ID}}">{{c.Item}}</label>
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+
+{% macro radios(radio_list) -%}
+    {% for r in radio_list %}
+    <div class="custom-control custom-radio mb-3">
+        <input class="custom-control-input" name="{{r.Separate}}" id="{{r.Separate}}_{{r.ID}}" type="radio" value="{{r.ID}}" {{"checked" if r.UseYn}}>
+        <label class="custom-control-label" for="{{r.Separate}}_{{r.ID}}">{{r.Item}}</label>
+    </div>
+    {% endfor %}
+{%- endmacro %}

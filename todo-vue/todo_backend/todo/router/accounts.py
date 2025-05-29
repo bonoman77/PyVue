@@ -1,8 +1,8 @@
 import random
 from flask import Blueprint, current_app, request, session, render_template, redirect, flash, url_for, jsonify
-import smpw.dbconns as conn
-from smpw.utils.auth_handler import login_required
-from smpw.utils.mail_handler import send_mail
+import todo.dbconns as conn
+from todo.utils.auth_handler import login_required
+from todo.utils.mail_handler import send_mail
 
 bp = Blueprint('accounts', __name__)
 

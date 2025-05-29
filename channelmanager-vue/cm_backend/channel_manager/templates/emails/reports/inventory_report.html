@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>재고 현황 보고서</h2>
+    <p>날짜: {{ data.report_date }}</p>
+    
+    <h3>재고 요약</h3>
+    <table>
+        <tr>
+            <th>구분</th>
+            <th>수량</th>
+            <th>금액</th>
+        </tr>
+        <tr>
+            <td>총 재고</td>
+            <td>{{ data.total_quantity }}</td>
+            <td>{{ data.total_value }}</td>
+        </tr>
+        <tr>
+            <td>안전재고 미달</td>
+            <td>{{ data.below_safety_count }}</td>
+            <td>{{ data.below_safety_value }}</td>
+        </tr>
+    </table>
+    
+    <h3>품목별 재고 현황</h3>
+    <table>
+        <tr>
+            <th>품목명</th>
+            <th>현재고</th>
+            <th>안전재고</th>
+            <th>단가</th>
+            <th>재고금액</th>
+        </tr>
+        {% for item in data.inventory_items %}
+        <tr {% if item.quantity < item.safety_stock %}class="warning"{% endif %}>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.safety_stock }}</td>
+            <td>{{ item.unit_price }}</td>
+            <td>{{ item.total_value }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% if data.below_safety_items %}
+    <h3>안전재고 미달 품목</h3>
+    <table>
+        <tr>
+            <th>품목명</th>
+            <th>현재고</th>
+            <th>안전재고</th>
+            <th>부족수량</th>
+        </tr>
+        {% for item in data.below_safety_items %}
+        <tr>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.safety_stock }}</td>
+            <td>{{ item.shortage }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    
+    <p>* 빨간색으로 표시된 품목은 안전재고 미달 상태입니다.</p>
+</body>
+</html>
