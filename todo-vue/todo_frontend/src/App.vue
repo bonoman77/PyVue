@@ -7,11 +7,22 @@ import axios from 'axios'
 
 const todos = ref([])
 const error = ref('')
+const total_cnt = ref(0) 
+const row_size = 5 
+const page = ref(1)
 
 const getTodos = async () => {
   try {
-    const res = await axios.get('http://localhost:4000/boards/todo_list')
+    const res = await axios.get('http://localhost:4000/boards/todo_list', {
+      params: {
+        page: page.value,
+        row_size: row_size,
+        search_text: ''
+      }
+    })
     todos.value = res.data.todo_list
+    total_cnt.value = res.data.total_cnt
+    console.log(total_cnt.value)
   } catch (err) {
     console.log(err)
     error.value = 'Failed to get todos' 
@@ -88,6 +99,16 @@ const filteredTodos = computed(() => {
       No todos available.
     </div>
     <TodoList :todos="filteredTodos" @delete-todo="deleteTodo" @toggle-todo="toggleTodo"/>
+    <hr />
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
   </div>
 </template>
 
