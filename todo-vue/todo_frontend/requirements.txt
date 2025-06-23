@@ -1,2 +1,4 @@
 axios
 vue-toastification@next
+vue-router@4
+
