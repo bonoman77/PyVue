@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue';
 import TodoForm from '@/components/TodoForm.vue'
 import TodoList from '@/components/TodoList.vue'
 import axios from 'axios'
-
+import { useRouter } from 'vue-router'
 
 const todos = ref([])
 const error = ref('')
@@ -14,6 +14,7 @@ const searchText = ref('')
 const numberOfPages = computed(() => {
   return Math.ceil(totalCnt.value / rowSize)
 })
+const router = useRouter()
 
 const getTodos = async (page = currentPage.value) => {
   currentPage.value = page
@@ -90,21 +91,19 @@ watch(searchText, () => {
   }, 1000)
 })
 
-// const filteredTodos = computed(() => {
-//   if (searchText.value){
-//     return todos.value.filter((todo) => {
-//       return todo.title.toLowerCase().includes(searchText.value.toLowerCase())
-//     })
-//   }
-//   return todos.value
-// })
+const moveToTodoCreatePage = () => {
+  router.push({ name: 'TodoCreate' })
+}
 
 </script>
 
 
 <template>
   <div>
-    <h2>To-Do List</h2>
+    <div class="d-flex justify-content-between mb-3">
+      <h2>To-Do List</h2>
+      <button type="button" class="btn btn-primary btn-sm" @click="moveToTodoCreatePage">Add Todo</button>
+    </div>
 
     <input type="text" 
     class="form-control mb-2"
