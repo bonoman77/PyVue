@@ -8,7 +8,7 @@ class Config:
     """기본 설정 클래스"""
     SECRET_KEY = os.environ.get('session_secret_key')
     SESSION_TYPE = 'filesystem'
-
+    
     # 애플리케이션 이름
     APP_NAME = 'smpw_manager'
 

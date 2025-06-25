@@ -52,12 +52,10 @@ const addTodo = async (todo) => {
   }
 }
 
-const deleteTodo = async (index) => {
+const deleteTodo = async (todoId) => {
   error.value = ''
   try {
-    const todo_id = todos.value[index].todo_id
-    await axios.delete('http://localhost:4000/boards/todo_delete/' + todo_id)
-    todos.value.splice(index, 1)
+    await axios.delete('http://localhost:4000/boards/todo_delete/' + todoId)
     getTodos()
   } catch (err) {
     console.log(err)
@@ -94,9 +92,7 @@ watch(searchText, () => {
 const moveToTodoCreatePage = () => {
   router.push({ name: 'TodoCreate' })
 }
-
 </script>
-
 
 <template>
   <div>
