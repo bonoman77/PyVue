@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'; 
 import TodoForm from '@/components/TodoForm.vue'
 import TodoList from '@/components/TodoList.vue'
-import axios from 'axios'
+import axios from '@/services/api'
 import { useRouter } from 'vue-router'
 
 const todos = ref([])
@@ -19,7 +19,7 @@ const router = useRouter()
 const getTodos = async (page = currentPage.value) => {
   currentPage.value = page
   try {
-    const res = await axios.get('http://localhost:4000/boards/todo_list', {
+    const res = await axios.get('boards/todo_list', {
       params: {
         page: currentPage.value,
         row_size: rowSize,
@@ -39,7 +39,7 @@ getTodos()
 
 const addTodo = async (todo) => {
   try {
-    const res = await axios.post('http://localhost:4000/boards/todo_insert', {
+    const res = await axios.post('boards/todo_insert', {
       title: todo.title,
       completed: todo.completed,
       contents: todo.contents,
@@ -55,7 +55,7 @@ const addTodo = async (todo) => {
 const deleteTodo = async (todoId) => {
   error.value = ''
   try {
-    await axios.delete('http://localhost:4000/boards/todo_delete/' + todoId)
+    await axios.delete('boards/todo_delete/' + todoId)
     getTodos()
   } catch (err) {
     console.log(err)
@@ -67,7 +67,7 @@ const toggleTodo = async (index, checked) => {
   error.value = ''
   try {
     const todo_id = todos.value[index].todo_id
-    await axios.patch('http://localhost:4000/boards/todo_toggle/' + todo_id, {
+    await axios.patch('boards/todo_toggle/' + todo_id, {
       completed: checked
     })
     todos.value[index].completed = checked

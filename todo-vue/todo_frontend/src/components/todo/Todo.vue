@@ -1,14 +1,18 @@
 <script setup>
-import axios from '@/services/api'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import _ from 'lodash'
 import { useToast } from 'vue-toastification'
-import Input from '@/components/Input.vue'
+import Input from '@/components/ui/Input.vue'
+import { useTodoStore } from '@/store/modules/todoStore'
 
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
+const todoStore = useTodoStore()
+const todoId = route.params.id
+
+// 로컬 상태 정의
 const todo = ref({
     title: '',
     completed: false,
@@ -20,9 +24,9 @@ const originalTodo = ref({
     contents: ''
 })
 
-const loading = ref(false)
-const todoId = route.params.todo_id
-const hasError = ref(false)
+// 스토어에서 로딩 상태 가져오기
+const loading = computed(() => todoStore.loading)
+const error = computed(() => todoStore.error)
 
 const props = defineProps({
     editing: {
@@ -31,66 +35,73 @@ const props = defineProps({
     }
 })
 
+// 할 일 상세 정보 가져오기
 const getTodo = async () => {
-    loading.value = true
-    try {
-        const res = await axios.get(`boards/todo_detail/${todoId}`)
-        todo.value = {...res.data.todo_detail}; 
-        originalTodo.value = {...res.data.todo_detail};
-
-        loading.value = false
-    } catch (err) {
-        console.log(err)
-        loading.value = false
+    const fetchedTodo = await todoStore.fetchTodoById(todoId)
+    
+    if (fetchedTodo) {
+        todo.value = {...fetchedTodo}
+        originalTodo.value = {...fetchedTodo}
     }
 }
 
+// 편집 모드인 경우 할 일 정보 가져오기
 if (props.editing) {
-    getTodo(); 
+    onMounted(() => {
+        getTodo()
+    })
 }
 
+// 할 일 변경 여부 확인
 const todoChanged = computed(() => {
     return !_.isEqual(todo.value, originalTodo.value)
 })
 
+// 할 일 상태 토글
 const toggleTodoStatus = () => {
     todo.value.completed = !todo.value.completed
 }
 
+// 할 일 목록 페이지로 이동
 const moveToTodoListPage = () => {
-    router.push({ name: 'Todos' })
+    router.push({ name: 'TodoList' })
 }
 
+// 할 일 저장 또는 수정
 const updateTodo = async () => {
     if (todo.value.title.trim() === '') {
         toast.error("할 일을 입력해주세요.")
         return
     }
-    try {
-        let res; 
-        const params = {
-            title: todo.value.title,
-            completed: todo.value.completed,
-            contents: todo.value.contents
-        }
-
-        if (props.editing) {
-            res = await axios.put(`boards/todo_update/${todoId}`, params)
-        } else {
-            res = await axios.post(`boards/todo_insert`, params)
-        }
-
-        if (res.status === 200) {
-            if (props.editing) {
-                toast.success("할 일이 성공적으로 수정되었습니다!")
-            } else {
-                toast.success("할 일이 성공적으로 저장되었습니다!")
-            }
+    
+    const todoData = {
+        title: todo.value.title,
+        completed: todo.value.completed,
+        contents: todo.value.contents
+    }
+    
+    let success = false
+    
+    if (props.editing) {
+        // 할 일 수정
+        success = await todoStore.updateTodo(todoId, todoData)
+        
+        if (success) {
+            toast.success("할 일이 성공적으로 수정되었습니다!")
             moveToTodoListPage()
+        } else {
+            toast.error("할 일 수정에 실패했습니다.")
         }
-    } catch (err) {
-        console.log(err)
-        toast.error("할 일 저장에 실패했습니다.")
+    } else {
+        // 할 일 추가
+        success = await todoStore.addTodo(todoData)
+        
+        if (success) {
+            toast.success("할 일이 성공적으로 저장되었습니다!")
+            moveToTodoListPage()
+        } else {
+            toast.error("할 일 저장에 실패했습니다.")
+        }
     }
 }
 </script>
@@ -129,4 +140,4 @@ const updateTodo = async () => {
 </template>
 
 <style scoped>
-</style>    
+</style>

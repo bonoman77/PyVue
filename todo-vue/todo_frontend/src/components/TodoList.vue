@@ -2,6 +2,7 @@
 import { ref } from 'vue';  
 import { useRouter } from 'vue-router';
 import Modal from '@/components/DeleteModal.vue'
+import List from '@/components/List.vue'
 
 const router = useRouter()
 const props = defineProps({
@@ -46,23 +47,25 @@ const moveToPage = (todoId) => {
 </script>
 
 <template>
-    <div v-for="(todo,index) in todos" :key="todo.todo_id" class="card py-1 my-1">
+    <List :items="todos">
+      <template #todo="{ item, index }">
       <div class="card-body p-1 ps-0 d-flex align-items-center justify-content-between" style="cursor: pointer;"
-      @click="moveToPage(todo.todo_id)">
+      @click="moveToPage(item.todo_id)">
         
         <div class="flex-grow-1 d-flex align-items-center">
-          <input type="checkbox" :checked="todo.completed"
+          <input type="checkbox" :checked="item.completed"
           @change="toggleTodo(index, $event)" @click.stop=""
           class="form-check-input me-2"  
           >
-          <div :class="todo.completed ? 'todo-completed' : ''">{{ todo.title }}</div>
+          <div :class="item.completed ? 'todo-completed' : ''">{{ item.title }}</div>
         </div>
         
         <div class="ms-auto">  
-          <button type="button" class="btn btn-danger btn-sm" @click.stop="openDeleteModal(todo.todo_id)">Delete</button>
+          <button type="button" class="btn btn-danger btn-sm" @click.stop="openDeleteModal(item.todo_id)">Delete</button>
         </div>
       </div>
-    </div>
+      </template>
+    </List>
     <teleport to="#modal">
       <Modal v-if="showModal" @close="closeModal" @delete="deleteTodo" />
     </teleport>

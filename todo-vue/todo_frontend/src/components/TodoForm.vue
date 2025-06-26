@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'; 
-
 const emit = defineEmits(['add-todo'])
 const todo = ref('')
 const hasError = ref(false)
