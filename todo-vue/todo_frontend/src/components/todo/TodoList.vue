@@ -1,25 +1,14 @@
 <template>
   <div>
     <ul class="list-group">
-      <li v-for="(todo, index) in props.todos" :key="todo.todo_id" class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <input 
-            type="checkbox" 
-            :checked="todo.completed" 
-            @change="toggleTodo(index, $event)"
-            class="form-check-input me-2"
-          />
-          <span :class="{ 'text-decoration-line-through': todo.completed }">{{ todo.title }}</span>
-        </div>
-        <div>
-          <router-link :to="{ name: 'TodoDetail', params: { id: todo.todo_id } }" class="btn btn-sm btn-info me-1">
-            상세
-          </router-link>
-          <button @click="openModal(todo.todo_id)" class="btn btn-sm btn-danger">
-            삭제
-          </button>
-        </div>
-      </li>
+      <TodoItem 
+        v-for="(todo, index) in props.todos" 
+        :key="todo.todo_id"
+        :todo="todo"
+        :index="index"
+        @delete="openModal"
+        @toggle="toggleTodo"
+      />
     </ul>
 
     <teleport to="body">
@@ -35,6 +24,7 @@
 <script setup>
 import { ref } from 'vue'
 import DeleteModal from '@/components/todo/DeleteModal.vue'
+import TodoItem from '@/components/todo/TodoItem.vue'
 
 const props = defineProps({
   todos: {
@@ -67,8 +57,10 @@ const deleteTodo = () => {
 }
 
 // 할 일 상태 토글
-const toggleTodo = (index, event) => {
-  emit('toggle-todo', index, event.target.checked)
+const toggleTodo = (todo, index) => {
+  if (todo && todo.todo_id) {
+    emit('toggle-todo', todo.todo_id, !todo.completed)
+  }
 }
 </script>
 

@@ -27,7 +27,8 @@ export const useTodoStore = defineStore('todo', {
       try {
         const data = await todoService.getTodos(page, searchText, this.rowSize)
         this.todos = data.todo_list
-        this.totalPages = data.total_page
+        this.totalItems = data.total_cnt  // 전체 항목 수 저장
+        this.totalPages = Math.ceil(data.total_cnt / this.rowSize)  // 전체 페이지 수 계산
         this.currentPage = page
         this.searchText = searchText
       } catch (err) {

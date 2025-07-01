@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTodoStore } from '@/store/modules/todoStore'
-import Todo from '@/components/todo/Todo.vue'
+import TodoForm from '@/components/todo/TodoForm.vue'
 
 const route = useRoute()
 const todoStore = useTodoStore()
@@ -17,7 +17,7 @@ onMounted(async () => {
 <template>
   <div>
     <h4>할 일 상세</h4>
-    <Todo :editing="true" />
+    <TodoForm :editing="true" />
   </div>  
 </template>
 

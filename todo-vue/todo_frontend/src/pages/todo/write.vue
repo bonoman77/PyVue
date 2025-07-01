@@ -1,11 +1,11 @@
 <script setup>
-import Todo from '@/components/todo/Todo.vue'
+import TodoForm from '@/components/todo/TodoForm.vue'
 </script>
 
 <template>
   <div>
     <h4>새 할 일 작성</h4>
-    <Todo :editing="false" />
+    <TodoForm :editing="false" />
   </div>  
 </template>
 

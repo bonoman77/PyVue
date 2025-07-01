@@ -1,24 +1,19 @@
 <script setup>
-
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
 </script>
 
-
 <template>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <router-link :to="{ name: 'Home' }" class="navbar-brand">Main</router-link>
-
-  <ul class="navbar-nav mr-auto">
-    <li class="nav-item active">
-      <router-link :to="{ name: 'Todos' }" class="nav-link">Todos</router-link>
-    </li> 
-  </ul>
-</nav>
-<div class="container">
-  <router-view />
-</div>
+  <div class="d-flex flex-column">
+    <Header />
+    <main class="flex-grow-1">
+      <div class="container py-3">
+        <router-view />
+      </div>
+    </main>
+    <Footer />
+  </div>
 </template>
 
-
 <style scoped>
-
 </style>
