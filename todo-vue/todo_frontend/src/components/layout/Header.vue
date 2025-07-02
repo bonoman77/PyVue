@@ -42,7 +42,7 @@ const handleLogin = () => {
         <div class="d-flex">
           <template v-if="isAuthenticated">
             <span class="navbar-text me-3">
-              안녕하세요, {{ currentUser?.username || '사용자' }}님!
+              안녕하세요, {{ currentUser?.userName || '사용자' }}님!
             </span>
             <Button 
               variant="danger" 

@@ -26,7 +26,6 @@ const numberOfPages = computed(() => todoStore.totalPages)
 
 // 컴포넌트 마운트 시 할 일 목록 불러오기
 onMounted(() => {
-  // 현재 스토어에 저장된 검색어와 페이지로 데이터 불러오기
   todoStore.fetchTodos(todoStore.currentPage, todoStore.searchText)
 })
 

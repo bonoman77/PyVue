@@ -10,22 +10,22 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const formData = ref({
-  username: '',
+  userEmail: '',
   password: ''
 })
 
 const formErrors = ref({
-  username: '',
+  userEmail: '',
   password: ''
 })
 
 const validateForm = () => {
   let isValid = true
-  formErrors.value.username = ''
+  formErrors.value.userEmail = ''
   formErrors.value.password = ''
   
-  if (!formData.value.username) {
-    formErrors.value.username = '사용자 이름을 입력해주세요.'
+  if (!formData.value.userEmail) {
+    formErrors.value.userEmail = '이메일 계정을 입력해주세요.'
     isValid = false
   }
   
@@ -56,10 +56,10 @@ const handleLogin = async () => {
       <div class="card-body">
         <form @submit.prevent="handleLogin">
           <Input
-            v-model="formData.username"
-            label="사용자 이름"
-            placeholder="사용자 이름을 입력하세요"
-            :error="formErrors.username"
+            v-model="formData.userEmail"
+            label="이메일 계정"
+            placeholder="이메일 계정을 입력하세요"
+            :error="formErrors.userEmail"
             required
           />
           

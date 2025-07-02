@@ -6,16 +6,19 @@ export const todoRoutes = [
   {
     path: '/todo',
     name: 'Todos',
-    component: Todos
+    component: Todos,
+    meta: { requiresAuth: true }
   },
   {
     path: '/todo/write',
     name: 'TodoWrite',
-    component: TodoWrite
+    component: TodoWrite,
+    meta: { requiresAuth: true }
   },
   {
     path: '/todo/:id',
     name: 'TodoDetail',
-    component: TodoDetail
+    component: TodoDetail,
+    meta: { requiresAuth: true }
   }
 ]

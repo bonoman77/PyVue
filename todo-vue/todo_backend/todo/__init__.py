@@ -34,10 +34,9 @@ def create_app(config_class=None):
 
 def register_blueprints(app):
     """모든 블루프린트를 앱에 등록"""
-    from todo.router import homes, accounts, admins, boards, manages
+    from todo.router import homes, auths, todos, boards
     # 각 모듈의 블루프린트 등록
     app.register_blueprint(homes.bp)
-    app.register_blueprint(accounts.bp, url_prefix='/accounts')
-    app.register_blueprint(admins.bp, url_prefix='/admins')
+    app.register_blueprint(auths.bp, url_prefix='/auths')
+    app.register_blueprint(todos.bp, url_prefix='/todos')
     app.register_blueprint(boards.bp, url_prefix='/boards')
-    app.register_blueprint(manages.bp, url_prefix='/manages')

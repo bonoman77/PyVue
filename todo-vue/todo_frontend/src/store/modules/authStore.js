@@ -36,6 +36,25 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     
+    async register(userData) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await authService.register(userData)
+        this.token = response.token
+        this.user = response.user
+        localStorage.setItem('token', response.token)
+        return true
+      } catch (err) {
+        this.error = err.message || '회원가입에 실패했습니다.'
+        console.error(err)
+        return false
+      } finally {
+        this.loading = false
+      }
+    },
+    
     async logout() {
       try {
         await authService.logout()

@@ -1,45 +1,51 @@
+import os
+import jwt
 import random
+import datetime
 from flask import Blueprint, current_app, request, session, render_template, redirect, flash, url_for, jsonify
 import todo.dbconns as conn
 from todo.utils.auth_handler import login_required
 from todo.utils.mail_handler import send_mail
+from dotenv import load_dotenv
 
-bp = Blueprint('accounts', __name__)
+load_dotenv()
 
-@bp.route("/login", methods=['GET'])
-def login():
-    if session.get('login_user'):
-        return redirect(url_for('homes.index'))
+bp = Blueprint('auths', __name__)
 
-    return render_template('accounts/login.html')
 
 
 @bp.route('/login', methods=['POST'])
 def login_post():
-    user_email = request.form.get('user_email')
-    user_passwd = request.form.get('user_passwd')
+    data = request.get_json()
+    user_email = data.get('userEmail')
+    password = data.get('password')
 
-    proc = "uspGetStreamMemberLogInConfirm  @UserEmail=?, @UserPassword=?"
-    res = conn.execute_return(proc, [user_email, user_passwd])
+    res = conn.callproc_return('sp_get_user_login', [user_email, password])
+    print(res)
 
-    if res:
-        if not res.AuthYn:
-            flash("먼저 이메일 인증을 해주셔야 사이트 이용이 가능합니다.", category="rose")
-            return render_template('accounts/login.html', user_email=user_email)
+    if not res:
+        return jsonify({'message': '로그인 실패: 잘못된 사용자 정보'}), 401
+    
+    # JWT 토큰 생성
+    token_payload = {
+        'userId': res['user_id'],
+        'userName': res['user_name'],
+        'userEmail': res['user_email'],
+        'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)  # 토큰 만료 시간 (24시간)
+    }
+    
 
-        session['login_user'] = {
-            'member_id': res.MemberID,
-            'member_name': res.MemberName,
-            'manager_yn': res.ManagerYn,
-            'pass_member_id': res.PassMemberID,
+    token = jwt.encode(token_payload, os.environ.get("session_secret_key"), algorithm='HS256')
+    
+    # 응답 반환
+    return jsonify({
+        'token': token,
+        'user': {
+            'userId': res['user_id'],
+            'userName': res['user_name'],
+            'userEmail': res['user_email']
         }
-
-        next_route = session.pop('next', '/')
-        return redirect(next_route)
-    else:
-        flash("해당 사용자가 존재하지 않습니다.", category="rose")
-        return render_template('accounts/login.html', user_email=user_email)
-
+    })
 
 @bp.route('/logout', methods=['GET'])
 @login_required
