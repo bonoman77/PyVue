@@ -1,0 +1,6 @@
+axios
+vue-toastification@next
+vue-router@4
+pinia
+pinia-plugin-persistedstate
+@vueuse/head
