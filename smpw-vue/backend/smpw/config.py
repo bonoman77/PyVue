@@ -38,13 +38,13 @@ class Config:
 class DevelopmentConfig(Config):
     """개발 환경 설정"""
     DEBUG = True
-    UPLOAD_FOLDER = r"C:\SeungKyun\PyProject\Uploads\MPWManager"  # 로컬 경로
+    UPLOAD_FOLDER = r"C:\SeungKyun\PyProject\Uploads\SMPW"  # 로컬 경로
 
 
 class ProductionConfig(Config):
     """운영 환경 설정"""
     DEBUG = False
-    UPLOAD_FOLDER = r"\\172.16.0.244\naspath\MPWManager"  # 서버 경로
+    UPLOAD_FOLDER = r"\\172.16.0.244\naspath\SMPW"  # 서버 경로
     SESSION_COOKIE_SECURE = True  # HTTPS에서만 쿠키 전송
 
 

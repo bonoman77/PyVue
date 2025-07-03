@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { todoService } from '@/services/todoService'
+import { useAuthStore } from '@/store/modules/authStore'
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
@@ -23,7 +24,7 @@ export const useTodoStore = defineStore('todo', {
     async fetchTodos(page = this.currentPage, searchText = this.searchText) {
       this.loading = true
       this.error = null
-      
+
       try {
         const data = await todoService.getTodos(page, searchText, this.rowSize)
         this.todos = data.todo_list
@@ -43,8 +44,13 @@ export const useTodoStore = defineStore('todo', {
       this.loading = true
       this.error = null
       
+      // authStore 인스턴스 생성
+      const authStore = useAuthStore()
+
       try {
-        const todo = await todoService.getTodoById(id)
+        const todo = await todoService.getTodoById(id, { 
+          params: { userId: authStore.user?.userId || 0 } 
+        })
         this.currentTodo = todo
         return todo
       } catch (err) {
@@ -105,8 +111,13 @@ export const useTodoStore = defineStore('todo', {
       this.loading = true
       this.error = null
       
+      // authStore 인스턴스 생성
+      const authStore = useAuthStore()
+      
       try {
-        await todoService.deleteTodo(id)
+        await todoService.deleteTodo(id, { 
+          params: { userId: authStore.user?.userId || 0 } 
+        })
         
         // 목록에서 삭제된 할 일 제거
         this.todos = this.todos.filter(todo => todo.todo_id !== id)
@@ -127,10 +138,16 @@ export const useTodoStore = defineStore('todo', {
     },
     
     async toggleTodo(id, completed) {
+      this.loading = true
       this.error = null
       
+      // authStore 인스턴스 생성
+      const authStore = useAuthStore()
+      
       try {
-        await todoService.toggleTodo(id, completed)
+        await todoService.toggleTodo(id, completed, { 
+          params: { userId: authStore.user?.userId || 0 } 
+        })
         
         // 목록에 있는 할 일 상태 업데이트
         const index = this.todos.findIndex(todo => todo.todo_id === id)

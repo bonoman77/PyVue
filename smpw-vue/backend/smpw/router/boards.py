@@ -5,8 +5,8 @@ from flask import Blueprint, request, jsonify
 bp = Blueprint('boards', __name__)
 
 
-@bp.route("/todo_list", methods=['GET'])
-def todo_list():
+@bp.route("/board_list", methods=['GET'])
+def board_list():
     user_id = 1
     page = int(request.args.get('page', 1))
     row_size = int(request.args.get('row_size', 10))
@@ -23,8 +23,8 @@ def todo_list():
     return jsonify(response_data)
 
 
-@bp.route("/todo_detail/<int:todo_id>", methods=['GET'])
-def todo_detail(todo_id):
+@bp.route("/board_detail/<int:board_id>", methods=['GET'])
+def board_detail(board_id):
     user_id = 1
     result = conn.callproc_return('sp_get_user_todo_select', [user_id, todo_id])
     # 응답 데이터 구성
@@ -36,26 +36,16 @@ def todo_detail(todo_id):
     return jsonify(response_data)
 
 
-@bp.route("/todo_delete/<int:todo_id>", methods=['DELETE'])
-def todo_delete(todo_id):
-    conn.callproc_without_return('sp_set_user_todo_delete', [todo_id])
+@bp.route("/board_delete/<int:board_id>", methods=['DELETE'])
+def board_delete(board_id):
+    conn.callproc_without_return('sp_set_user_board_delete', [board_id])
     
     # JSON 응답 반환
-    return jsonify({"todo_id": todo_id})
+    return jsonify({"board_id": board_id})
 
-@bp.route("/todo_toggle/<int:todo_id>", methods=['PATCH'])
-def todo_toggle(todo_id):
 
-    data = request.get_json()
-    completed = data.get('completed', False)
-
-    conn.callproc_without_return('sp_set_user_todo_toggle', [todo_id, completed])
-    
-    # JSON 응답 반환
-    return jsonify({"todo_id": todo_id})
-
-@bp.route("/todo_insert", methods=['POST'])
-def todo_insert():
+@bp.route("/board_insert", methods=['POST'])
+def board_insert():
     # 요청에서 JSON 데이터 가져오기
     data = request.get_json()
     
@@ -67,12 +57,12 @@ def todo_insert():
     # 데이터베이스에 저장
     # member_id = session['login_user']['member_id']
     user_id = 1
-    result = conn.callproc_return('sp_set_user_todo_insert', [user_id, title, int(completed), contents])
-    todo_id = list(result.values())[0] if result else None
+    result = conn.callproc_return('sp_set_user_board_insert', [user_id, title, int(completed), contents])
+    board_id = list(result.values())[0] if result else None
     
     # 응답 데이터 구성
     response_data = {
-        'todo_id': todo_id,
+        'board_id': board_id,
         'title': title,
         'completed': completed,
         'contents': contents
@@ -82,8 +72,8 @@ def todo_insert():
     return jsonify(response_data)
 
 
-@bp.route("/todo_update/<int:todo_id>", methods=['PUT'])
-def todo_update(todo_id):
+@bp.route("/board_update/<int:board_id>", methods=['PUT'])
+def board_update(board_id):
     # 요청에서 JSON 데이터 가져오기
     data = request.get_json()
 
@@ -91,7 +81,7 @@ def todo_update(todo_id):
     completed = data.get('completed', False)
     contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, title, int(completed), contents])
+    conn.callproc_without_return('sp_set_user_board_update', [board_id, title, int(completed), contents])
     
     # JSON 응답 반환
-    return jsonify({"todo_id": todo_id})
+    return jsonify({"board_id": board_id})

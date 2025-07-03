@@ -8,7 +8,7 @@ export const authService = {
    */
   async login(credentials) {
     try {
-      const response = await axios.post('/auths/login', credentials)
+      const response = await axios.post('/accounts/login', credentials)
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || '로그인에 실패했습니다.')
@@ -22,7 +22,7 @@ export const authService = {
   async logout() {
     try {
       // 서버에 로그아웃 요청 (토큰 무효화)
-      await api.post('/auths/logout')
+      await api.post('/accounts/logout')
       // 로컬 스토리지에서 토큰 제거
       localStorage.removeItem('token')
     } catch (error) {
@@ -38,7 +38,7 @@ export const authService = {
    */
   async getCurrentUser() {
     try {
-      const response = await axios.get('/auths/me')
+      const response = await axios.get('/accounts/me')
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || '사용자 정보를 불러오는 데 실패했습니다.')
@@ -52,7 +52,7 @@ export const authService = {
    */
   async register(userData) {
     try {
-      const response = await axios.post('/auths/register', userData)
+      const response = await axios.post('/accounts/register', userData)
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || '회원가입에 실패했습니다.')
@@ -65,7 +65,7 @@ export const authService = {
    */
   async refreshToken() {
     try {
-      const response = await axios.post('/auths/refresh-token')
+      const response = await axios.post('/accounts/refresh-token')
       const { token } = response.data
       localStorage.setItem('token', token)
       return response.data

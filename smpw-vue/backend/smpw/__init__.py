@@ -1,9 +1,11 @@
 import os
-from flask import Flask, url_for
+from flask import Flask, jsonify
 from smpw.utils.file_handler import file_download
 from smpw.utils.log_handler import setup_logger
 from smpw.config import get_config
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
+from smpw.swagger import get_swagger_docs
 
 def create_app(config_class=None):
     """애플리케이션 팩토리 함수"""
@@ -27,6 +29,25 @@ def create_app(config_class=None):
     app.add_url_rule('/file_download', 'file_download', file_download, methods=['GET'])
 
     
+       # Swagger UI 설정
+    SWAGGER_URL = '/api/docs'
+    API_URL = '/api/swagger.json'
+    
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "SMPW API"
+        }
+    )
+    
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+    
+    @app.route('/api/swagger.json')
+    def swagger_json():
+        return jsonify(get_swagger_docs())
+
+
     # 블루프린트 등록
     register_blueprints(app)
 
@@ -34,9 +55,9 @@ def create_app(config_class=None):
 
 def register_blueprints(app):
     """모든 블루프린트를 앱에 등록"""
-    from smpw.router import homes, auths, todos, boards
+    from smpw.router import homes, accounts, todos, boards
     # 각 모듈의 블루프린트 등록
     app.register_blueprint(homes.bp)
-    app.register_blueprint(auths.bp, url_prefix='/auths')
+    app.register_blueprint(accounts.bp, url_prefix='/accounts')
     app.register_blueprint(todos.bp, url_prefix='/todos')
     app.register_blueprint(boards.bp, url_prefix='/boards')

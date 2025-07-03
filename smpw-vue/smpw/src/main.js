@@ -7,8 +7,7 @@ import 'vue-toastification/dist/index.css';
 import router from './router';
 import pinia from './store';
 
-// PrimeVue 가져오기
-import PrimeVue from 'primevue/config';
+
 
 // Toast 옵션 설정
 const toastOptions = {
@@ -22,5 +21,4 @@ app.use(head);
 app.use(Toast, toastOptions);
 app.use(router);
 app.use(pinia);
-app.use(PrimeVue, { ripple: true }); // PrimeVue 등록
 app.mount('#app');

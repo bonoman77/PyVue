@@ -5,11 +5,13 @@ import _ from 'lodash'
 import { useToast } from 'vue-toastification'
 import Input from '@/components/ui/Input.vue'
 import { useTodoStore } from '@/store/modules/todoStore'
+import { useAuthStore } from '@/store/modules/authStore'
 
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
 const todoStore = useTodoStore()
+const authStore = useAuthStore()
 const todoId = route.params.id
 
 // 로컬 상태 정의
@@ -78,6 +80,7 @@ const updateTodo = async () => {
     }
     
     const todoData = {
+        userId: authStore.user?.userId || 0, // 로그인한 사용자 ID 사용, 없으면 기본값 1
         title: todo.value.title,
         completed: todo.value.completed,
         contents: todo.value.contents

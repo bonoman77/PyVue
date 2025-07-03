@@ -1,6 +1,7 @@
 axios
 vue-toastification@next
 vue-router@4
+lodash
 pinia
 pinia-plugin-persistedstate
 @vueuse/head

@@ -7,7 +7,7 @@ bp = Blueprint('todos', __name__)
 
 @bp.route("/todo_list", methods=['GET'])
 def todo_list():
-    user_id = 1
+    user_id = request.args.get('userId', type=int)
     page = int(request.args.get('page', 1))
     row_size = int(request.args.get('row_size', 10))
     search_text = request.args.get('search_text', '')
@@ -25,7 +25,7 @@ def todo_list():
 
 @bp.route("/todo_detail/<int:todo_id>", methods=['GET'])
 def todo_detail(todo_id):
-    user_id = 1
+    user_id = request.args.get('userId', type=int)
     result = conn.callproc_return('sp_get_user_todo_select', [user_id, todo_id])
     # 응답 데이터 구성
     response_data = {
@@ -38,18 +38,18 @@ def todo_detail(todo_id):
 
 @bp.route("/todo_delete/<int:todo_id>", methods=['DELETE'])
 def todo_delete(todo_id):
-    conn.callproc_without_return('sp_set_user_todo_delete', [todo_id])
+    user_id = request.args.get('userId', type=int)
+    conn.callproc_without_return('sp_set_user_todo_delete', [user_id, todo_id])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})
 
 @bp.route("/todo_toggle/<int:todo_id>", methods=['PATCH'])
 def todo_toggle(todo_id):
+    user_id = request.args.get('userId', type=int)
+    completed = request.args.get('completed', type=int)
 
-    data = request.get_json()
-    completed = data.get('completed', False)
-
-    conn.callproc_without_return('sp_set_user_todo_toggle', [todo_id, completed])
+    conn.callproc_without_return('sp_set_user_todo_toggle', [user_id, todo_id, completed])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})
@@ -60,13 +60,10 @@ def todo_insert():
     data = request.get_json()
     
     # 필요한 데이터 추출
+    user_id = data.get('userId')
     title = data.get('title')
     completed = data.get('completed', False)
     contents = data.get('contents', '')
-    
-    # 데이터베이스에 저장
-    # member_id = session['login_user']['member_id']
-    user_id = 1
     result = conn.callproc_return('sp_set_user_todo_insert', [user_id, title, int(completed), contents])
     todo_id = list(result.values())[0] if result else None
     
@@ -87,11 +84,12 @@ def todo_update(todo_id):
     # 요청에서 JSON 데이터 가져오기
     data = request.get_json()
 
+    user_id = data.get('userId')
     title = data.get('title')
     completed = data.get('completed', False)
     contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, title, int(completed), contents])
+    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, user_id, title, int(completed), contents])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})

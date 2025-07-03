@@ -1,0 +1,18 @@
+﻿[2025-07-03 07:47:20,349] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,349] ERROR in dbconns: 연결 풀 초기화 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,371] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,371] ERROR in dbconns: 연결 풀 초기화 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,762] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,762] ERROR in dbconns: 연결 풀 초기화 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,763] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 07:47:20,763] ERROR in dbconns: 연결 풀 초기화 중 오류: (1045, "Access denied for user 'root'@'localhost' (using password: NO)")
+[2025-07-03 09:21:56,811] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:21:56,811] ERROR in dbconns: 손상된 연결 재생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:00,927] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:00,927] ERROR in dbconns: 손상된 연결 재생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:00,927] ERROR in dbconns: 데이터베이스 연결 사용 중 오류: 데이터베이스 연결을 얻는 데 시간이 초과되었습니다.
+[2025-07-03 09:22:00,927] ERROR in dbconns: 쿼리 실행 중 오류 (단일 결과): 데이터베이스 연결을 얻는 데 시간이 초과되었습니다.
+[2025-07-03 09:22:07,505] ERROR in dbconns: 데이터베이스 연결 생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:07,506] ERROR in dbconns: 새 연결 생성 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:07,507] ERROR in dbconns: 데이터베이스 연결 사용 중 오류: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")
+[2025-07-03 09:22:07,507] ERROR in dbconns: 쿼리 실행 중 오류 (단일 결과): (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다)")

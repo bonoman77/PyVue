@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'; 
-import Home from '@/pages/home.vue'
-import { todoRoutes } from './todo.routes'
 import { useAuthStore } from '@/store/modules/authStore'
+import Home from '@/pages/Home.vue'
+import { authRoutes } from './auth.routes'
+import { todoRoutes } from './todo.routes'
+import { boardRoutes } from './board.routes'
+import { productRoutes } from './product.routes'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -10,17 +13,6 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: Home
-    },
-    ...todoRoutes,
-    {
-      path: '/login',
-      name: 'Login',
-      component: () => import('@/pages/auth/Login.vue')
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      component: () => import('@/pages/auth/Register.vue')
     },
     {
       path: '/privacy-policy',
@@ -31,7 +23,11 @@ const router = createRouter({
       path: '/terms-of-service',
       name: 'TermsOfService',
       component: () => import('@/pages/TermsOfService.vue')
-    }
+    }, 
+    ...authRoutes,
+    ...todoRoutes,
+    ...productRoutes,
+    ...boardRoutes,
   ]
 })
 
