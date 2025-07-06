@@ -5,6 +5,7 @@
         type="checkbox" 
         :checked="todo.completed" 
         @change="onToggle($event)"
+        @click.stop
         class="form-check-input me-2"
       />
       <router-link 

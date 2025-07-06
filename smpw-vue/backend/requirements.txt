@@ -1,8 +1,9 @@
-Flask==2.3.3
-pymysql==1.0.2
-python-dateutil==2.8.2
-python-dotenv==1.0.0
-Flask-Mail==0.9.1
-requests==2.31.0
-Flask-Cors==4.0.0
-pyjwt==2.8.0
+Flask
+pymysql
+python-dateutil
+python-dotenv
+Flask-Mail
+requests
+Flask-Cors
+pyjwt
+flask_swagger_ui

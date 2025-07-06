@@ -46,8 +46,9 @@ def todo_delete(todo_id):
 
 @bp.route("/todo_toggle/<int:todo_id>", methods=['PATCH'])
 def todo_toggle(todo_id):
+    data = request.get_json()
+    completed = data.get('completed')
     user_id = request.args.get('userId', type=int)
-    completed = request.args.get('completed', type=int)
 
     conn.callproc_without_return('sp_set_user_todo_toggle', [user_id, todo_id, completed])
     
@@ -89,7 +90,7 @@ def todo_update(todo_id):
     completed = data.get('completed', False)
     contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_user_todo_update', [todo_id, user_id, title, int(completed), contents])
+    conn.callproc_without_return('sp_set_user_todo_update', [user_id, todo_id, title, int(completed), contents])
     
     # JSON 응답 반환
     return jsonify({"todo_id": todo_id})

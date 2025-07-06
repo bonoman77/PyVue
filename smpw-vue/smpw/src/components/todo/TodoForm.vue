@@ -147,7 +147,7 @@ const updateTodo = async () => {
             class="btn btn-primary"
             :disabled="!todoChanged"
         >
-            {{ editing ? 'Update' : 'Create' }}
+            {{ editing ? '수정' : '생성' }}
         </button>
         <button 
             class="btn btn-secondary ms-2"
