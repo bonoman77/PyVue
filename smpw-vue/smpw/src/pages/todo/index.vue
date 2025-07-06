@@ -74,7 +74,7 @@ const moveToTodoCreatePage = () => {
         size="sm" 
         @click="moveToTodoCreatePage"
       >
-        Add Todo
+        할 일 추가
       </Button>
     </div>
 

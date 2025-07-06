@@ -137,40 +137,38 @@ export const useTodoStore = defineStore('todo', {
       }
     },
     
+    setSearchText(text) {
+      this.searchText = text
+      this.fetchTodos(1, text) // 검색 시 첫 페이지로 이동
+    },
+    
     async toggleTodo(id, completed) {
-      this.loading = true
-      this.error = null
-      
-      // authStore 인스턴스 생성
-      const authStore = useAuthStore()
-      
       try {
+        // authStore에서 userId 가져오기
+        const authStore = useAuthStore()
+        const userId = authStore.user?.userId || 0
+        
+        // userId를 params로 전달
         await todoService.toggleTodo(id, completed, { 
-          params: { userId: authStore.user?.userId || 0 } 
+          params: { userId } 
         })
         
         // 목록에 있는 할 일 상태 업데이트
-        const index = this.todos.findIndex(todo => todo.todo_id === id)
+        const index = this.todos.findIndex(todo => Number(todo.todo_id) === Number(id))
         if (index !== -1) {
           this.todos[index].completed = completed
         }
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentTodo && this.currentTodo.todo_id === id) {
+        if (this.currentTodo && Number(this.currentTodo.todo_id) === Number(id)) {
           this.currentTodo.completed = completed
         }
         
         return true
-      } catch (err) {
-        this.error = err.message || '할 일 상태 변경에 실패했습니다.'
-        console.error(err)
+      } catch (error) {
+        console.error('할 일 상태 변경 실패:', error)
         return false
       }
-    },
-    
-    setSearchText(text) {
-      this.searchText = text
-      this.fetchTodos(1, text) // 검색 시 첫 페이지로 이동
     },
     
     resetState() {

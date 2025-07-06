@@ -4,6 +4,7 @@ export const boardService = {
   async getBoards(page = 1, searchText = '', rowSize = 10) {
     const response = await axios.get('boards/board_list', {
       params: {
+        userId: useAuthStore().user?.userId || 0,
         page,
         row_size: rowSize,
         search_text: searchText
@@ -12,8 +13,8 @@ export const boardService = {
     return response.data
   },
   
-  async getBoardById(id) {
-    const response = await axios.get(`boards/board_detail/${id}`)
+  async getBoardById(id, params) {
+    const response = await axios.get(`boards/board_detail/${id}`, params)
     return response.data.board_detail
   },
   
@@ -27,8 +28,13 @@ export const boardService = {
     return response.data
   },
   
-  async deleteBoard(id) {
-    const response = await axios.delete(`boards/board_delete/${id}`)
+  async deleteBoard(id, params) {
+    const response = await axios.delete(`boards/board_delete/${id}`, params)
     return response.data
   },
+
+  async displayBoard(id, display) {
+    const response = await axios.patch(`boards/board_display/${id}`, {display})
+    return response.data
+  }
 }
