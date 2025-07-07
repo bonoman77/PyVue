@@ -43,6 +43,9 @@ const toggleDropdown = () => {
           <li class="nav-item">
             <router-link class="nav-link" to="/todo">할 일 목록</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/board">게시글 목록</router-link>
+          </li>
         </ul>
         
         <div class="d-flex">

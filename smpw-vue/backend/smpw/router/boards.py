@@ -7,12 +7,11 @@ bp = Blueprint('boards', __name__)
 
 @bp.route("/board_list", methods=['GET'])
 def board_list():
-    user_id = request.args.get('userId', type=int)
     page = int(request.args.get('page', 1))
     row_size = int(request.args.get('row_size', 10))
     search_text = request.args.get('search_text', '')
-    result = conn.callproc_return_all('sp_get_board_list', [user_id, page, row_size, search_text])
-    total_cnt = conn.callproc_return('sp_get_board_total_cnt', [user_id, search_text])
+    result = conn.callproc_return_all('sp_get_board_list', [page, row_size, search_text])
+    total_cnt = conn.callproc_return('sp_get_board_total_cnt', [search_text])
     # 응답 데이터 구성
     response_data = {
         'board_list': result,
@@ -25,8 +24,7 @@ def board_list():
 
 @bp.route("/board_detail/<int:board_id>", methods=['GET'])
 def board_detail(board_id):
-    user_id = request.args.get('userId', type=int)
-    result = conn.callproc_return('sp_get_board_select', [user_id, board_id])
+    result = conn.callproc_return('sp_get_board_select', [board_id])
     # 응답 데이터 구성
     response_data = {
         'board_detail': result,
@@ -51,17 +49,17 @@ def board_insert():
     
     # 필요한 데이터 추출
     user_id = data.get('userId')
+    board_kind_id = data.get('board_kind_id')
     title = data.get('title')
-    completed = data.get('completed', False)
     contents = data.get('contents', '')
-    result = conn.callproc_return('sp_set_board_insert', [user_id, title, int(completed), contents])
+    result = conn.callproc_return('sp_set_board_insert', [user_id, board_kind_id, title, contents])
     board_id = list(result.values())[0] if result else None
     
     # 응답 데이터 구성
     response_data = {
         'board_id': board_id,
+        'board_kind_id': board_kind_id,
         'title': title,
-        'completed': completed,
         'contents': contents
     }
     
@@ -76,10 +74,10 @@ def board_update(board_id):
 
     user_id = data.get('userId')
     title = data.get('title')
-    completed = data.get('completed', False)
+    display = data.get('display', False)
     contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_board_update', [user_id, board_id, title, int(completed), contents])
+    conn.callproc_without_return('sp_set_board_update', [user_id, board_id, title, int(display), contents])
     
     # JSON 응답 반환
     return jsonify({"board_id": board_id})
