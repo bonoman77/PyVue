@@ -12,6 +12,7 @@ def board_list():
     search_text = request.args.get('search_text', '')
     result = conn.callproc_return_all('sp_get_board_list', [page, row_size, search_text])
     total_cnt = conn.callproc_return('sp_get_board_total_cnt', [search_text])
+    print(total_cnt)
     # 응답 데이터 구성
     response_data = {
         'board_list': result,
@@ -49,9 +50,10 @@ def board_insert():
     
     # 필요한 데이터 추출
     user_id = data.get('userId')
-    board_kind_id = data.get('board_kind_id')
+    board_kind_id = 1
     title = data.get('title')
     contents = data.get('contents', '')
+    print([user_id, board_kind_id, title, contents]) 
     result = conn.callproc_return('sp_set_board_insert', [user_id, board_kind_id, title, contents])
     board_id = list(result.values())[0] if result else None
     

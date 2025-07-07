@@ -7,7 +7,7 @@
           :post="post"
           :index="index"
           @delete="openModal"
-          @toggle="togglePost"
+          @toggle-display="toggleDisplay"
         />
       </ul>
   
@@ -33,7 +33,7 @@
     }
   })
   
-  const emit = defineEmits(['delete-post', 'toggle-post'])
+  const emit = defineEmits(['delete-post', 'toggle-display'])
   
   const showModal = ref(false)
   const selectedPostId = ref(null)
@@ -57,9 +57,9 @@
   }
   
   // 게시글 상태 토글
-  const togglePost = (post, index) => {
+  const toggleDisplay = (post, index) => {
     if (post && post.post_id) {
-      emit('toggle-post', post.post_id, !post.display)
+      emit('toggle-display', post.post_id, !post.display)
     }
   }
   </script>
