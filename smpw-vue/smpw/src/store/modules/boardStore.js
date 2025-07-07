@@ -34,7 +34,7 @@ export const useBoardStore = defineStore('board', {
         this.currentPage = page
         this.searchText = searchText
       } catch (err) {
-        this.error = err.message || '할 일 목록을 불러오는 데 실패했습니다.'
+        this.error = err.message || '게시글 목록을 불러오는 데 실패했습니다.'
         console.error(err)
       } finally {
         this.loading = false
@@ -46,13 +46,8 @@ export const useBoardStore = defineStore('board', {
       this.loading = true
       this.error = null
       
-      // authStore 인스턴스 생성
-      const authStore = useAuthStore()
-
       try {
-        const post = await boardService.getBoardById(id, { 
-          params: { userId: authStore.user?.userId || 0 } 
-        })
+        const post = await boardService.getBoardById(id)
         this.currentPost = post
         return post
       } catch (err) {

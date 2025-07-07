@@ -90,7 +90,7 @@ const moveToBoardCreatePage = () => {
     <div v-else-if="posts.length === 0" class="text-center py-2">
       게시글이 없습니다.
     </div>
-    <TodoList v-else :todos="posts" @delete-post="deletePost" @toggle-display="toggleDisplay"/>
+    <BoardList v-else :posts="posts" @delete-post="deletePost" @toggle-display="toggleDisplay"/>
     <hr />
     <Pagination 
       :current-page="currentPage" 
