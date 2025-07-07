@@ -69,7 +69,7 @@ const togglePostStatus = (event) => {
 
 // 게시글 목록 페이지로 이동
 const moveToPostListPage = () => {
-    router.push({ name: 'Posts' })
+    router.push({ name: 'BoardList' })
 }
 
 // 게시글 저장 또는 수정

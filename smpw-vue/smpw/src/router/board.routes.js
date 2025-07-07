@@ -9,13 +9,13 @@ export const boardRoutes = [
     component: BoardList
   },
   {
-    path: '/board/:id',
-    name: 'BoardDetail',
-    component: BoardDetail
-  },
-  {
     path: '/board/write',
     name: 'BoardWrite',
     component: BoardWrite
+  },
+  {
+    path: '/board/:id',
+    name: 'BoardDetail',
+    component: BoardDetail
   }
 ]
