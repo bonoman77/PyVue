@@ -3,17 +3,17 @@
       <div>
         <input 
           type="checkbox" 
-          :checked="post.display" 
+          :checked="board.displayYn" 
           @change="onToggle($event)"
           @click.stop
           class="form-check-input me-2"
         />
         <router-link 
-          :to="{ name: 'BoardDetail', params: { id: post.board_id } }" 
-          class="post-title"
-          :class="{ 'text-decoration-line-through': post.display }"
+          :to="{ name: 'BoardDetail', params: { id: board.board_id } }" 
+          class="board-title"
+          :class="{ 'text-decoration-line-through': board.displayYn }"
         >
-          {{ post.title }}
+          {{ board.title }}
         </router-link>
       </div>
       <div>
@@ -32,7 +32,7 @@
   import Button from '@/components/ui/Button.vue';
   
   const props = defineProps({
-    post: {
+    board: {
       type: Object,
       required: true
     },
@@ -45,27 +45,27 @@
   const emit = defineEmits(['toggle', 'delete']);
   
   const onToggle = (event) => {
-    emit('toggle', props.post, props.index);
+    emit('toggle', props.board, props.index);
   };
   
   const onDelete = () => {
-    emit('delete', props.post.post_id, props.index);
+    emit('delete', props.board.board_id, props.index);
   };
   </script>
   
   <style scoped>
-  .post-title {
+  .board-title {
     cursor: pointer;
     color: #212529;
     text-decoration: none;
   }
   
-  .post-title:hover {
+  .board-title:hover {
     color: #0d6efd;
     text-decoration: underline;
   }
   
-  .post-title.text-decoration-line-through {
+  .board-title.text-decoration-line-through {
     color: #6c757d;
   }
   </style>

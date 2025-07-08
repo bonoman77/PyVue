@@ -10,7 +10,7 @@ const boardStore = useBoardStore()
 const router = useRouter()
 
 // 스토어의 상태를 컴포넌트에서 사용
-const posts = computed(() => boardStore.posts)
+const boards = computed(() => boardStore.boards)
 const error = computed(() => boardStore.error)
 const loading = computed(() => boardStore.loading)
 const currentPage = computed({
@@ -26,36 +26,36 @@ const numberOfPages = computed(() => boardStore.totalPages)
 
 // 컴포넌트 마운트 시 할 일 목록 불러오기
 onMounted(() => {
-  boardStore.fetchPosts(boardStore.currentPage, boardStore.searchText)
+  boardStore.fetchBoards(boardStore.currentPage, boardStore.searchText)
 })
 
 // 페이지 변경 시 할 일 목록 불러오기
-const getPosts = (page = currentPage.value) => {
-  boardStore.fetchPosts(page, searchText.value)
+const getBoards = (page = currentPage.value) => {
+  boardStore.fetchBoards(page, searchText.value)
 }
 
 // 게시글 삭제
-const deletePost = async (postId) => {
-  await boardStore.deletePost(postId)
+const deleteBoard = async (boardId) => {
+  await boardStore.deleteBoard(boardId)
 }
 
 // 게시글 완료 상태 토글
-const toggleDisplay = async (postId, completed) => {
-  await boardStore.toggleDisplay(postId, completed)
+const toggleDisplay = async (boardId, display) => {
+  await boardStore.toggleDisplay(boardId, display)
 }
 
 // 검색 타이머
 let timeout = null
-const searchPost = () => {
+const searchBoard = () => {
   clearTimeout(timeout)
-  getPosts(1)
+  getBoards(1)
 }
 
 // 검색어 변경 감지
 watch(searchText, () => {
   clearTimeout(timeout)
   timeout = setTimeout(() => {
-    getPosts(1)
+    getBoards(1)
   }, 1000)
 })
 
@@ -82,20 +82,20 @@ const moveToBoardCreatePage = () => {
     class="form-control mb-2"
     v-model="searchText" 
     placeholder="게시글 검색..."
-    @keyup.enter="searchPost">
+    @keyup.enter="searchBoard">
     <div v-if="error" class="text-danger">{{ error }}</div>
     <div v-if="loading" class="text-center py-2">
       로딩중...
     </div>
-    <div v-else-if="posts.length === 0" class="text-center py-2">
+    <div v-else-if="boards.length === 0" class="text-center py-2">
       게시글이 없습니다.
     </div>
-    <BoardList v-else :posts="posts" @delete-post="deletePost" @toggle-display="toggleDisplay"/>
+    <BoardList v-else :boards="boards" @delete-board="deleteBoard" @toggle-display="toggleDisplay"/>
     <hr />
     <Pagination 
       :current-page="currentPage" 
       :total-pages="numberOfPages"
-      @page-change="getPosts"
+      @page-change="getBoards"
     />
   </div>
 </template>

@@ -4,8 +4,8 @@ import { useAuthStore } from '@/store/modules/authStore'
 
 export const useBoardStore = defineStore('board', {
   state: () => ({
-    posts: [],
-    currentPost: null,
+    boards: [],
+    currentBoard: null,
     currentPage: 1,
     totalPages: 0,
     rowSize: 10,
@@ -15,20 +15,20 @@ export const useBoardStore = defineStore('board', {
   }),
   
   getters: {
-    getPostById: (state) => (id) => {
-      return state.posts.find(post => post.post_id === id)
+    getBoardById: (state) => (id) => {
+      return state.boards.find(board => board.board_id === id)
     }
   },
   
   actions: {
-    async fetchPosts(page = this.currentPage, searchText = this.searchText) {
+    async fetchBoards(page = this.currentPage, searchText = this.searchText) {
       // 게시글 목록 조회 로직
       this.loading = true
       this.error = null
 
       try {
         const data = await boardService.getBoards(page, searchText, this.rowSize)
-        this.posts = data.board_list
+        this.boards = data.board_list
         this.totalItems = data.total_cnt  // 전체 항목 수 저장
         this.totalPages = Math.ceil(data.total_cnt / this.rowSize)  // 전체 페이지 수 계산
         this.currentPage = page
@@ -41,15 +41,15 @@ export const useBoardStore = defineStore('board', {
       }
     },
     
-    async fetchPostById(id) {
+    async fetchBoardById(id) {
       // 게시글 상세 조회 로직
       this.loading = true
       this.error = null
       
       try {
-        const post = await boardService.getBoardById(id)
-        this.currentPost = post
-        return post
+        const board = await boardService.getBoardById(id)
+        this.currentBoard = board
+        return board
       } catch (err) {
         this.error = err.message || '게시글 상세 정보를 불러오는 데 실패했습니다.'
         console.error(err)
@@ -59,14 +59,14 @@ export const useBoardStore = defineStore('board', {
       }
     },
     
-    async addPost(postData) {
+    async addBoard(boardData) {
       // 게시글 작성 로직
       this.loading = true
       this.error = null
       
       try {
-        await boardService.createBoard(postData)
-        await this.fetchPosts()
+        await boardService.createBoard(boardData)
+        await this.fetchBoards()
         return true
       } catch (err) {
         this.error = err.message || '게시글을 추가하는 데 실패했습니다.'
@@ -77,23 +77,23 @@ export const useBoardStore = defineStore('board', {
       }
     },
     
-    async updatePost(id, postData) {
+    async updateBoard(id, boardData) {
       // 게시글 수정 로직
       this.loading = true
       this.error = null
       
       try {
-        await boardService.updateBoard(id, postData)
+        await boardService.updateBoard(id, boardData)
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentPost && this.currentPost.post_id === id) {
-          this.currentPost = { ...this.currentPost, ...postData }
+        if (this.currentBoard && this.currentBoard.board_id === id) {
+          this.currentBoard = { ...this.currentBoard, ...boardData }
         }
         
         // 목록에 있는 할 일 업데이트
-        const index = this.posts.findIndex(post => post.post_id === id)
+        const index = this.boards.findIndex(board => board.board_id === id)
         if (index !== -1) {
-          this.posts[index] = { ...this.posts[index], ...postData }
+          this.boards[index] = { ...this.boards[index], ...boardData }
         }
         
         return true
@@ -106,7 +106,7 @@ export const useBoardStore = defineStore('board', {
       }
     },
     
-    async deletePost(id) {
+    async deleteBoard(id) {
       // 게시글 삭제 로직
       this.loading = true
       this.error = null
@@ -120,11 +120,11 @@ export const useBoardStore = defineStore('board', {
         })
         
         // 목록에서 삭제된 할 일 제거
-        this.posts = this.posts.filter(post => post.post_id !== id)
+        this.boards = this.boards.filter(board => board.board_id !== id)
         
         // 현재 상세 페이지에 있는 경우 초기화
-        if (this.currentPost && this.currentPost.post_id === id) {
-          this.currentPost = null
+        if (this.currentBoard && this.currentBoard.board_id === id) {
+          this.currentBoard = null
         }
         
         return true
@@ -139,10 +139,10 @@ export const useBoardStore = defineStore('board', {
     
     setSearchText(text) {
       this.searchText = text
-      this.fetchPosts(1, text) // 검색 시 첫 페이지로 이동
+      this.fetchBoards(1, text) // 검색 시 첫 페이지로 이동
     },
     
-    async ToggleDisplay(id, display) {
+    async toggleDisplay(id, displayYn) {
       // 게시글 상태 변경 로직
       try {
         // authStore에서 userId 가져오기
@@ -150,17 +150,17 @@ export const useBoardStore = defineStore('board', {
         const userId = authStore.user?.userId || 0
         
         // userId를 params로 전달
-        await boardService.displayBoard(id, display)
+        await boardService.displayBoard(id, displayYn)
         
         // 목록에 있는 할 일 상태 업데이트
-        const index = this.posts.findIndex(post => Number(post.post_id) === Number(id))
+        const index = this.boards.findIndex(board => Number(board.board_id) === Number(id))
         if (index !== -1) {
-          this.posts[index].display = display
+          this.boards[index].displayYn = displayYn
         }
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentPost && Number(this.currentPost.post_id) === Number(id)) {
-          this.currentPost.display = display
+        if (this.currentBoard && Number(this.currentBoard.board_id) === Number(id)) {
+          this.currentBoard.displayYn = displayYn
         }
         
         return true
@@ -171,8 +171,8 @@ export const useBoardStore = defineStore('board', {
     },
     
     resetState() {
-      this.posts = []
-      this.currentPost = null
+      this.boards = []
+      this.currentBoard = null
       this.currentPage = 1
       this.totalPages = 0
       this.searchText = ''

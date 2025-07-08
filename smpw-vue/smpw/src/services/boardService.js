@@ -1,5 +1,4 @@
 import axios from '@/services/api'
-import { useAuthStore } from '@/store/modules/authStore'
 
 export const boardService = {
   async getBoards(page = 1, searchText = '', rowSize = 10) {
@@ -33,8 +32,8 @@ export const boardService = {
     return response.data
   },
 
-  async displayBoard(id, display) {
-    const response = await axios.patch(`boards/board_display/${id}`, {display})
+  async displayBoard(id, displayYn) {
+    const response = await axios.patch(`boards/board_display/${id}`, {displayYn})
     return response.data
   }
 }

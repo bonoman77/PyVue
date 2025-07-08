@@ -9,7 +9,7 @@
         class="form-check-input me-2"
       />
       <router-link 
-        :to="{ name: 'TodoDetail', params: { id: todo.todo_id } }" 
+        :to="{ name: 'TodoDetail', params: { id: todo.todoId } }" 
         class="todo-title"
         :class="{ 'text-decoration-line-through': todo.completed }"
       >
@@ -49,7 +49,7 @@ const onToggle = (event) => {
 };
 
 const onDelete = () => {
-  emit('delete', props.todo.todo_id, props.index);
+  emit('delete', props.todo.todoId, props.index);
 };
 </script>
 

@@ -2,9 +2,9 @@
     <div>
       <ul class="list-group">
         <BoardItem 
-          v-for="(post, index) in props.posts" 
-          :key="post.post_id"
-          :post="post"
+          v-for="(board, index) in props.boards" 
+          :key="board.board_id"
+          :board="board"
           :index="index"
           @delete="openModal"
           @toggle-display="toggleDisplay"
@@ -15,7 +15,7 @@
         <DeleteModal 
           v-if="showModal" 
           @close="closeModal" 
-          @delete="deletePost"
+          @delete="deleteBoard"
         />
       </teleport>
     </div>
@@ -27,39 +27,39 @@
   import BoardItem from '@/components/board/BoardItem.vue'
   
   const props = defineProps({
-    posts: {
+    boards: {
       type: Array,
       required: true
     }
   })
   
-  const emit = defineEmits(['delete-post', 'toggle-display'])
+  const emit = defineEmits(['delete-board', 'toggle-display'])
   
   const showModal = ref(false)
-  const selectedPostId = ref(null)
+  const selectedBoardId = ref(null)
   
   // 모달 열기
-  const openModal = (postId) => {
-    selectedPostId.value = postId
+  const openModal = (boardId) => {
+    selectedBoardId.value = boardId
     showModal.value = true
   }
   
   // 모달 닫기
   const closeModal = () => {
     showModal.value = false
-    selectedPostId.value = null
+    selectedBoardId.value = null
   }
   
   // 게시글 삭제
-  const deletePost = () => {
-    emit('delete-post', selectedPostId.value)
+  const deleteBoard = () => {
+    emit('delete-board', selectedBoardId.value)
     closeModal()
   }
   
   // 게시글 상태 토글
-  const toggleDisplay = (post, index) => {
-    if (post && post.post_id) {
-      emit('toggle-display', post.post_id, !post.display)
+  const toggleDisplay = (board, index) => {
+    if (board && board.board_id) {
+      emit('toggle-display', board.board_id, !board.displayYn)
     }
   }
   </script>

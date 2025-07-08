@@ -12,17 +12,17 @@ const router = useRouter()
 const route = useRoute()
 const boardStore = useBoardStore()
 const authStore = useAuthStore()
-const postId = route.params.id
+const boardId = route.params.id
 
 // 로컬 상태 정의
-const post = ref({
+const board = ref({
     title: '',
-    display: false,
+    displayYn: false,
     contents: ''
 })
-const originalPost = ref({
+const originalBoard = ref({
     title: '',
-    display: false,
+    displayYn: false,
     contents: ''
 })
 
@@ -38,73 +38,73 @@ const props = defineProps({
 })
 
 // 할 일 상세 정보 가져오기
-const getPost = async () => {
-    const fetchedPost = await boardStore.fetchPostById(postId)
+const getBoard = async () => {
+    const fetchedBoard = await boardStore.fetchBoardById(boardId)
     
-    if (fetchedPost) {
-        post.value = {...fetchedPost}
-        originalPost.value = {...fetchedPost}
+    if (fetchedBoard) {
+        board.value = {...fetchedBoard}
+        originalBoard.value = {...fetchedBoard}
     }
 }
 
 // 편집 모드인 경우 할 일 정보 가져오기
 if (props.editing) {
     onMounted(() => {
-        getPost()
+        getBoard()
     })
 }
 
 // 게시글 변경 여부 확인
-const postChanged = computed(() => {
-    return !_.isEqual(post.value, originalPost.value)
+const boardChanged = computed(() => {
+    return !_.isEqual(board.value, originalBoard.value)
 })
 
 // 게시글 상태 토글 (화면에서만 상태 변경)
-const togglePostStatus = (event) => {
+const toggleBoardStatus = (event) => {
     // 폼 제출 방지
     if (event) event.preventDefault()
     // 화면 상에서만 상태 변경
-    post.value.display = !post.value.display
+    board.value.displayYn = !board.value.displayYn
 }
 
 // 게시글 목록 페이지로 이동
-const moveToPostListPage = () => {
+const moveToBoardListPage = () => {
     router.push({ name: 'BoardList' })
 }
 
 // 게시글 저장 또는 수정
-const updatePost = async () => {
-    if (post.value.title.trim() === '') {
+const updateBoard = async () => {
+    if (board.value.title.trim() === '') {
         toast.error("게시글을 입력해주세요.")
         return
     }
     
-    const postData = {
+    const boardData = {
         userId: authStore.user?.userId || 0, // 로그인한 사용자 ID 사용, 없으면 기본값 0
-        title: post.value.title,
-        display: post.value.display,
-        contents: post.value.contents
+        title: board.value.title,
+        displayYn: board.value.displayYn,
+        contents: board.value.contents
     }
     
     let success = false
     
     if (props.editing) {
         // 게시글 수정
-        success = await boardStore.updatePost(postId, postData)
+        success = await boardStore.updateBoard(boardId, boardData)
         
         if (success) {
             toast.success("게시글이 성공적으로 수정되었습니다!")
-            moveToPostListPage()
+            moveToBoardListPage()
         } else {
             toast.error("게시글 수정에 실패했습니다.")
         }
     } else {
         // 게시글 추가
-        success = await boardStore.addPost(postData)
+        success = await boardStore.addBoard(boardData)
         
         if (success) {
             toast.success("게시글이 성공적으로 저장되었습니다!")
-            moveToPostListPage()
+            moveToBoardListPage()
         } else {
             toast.error("게시글 저장에 실패했습니다.")
         }
@@ -115,10 +115,10 @@ const updatePost = async () => {
 <template>
     <div v-if="loading">Loading...</div>
     <form v-else
-    @submit.prevent="updatePost">
+    @submit.prevent="updateBoard">
         <div class="row">
             <div class="col-6">
-                <Input label="Title" :error="error" v-model="post.title"/>
+                <Input label="Title" :error="error" v-model="board.title"/>
             </div>
             <div v-if="editing" class="col-6">
                 <div class="form-group">
@@ -127,17 +127,17 @@ const updatePost = async () => {
                         id="status-btn"
                         type="button"
                         class="btn w-100"
-                        :class="post.display ? 'btn-success' : 'btn-danger'"
-                        @click="togglePostStatus"
+                        :class="board.displayYn ? 'btn-success' : 'btn-danger'"
+                        @click="toggleBoardStatus"
                     >
-                        {{ post.display ? 'Done' : 'Not Done' }}
+                        {{ board.displayYn ? 'Display' : 'Not Display' }}
                     </button>
                 </div>
             </div>
             <div class="col-12">
                 <div class="form-group">
                     <label for="contents" class="form-label">Contents</label>
-                    <textarea class="form-control" id="contents" v-model="post.contents"></textarea>
+                    <textarea class="form-control" id="contents" v-model="board.contents"></textarea>
                 </div>
             </div>
         </div>
@@ -145,13 +145,13 @@ const updatePost = async () => {
         <button 
             type="submit" 
             class="btn btn-primary"
-            :disabled="!postChanged"
+            :disabled="!boardChanged"
         >
             {{ editing ? '수정' : '생성' }}
         </button>
         <button 
             class="btn btn-secondary ms-2"
-            @click="moveToPostListPage"
+            @click="moveToBoardListPage"
         >
             취소
         </button>

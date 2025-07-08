@@ -3,7 +3,7 @@
     <ul class="list-group">
       <TodoItem 
         v-for="(todo, index) in props.todos" 
-        :key="todo.todo_id"
+        :key="todo.todoId"
         :todo="todo"
         :index="index"
         @delete="openModal"
@@ -58,8 +58,8 @@ const deleteTodo = () => {
 
 // 할 일 상태 토글
 const toggleTodo = (todo, index) => {
-  if (todo && todo.todo_id) {
-    emit('toggle-todo', todo.todo_id, !todo.completed)
+  if (todo && todo.todoId) {
+    emit('toggle-todo', todo.todoId, !todo.completed)
   }
 }
 </script>

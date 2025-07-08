@@ -16,7 +16,7 @@ export const useTodoStore = defineStore('todo', {
   
   getters: {
     getTodoById: (state) => (id) => {
-      return state.todos.find(todo => todo.todo_id === id)
+      return state.todos.find(todo => todo.todoId === id)
     }
   },
   
@@ -27,9 +27,9 @@ export const useTodoStore = defineStore('todo', {
 
       try {
         const data = await todoService.getTodos(page, searchText, this.rowSize)
-        this.todos = data.todo_list
-        this.totalItems = data.total_cnt  // 전체 항목 수 저장
-        this.totalPages = Math.ceil(data.total_cnt / this.rowSize)  // 전체 페이지 수 계산
+        this.todos = data.todoList
+        this.totalItems = data.totalCnt  // 전체 항목 수 저장
+        this.totalPages = Math.ceil(data.totalCnt / this.rowSize)  // 전체 페이지 수 계산
         this.currentPage = page
         this.searchText = searchText
       } catch (err) {
@@ -87,12 +87,12 @@ export const useTodoStore = defineStore('todo', {
         await todoService.updateTodo(id, todoData)
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentTodo && this.currentTodo.todo_id === id) {
+        if (this.currentTodo && this.currentTodo.todoId === id) {
           this.currentTodo = { ...this.currentTodo, ...todoData }
         }
         
         // 목록에 있는 할 일 업데이트
-        const index = this.todos.findIndex(todo => todo.todo_id === id)
+        const index = this.todos.findIndex(todo => todo.todoId === id)
         if (index !== -1) {
           this.todos[index] = { ...this.todos[index], ...todoData }
         }
@@ -120,10 +120,10 @@ export const useTodoStore = defineStore('todo', {
         })
         
         // 목록에서 삭제된 할 일 제거
-        this.todos = this.todos.filter(todo => todo.todo_id !== id)
+        this.todos = this.todos.filter(todo => todo.todoId !== id)
         
         // 현재 상세 페이지에 있는 경우 초기화
-        if (this.currentTodo && this.currentTodo.todo_id === id) {
+        if (this.currentTodo && this.currentTodo.todoId === id) {
           this.currentTodo = null
         }
         
@@ -154,13 +154,13 @@ export const useTodoStore = defineStore('todo', {
         })
         
         // 목록에 있는 할 일 상태 업데이트
-        const index = this.todos.findIndex(todo => Number(todo.todo_id) === Number(id))
+        const index = this.todos.findIndex(todo => Number(todo.todoId) === Number(id))
         if (index !== -1) {
           this.todos[index].completed = completed
         }
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentTodo && Number(this.currentTodo.todo_id) === Number(id)) {
+        if (this.currentTodo && Number(this.currentTodo.todoId) === Number(id)) {
           this.currentTodo.completed = completed
         }
         

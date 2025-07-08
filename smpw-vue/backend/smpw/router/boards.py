@@ -42,7 +42,21 @@ def board_delete(board_id):
     
     # JSON 응답 반환
     return jsonify({"board_id": board_id})
+
+
+
+@bp.route("/board_display/<int:board_id>", methods=['PATCH'])
+def board_display(board_id):
+    data = request.get_json()
+    display_yn = data.get('displayYn')
+    conn.callproc_without_return('sp_set_board_display', [board_id, display_yn])
     
+    # JSON 응답 반환
+    return jsonify({"board_id": board_id})
+
+
+
+
 @bp.route("/board_insert", methods=['POST'])
 def board_insert():
     # 요청에서 JSON 데이터 가져오기
@@ -73,13 +87,12 @@ def board_insert():
 def board_update(board_id):
     # 요청에서 JSON 데이터 가져오기
     data = request.get_json()
-
     user_id = data.get('userId')
     title = data.get('title')
-    display = data.get('display', False)
+    display_yn = data.get('display_yn')
     contents = data.get('contents', '')
     
-    conn.callproc_without_return('sp_set_board_update', [user_id, board_id, title, int(display), contents])
+    conn.callproc_without_return('sp_set_board_update', [user_id, board_id, title, int(display_yn), contents])
     
     # JSON 응답 반환
     return jsonify({"board_id": board_id})
