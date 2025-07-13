@@ -3,7 +3,7 @@
       <ul class="list-group">
         <BoardItem 
           v-for="(board, index) in props.boards" 
-          :key="board.board_id"
+          :key="board.boardId"
           :board="board"
           :index="index"
           @delete="openModal"
@@ -58,8 +58,8 @@
   
   // 게시글 상태 토글
   const toggleDisplay = (board, index) => {
-    if (board && board.board_id) {
-      emit('toggle-display', board.board_id, !board.displayYn)
+    if (board && board.boardId) {
+      emit('toggle-display', board.boardId, !board.displayYn)
     }
   }
   </script>

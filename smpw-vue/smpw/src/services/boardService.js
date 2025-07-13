@@ -27,13 +27,13 @@ export const boardService = {
     return response.data
   },
   
-  async deleteBoard(id, params) {
-    const response = await axios.delete(`boards/board_delete/${id}`, params)
+  async deleteBoard(id, config) {
+    const response = await axios.delete(`boards/board_delete/${id}`, config)
     return response.data
   },
 
   async displayBoard(id, displayYn) {
-    const response = await axios.patch(`boards/board_display/${id}`, {displayYn})
+    const response = await axios.patch(`boards/board_display/${id}`, {display_yn: displayYn})
     return response.data
   }
 }

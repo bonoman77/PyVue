@@ -14,9 +14,9 @@ bp = Blueprint('accounts', __name__)
 @bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user_email = data.get('userEmail')
+    user_email = data.get('user_email')
     password = data.get('password')
-
+    print(user_email, password)
     res = conn.callproc_return('sp_get_user_login', [user_email, password])
     print(res)
 

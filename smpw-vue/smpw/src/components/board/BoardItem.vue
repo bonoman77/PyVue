@@ -9,7 +9,7 @@
           class="form-check-input me-2"
         />
         <router-link 
-          :to="{ name: 'BoardDetail', params: { id: board.board_id } }" 
+          :to="{ name: 'BoardDetail', params: { id: board.boardId } }" 
           class="board-title"
           :class="{ 'text-decoration-line-through': board.displayYn }"
         >

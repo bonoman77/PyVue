@@ -16,7 +16,7 @@ export const useBoardStore = defineStore('board', {
   
   getters: {
     getBoardById: (state) => (id) => {
-      return state.boards.find(board => board.board_id === id)
+      return state.boards.find(board => board.boardId === id)
     }
   },
   
@@ -28,9 +28,9 @@ export const useBoardStore = defineStore('board', {
 
       try {
         const data = await boardService.getBoards(page, searchText, this.rowSize)
-        this.boards = data.board_list
-        this.totalItems = data.total_cnt  // 전체 항목 수 저장
-        this.totalPages = Math.ceil(data.total_cnt / this.rowSize)  // 전체 페이지 수 계산
+        this.boards = data.boardList
+        this.totalItems = data.totalCnt  // 전체 항목 수 저장
+        this.totalPages = Math.ceil(data.totalCnt / this.rowSize)  // 전체 페이지 수 계산
         this.currentPage = page
         this.searchText = searchText
       } catch (err) {
@@ -86,12 +86,12 @@ export const useBoardStore = defineStore('board', {
         await boardService.updateBoard(id, boardData)
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentBoard && this.currentBoard.board_id === id) {
+        if (this.currentBoard && this.currentBoard.boardId === id) {
           this.currentBoard = { ...this.currentBoard, ...boardData }
         }
         
         // 목록에 있는 할 일 업데이트
-        const index = this.boards.findIndex(board => board.board_id === id)
+        const index = this.boards.findIndex(board => board.boardId === id)
         if (index !== -1) {
           this.boards[index] = { ...this.boards[index], ...boardData }
         }
@@ -120,10 +120,10 @@ export const useBoardStore = defineStore('board', {
         })
         
         // 목록에서 삭제된 할 일 제거
-        this.boards = this.boards.filter(board => board.board_id !== id)
+        this.boards = this.boards.filter(board => board.boardId !== id)
         
         // 현재 상세 페이지에 있는 경우 초기화
-        if (this.currentBoard && this.currentBoard.board_id === id) {
+        if (this.currentBoard && this.currentBoard.boardId === id) {
           this.currentBoard = null
         }
         
@@ -153,13 +153,13 @@ export const useBoardStore = defineStore('board', {
         await boardService.displayBoard(id, displayYn)
         
         // 목록에 있는 할 일 상태 업데이트
-        const index = this.boards.findIndex(board => Number(board.board_id) === Number(id))
+        const index = this.boards.findIndex(board => Number(board.boardId) === Number(id))
         if (index !== -1) {
           this.boards[index].displayYn = displayYn
         }
         
         // 현재 상세 페이지에 있는 경우 현재 할 일 업데이트
-        if (this.currentBoard && Number(this.currentBoard.board_id) === Number(id)) {
+        if (this.currentBoard && Number(this.currentBoard.boardId) === Number(id)) {
           this.currentBoard.displayYn = displayYn
         }
         

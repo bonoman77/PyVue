@@ -4,6 +4,10 @@
  * @returns {string} 카멜 케이스로 변환된 문자열
  */
 export const snakeToCamel = (str) => {
+  // 언더스코어로 시작하는 경우 처리
+  if (str.startsWith('_')) {
+    return '_' + str.substring(1).replace(/_([a-z])/g, (match, group) => group.toUpperCase());
+  }
   return str.replace(/_([a-z])/g, (match, group) => group.toUpperCase());
 };
 
@@ -13,7 +17,10 @@ export const snakeToCamel = (str) => {
  * @returns {string} 스네이크 케이스로 변환된 문자열
  */
 export const camelToSnake = (str) => {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  // 첫 글자가 대문자인 경우 처리
+  return str
+    .replace(/^([A-Z])/, (match) => match.toLowerCase())
+    .replace(/([A-Z])/g, (letter) => `_${letter.toLowerCase()}`);
 };
 
 /**
