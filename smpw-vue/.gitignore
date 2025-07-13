@@ -22,6 +22,7 @@ wheels/
 *.pyc 
 
 # Virtual Environment
+node_modules/
 venv/
 env/
 ENV/
