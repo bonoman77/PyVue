@@ -6,16 +6,19 @@ export const boardRoutes = [
   {
     path: '/board',
     name: 'BoardList',
-    component: BoardList
+    component: BoardList,
+    meta: { requiresAuth: true }
   },
   {
     path: '/board/write',
     name: 'BoardWrite',
-    component: BoardWrite
+    component: BoardWrite,
+    meta: { requiresAuth: true }
   },
   {
     path: '/board/:id',
     name: 'BoardDetail',
-    component: BoardDetail
+    component: BoardDetail,
+    meta: { requiresAuth: true }
   }
 ]

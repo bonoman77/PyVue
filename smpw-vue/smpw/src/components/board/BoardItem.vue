@@ -16,6 +16,9 @@
           {{ board.title }}
         </router-link>
       </div>
+      <div class="ms-auto me-3 text-muted">
+        {{ board.userName }}
+      </div>
       <div>
         <Button 
           variant="danger" 
@@ -49,7 +52,7 @@
   };
   
   const onDelete = () => {
-    emit('delete', props.board.board_id, props.index);
+    emit('delete', props.board.boardId, props.index);
   };
   </script>
   

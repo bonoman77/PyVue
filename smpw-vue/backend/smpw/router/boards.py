@@ -92,6 +92,8 @@ def board_update(board_id):
     display_yn = data.get('display_yn')
     contents = data.get('contents', '')
     
+    print([user_id, board_id, title, display_yn, contents])
+
     conn.callproc_without_return('sp_set_board_update', [user_id, board_id, title, int(display_yn), contents])
     
     # JSON 응답 반환

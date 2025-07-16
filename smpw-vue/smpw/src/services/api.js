@@ -20,12 +20,16 @@ instance.interceptors.request.use(
         
         // 요청 데이터의 키를 스네이크 케이스로 변환
         if (config.data) {
+            console.log('요청 데이터 변환 전:', config.data)
             config.data = convertObjectKeysToSnakeCase(config.data)
+            console.log('요청 데이터 변환 후:', config.data)
         }
         
         // params도 변환
         if (config.params) {
+            console.log('요청 파라미터 변환 전:', config.params)
             config.params = convertObjectKeysToSnakeCase(config.params)
+            console.log('요청 파라미터 변환 후:', config.params)
         }
         
         return config
@@ -38,7 +42,9 @@ instance.interceptors.response.use(
     response => {
         // 응답 데이터의 키를 카멜 케이스로 변환
         if (response.data) {
+            console.log('응답 데이터 변환 전:', response.data)
             response.data = convertObjectKeysToCamelCase(response.data)
+            console.log('응답 데이터 변환 후:', response.data)
         }
         return response
     },

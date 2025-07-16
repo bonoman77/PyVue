@@ -14,7 +14,14 @@ export const boardService = {
   
   async getBoardById(id) {
     const response = await axios.get(`boards/board_detail/${id}`)
-    return response.data.board_detail
+    console.log('API 응답 데이터:', response.data)
+    
+    // 응답 데이터 구조 확인
+    if (!response.data.boardDetail) {
+      console.error('boardDetail이 없습니다:', response.data)
+    }
+    
+    return response.data.boardDetail
   },
   
   async createBoard(boardData) {
@@ -27,8 +34,8 @@ export const boardService = {
     return response.data
   },
   
-  async deleteBoard(id, config) {
-    const response = await axios.delete(`boards/board_delete/${id}`, config)
+  async deleteBoard(id, params) {
+    const response = await axios.delete(`boards/board_delete/${id}`, params)
     return response.data
   },
 
