@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createHead } from '@vueuse/head'
 import './styles/global.css'
+import '@/assets/css/argon.css'
 import App from './App.vue'
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';

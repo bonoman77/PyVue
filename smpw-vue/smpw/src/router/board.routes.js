@@ -1,5 +1,5 @@
 import BoardList from '@/pages/board/index.vue'
-import BoardDetail from '@/pages/board/[id].vue'
+import BoardDetail from '@/pages/board/Detail.vue'
 import BoardWrite from '@/pages/board/write.vue'
 
 export const boardRoutes = [

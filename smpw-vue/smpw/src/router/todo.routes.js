@@ -1,5 +1,5 @@
 import Todos from '@/pages/todo/index.vue'
-import TodoDetail from '@/pages/todo/[id].vue'
+import TodoDetail from '@/pages/todo/Detail.vue'
 import TodoWrite from '@/pages/todo/write.vue'
 
 export const todoRoutes = [
