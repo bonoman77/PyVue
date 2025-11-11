@@ -1,0 +1,9 @@
+Flask
+pymysql
+python-dateutil
+python-dotenv
+Flask-Mail
+requests
+Flask-Cors
+pyjwt
+flask_swagger_ui
