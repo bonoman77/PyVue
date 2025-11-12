@@ -2,19 +2,38 @@
 
 <template>
   <div class="container">
-    {{ name }}
+    <h2>Todo List</h2>
+    <TodoSimpleForm @add-todo="onAddTodo"/>
+
+    <div v-show="todos.length === 0">
+      추가된 Todo가 없습니다.
+    </div>
+    <div class="card" v-for="todo in todos" :key="todo.id">
+      <div class="card-body d-flex">
+        <div class="form-check flex-grow-1 align-self-center">
+          <input type="checkbox" class="form-check-input" v-model="todo.completed">
+          <label class="form-check-label" :class="{ completed: todo.completed }">{{ todo.subject }}</label>
+        </div>
+        <button class="btn btn-danger" type="button" @click="onDelete(todo.id)">Delete</button>
+      </div>
+    </div>
   </div>
-  <button class="btn btn-primary" v-on:click="consoleLog">Click me</button>
 </template>
 
 
 <script setup>
-import { ref } from 'vue'
+  import { ref } from 'vue' 
+  import TodoSimpleForm from './components/TodoSimpleForm.vue';
 
-const name = ref('Kossie Coder'); 
-const consoleLog = () => {
-  console.log('test');
-};
+  const todos = ref([]);
+
+  const onAddTodo = (todo) => {
+    todos.value.push(todo);
+  };
+
+  const onDelete = (id) => {
+    todos.value = todos.value.filter((todo) => todo.id !== id);
+  };
 </script>
 
 
@@ -31,5 +50,9 @@ const consoleLog = () => {
 }
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
+}
+.completed {
+  color: gray;
+  text-decoration: line-through;
 }
 </style>
