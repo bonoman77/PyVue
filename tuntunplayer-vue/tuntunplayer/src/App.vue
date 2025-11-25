@@ -1,8 +1,8 @@
-
-
 <template>
   <div class="container">
-    <h2>Todo List</h2>
+    <h2>Todo List {{ name }}</h2>
+    <button class="btn btn-primary" @click="greeting()">Greeting</button>
+    <input type="text" :value="name"/>
     <TodoSimpleForm @add-todo="onAddTodo"/>
 
     <div v-show="todos.length === 0">
@@ -17,7 +17,12 @@
   import TodoSimpleForm from './components/TodoSimpleForm.vue';
   import TodoList from './components/TodoList.vue';
 
+  const name = ref("SeungKyun");
   const todos = ref([]);
+
+  const greeting = () => {
+    name.value = "Hello";
+  }
 
   const onAddTodo = (todo) => {
     todos.value.push(todo);
