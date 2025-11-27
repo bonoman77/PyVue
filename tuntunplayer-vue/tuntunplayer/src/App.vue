@@ -1,8 +1,7 @@
 <template>
   <div class="container">
-    <h2>Todo List {{ name }}</h2>
+    <h2>Todo List</h2>
     <button class="btn btn-primary" @click="greeting()">Greeting</button>
-    <input type="text" :value="name"/>
     <TodoSimpleForm @add-todo="onAddTodo"/>
 
     <div v-show="todos.length === 0">
@@ -55,3 +54,19 @@
 }
 
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
