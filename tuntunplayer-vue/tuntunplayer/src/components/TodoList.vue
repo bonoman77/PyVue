@@ -6,7 +6,7 @@
           <input type="checkbox" class="form-check-input" v-model="todo.completed">
           <label class="form-check-label" :class="{ completed: todo.completed }">{{ todo.subject }}</label>
         </div>
-        <button class="btn btn-danger" type="button" @click="onDelete(todo.id)">Delete</button>
+        <button class="btn btn-danger btn-sm" type="button" @click="onDelete(todo.id)">Delete</button>
       </div>
     </div>
   </div>
@@ -32,8 +32,14 @@
 </script>
 
 <style scoped>
-
-
+.card {
+  padding: 0em; 
+  margin-top: 8px; 
+}
+.completed {
+  color: gray;
+  text-decoration: line-through;
+}
 </style>
 
 

@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <h2>Todo List</h2>
-    <button class="btn btn-primary" @click="greeting()">Greeting</button>
     <TodoSimpleForm @add-todo="onAddTodo"/>
 
     <div v-show="todos.length === 0">
@@ -48,16 +47,11 @@
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
 }
-.completed {
-  color: gray;
-  text-decoration: line-through;
-}
 
 </style>
 
 
-
-
+<!-- Delete -->
 
 
 
