@@ -1,12 +1,15 @@
 <template>
   <div class="container">
     <h2>Todo List</h2>
+
+    <input type="text" class="form-control" v-model="todo" placeholder="Search">
+
     <TodoSimpleForm @add-todo="onAddTodo"/>
 
     <div v-show="todos.length === 0">
       추가된 Todo가 없습니다.
     </div>
-    <TodoList :todos="todos" @delete="onDelete"/>
+    <TodoList :todos="todos" @delete="onDelete" @toggle-todo="onToggleTodo"/>
   </div>
 </template>
 
@@ -15,12 +18,8 @@
   import TodoSimpleForm from './components/TodoSimpleForm.vue';
   import TodoList from './components/TodoList.vue';
 
-  const name = ref("SeungKyun");
   const todos = ref([]);
-
-  const greeting = () => {
-    name.value = "Hello";
-  }
+  const searchText = ref('');
 
   const onAddTodo = (todo) => {
     todos.value.push(todo);
@@ -29,6 +28,20 @@
   const onDelete = (id) => {
     todos.value = todos.value.filter((todo) => todo.id !== id);
   };
+
+  const onToggleTodo = (id) => {
+    todos.value = todos.value.map((todo) => {
+      if(todo.id === id) {
+        todo.completed = !todo.completed;
+      }
+      return todo;
+    });
+  };
+
+  const onSearchTodo = (search) => {
+    todos.value = todos.value.filter((todo) => todo.subject.includes(search));
+  };
+
 </script>
 
 
@@ -51,7 +64,10 @@
 </style>
 
 
-<!-- Delete -->
+
+
+
+
 
 
 
