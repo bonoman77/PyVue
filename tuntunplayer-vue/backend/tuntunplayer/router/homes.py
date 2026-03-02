@@ -1,4 +1,4 @@
-import smpw.dbconns as conn
+import tuntunplayer.dbconns as conn
 from flask import Blueprint, render_template
 
 bp = Blueprint('homes', __name__)
@@ -15,7 +15,7 @@ def index():
         print(f"데이터베이스 연결 오류: {str(e)}")
     
     # 서버 포트 정보 가져오기
-    port = 4000  # start_smpw.py에 설정된 포트
+    port = 4000  # start_tuntunplayer.py에 설정된 포트
     
     # CORS 허용된 클라이언트 포트 (Vue.js 앱)
     client_port = 5173  # __init__.py의 CORS 설정에서 확인

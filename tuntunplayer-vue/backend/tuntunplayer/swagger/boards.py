@@ -2,8 +2,8 @@ def get_boards_swagger():
     return {
         "swagger": "2.0",
         "info": {
-            "title": "SMPW API",
-            "description": "SMPW 백엔드 API 문서",
+            "title": "TuntunPlayer API",
+            "description": "TuntunPlayer 백엔드 API 문서",
             "version": "1.0"
         },
         "basePath": "/",

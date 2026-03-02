@@ -3,8 +3,8 @@ import jwt
 import random
 import datetime
 from flask import Blueprint, request, session, render_template, redirect, flash, url_for, jsonify
-import smpw.dbconns as conn
-from smpw.utils.mail_handler import send_mail
+import tuntunplayer.dbconns as conn
+from tuntunplayer.utils.mail_handler import send_mail
 from dotenv import load_dotenv
 
 load_dotenv()

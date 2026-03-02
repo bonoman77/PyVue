@@ -1,11 +1,11 @@
 import os
 from flask import Flask, jsonify
-from smpw.utils.file_handler import file_download
-from smpw.utils.log_handler import setup_logger
-from smpw.config import get_config
+from tuntunplayer.utils.file_handler import file_download
+from tuntunplayer.utils.log_handler import setup_logger
+from tuntunplayer.config import get_config
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
-from smpw.swagger import get_swagger_docs
+from tuntunplayer.swagger import get_swagger_docs
 
 def create_app(config_class=None):
     """애플리케이션 팩토리 함수"""
@@ -37,7 +37,7 @@ def create_app(config_class=None):
         SWAGGER_URL,
         API_URL,
         config={
-            'app_name': "SMPW API"
+            'app_name': "TuntunPlayer API"
         }
     )
     
@@ -55,7 +55,7 @@ def create_app(config_class=None):
 
 def register_blueprints(app):
     """모든 블루프린트를 앱에 등록"""
-    from smpw.router import homes, accounts, todos, boards
+    from tuntunplayer.router import homes, accounts, todos, boards
     # 각 모듈의 블루프린트 등록
     app.register_blueprint(homes.bp)
     app.register_blueprint(accounts.bp, url_prefix='/accounts')

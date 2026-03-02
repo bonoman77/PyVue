@@ -1,4 +1,4 @@
-import smpw.dbconns as conn
+import tuntunplayer.dbconns as conn
 from flask import Blueprint, request, jsonify
 
 

@@ -2,26 +2,30 @@
   <div class="container">
     <h2>Todo List</h2>
 
-    <input type="text" class="form-control" v-model="todo" placeholder="Search">
-
+    <input type="text" class="form-control" v-model="searchText" placeholder="Search">
+    <hr />
     <TodoSimpleForm @add-todo="onAddTodo"/>
 
-    <div v-show="todos.length === 0">
-      추가된 Todo가 없습니다.
+    <div v-show="!filteredTodos.length">
+      There is nothing to display.
     </div>
-    <TodoList :todos="todos" @delete="onDelete" @toggle-todo="onToggleTodo"/>
+    <TodoList :todos="filteredTodos" @delete="onDelete" @toggle-todo="onToggleTodo" />  
   </div>
 </template>
 
 <script setup>
-  import { ref } from 'vue' 
+  import { ref, computed } from 'vue' 
   import TodoSimpleForm from './components/TodoSimpleForm.vue';
   import TodoList from './components/TodoList.vue';
 
   const todos = ref([]);
   const searchText = ref('');
+  const filteredTodos = computed(() => {
+    return todos.value.filter((todo) => todo.subject.includes(searchText.value));
+  });
 
   const onAddTodo = (todo) => {
+    axios.post('http://localhost:3000/todos', todo)
     todos.value.push(todo);
   };
 
